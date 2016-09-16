@@ -31,6 +31,10 @@ class BaseDomain:
     err_msg = self.__build_err_msg("fetch_Q_value")
     raise NotImplementedError(err_msg)
 
+  def update_Q_value(self, Q_table, state, action ,new_value):
+    err_msg = self.__build_err_msg("update_Q_value")
+    raise NotImplementedError(err_msg)
+
 
   def __build_err_msg(self, msg):
     return "Your client does not implement [ {0} ] method".format(msg)

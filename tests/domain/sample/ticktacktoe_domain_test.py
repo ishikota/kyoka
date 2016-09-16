@@ -108,6 +108,17 @@ class TickTackToeDomainTest(BaseUnitTest):
     Q_table[4][2][0] = 1  # 4 = first_board, 2 = second_board, 0 = log(action, base=2)
     self.eq(1, self.domain.fetch_Q_value(Q_table, state, action))
 
+  def test_update_Q_value(self):
+    bin2i = lambda b: int(b, 2)
+    first_player_board = bin2i("000000100")
+    second_player_board = bin2i("000000010")
+    state = (first_player_board, second_player_board)
+    action = 1
+    Q_table = [[[0 for a in range(2)] for j in range(3)] for i in range(5)]
+    self.eq(0, self.domain.fetch_Q_value(Q_table, state, action))
+    self.domain.update_Q_value(Q_table, state, action, 1)
+    self.eq(1, self.domain.fetch_Q_value(Q_table, state, action))
+
 
   def __gen_initial_state(self):
     """

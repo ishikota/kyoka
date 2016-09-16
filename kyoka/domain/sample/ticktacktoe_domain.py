@@ -59,6 +59,10 @@ class TickTackToeDomain(BaseDomain):
     Q_value = Q_table[first_player_board][second_player_board][move_position]
     return Q_value
 
+  def update_Q_value(self, Q_table, state, action, new_value):
+    first_player_board, second_player_board = state
+    move_position = int(math.log(action,2))
+    Q_table[first_player_board][second_player_board][move_position] = new_value
 
   def __is_winning(self, player_board):
     bin2i = lambda b: int(b, 2)
