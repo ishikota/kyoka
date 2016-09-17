@@ -1,20 +1,19 @@
 class BaseRLAlgorithm(object):
 
-  def training(self, domain, policy):
-    err_msg = self.__build_err_msg("training")
+  def update_value_function(self, domain, policy, value_function):
+    err_msg = self.__build_err_msg("update_value_function")
     raise NotImplementedError(err_msg)
 
-  def select_action(self, state, action):
-    err_msg = self.__build_err_msg("select_action")
-    raise NotImplementedError(err_msg)
-
-  def save_value_function(self, Q):
-    err_msg = self.__build_err_msg("save_value_function")
-    raise NotImplementedError(err_msg)
-
-  def load_value_function(self, Q):
-    err_msg = self.__build_err_msg("load_value_function")
-    raise NotImplementedError(err_msg)
+  def generate_episode(self, domain, policy):
+    state = domain.generate_initial_state()
+    episode = []
+    while not domain.is_terminal_state(state):
+      action = policy.choose_action(state)
+      next_state = domain.transit_state(state, action)
+      reward = domain.calculate_reward(next_state)
+      episode.append((state, action, next_state, reward))
+      state = next_state
+    return episode
 
 
   def __build_err_msg(self, msg):
