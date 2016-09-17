@@ -15,6 +15,10 @@ class BaseStateValueFunctionTest(BaseUnitTest):
     else:
       self.fail("NotImplementedError does not occur")
 
-  def test_state_to_unique_value(self):
-    self.eq(1, self.func.state_to_unique_value(1))
+  def test_deepcopy_default_implementation(self):
+    self.func.tmp = "hoge"
+    copy = self.func.deepcopy()
+    copy.tmp = "fuga"
+    self.eq(self.func.tmp, copy.tmp)
+
 

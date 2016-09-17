@@ -11,11 +11,14 @@ class BaseActionValueFunction(object):
   def setUp(self):
     pass
 
-  def state_to_unique_value(self, state):
-    return state
+  def deepcopy(self):
+    return self
 
-  def action_to_unique_value(self, action):
-    return action
+  def save(self, dest_file_path):
+    pass
+
+  def load(self, src_file_path):
+    pass
 
 
   def __build_err_msg(self, msg):
