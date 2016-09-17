@@ -13,12 +13,10 @@ class DomainValidator:
 
     method_names = [
         ("generate_inital_state", 0),
-        ("generate_initial_Q_table", 0),
         ("is_terminal_state", 1),
         ("transit_state", 2),
         ("generate_possible_actions", 1),
         ("calculate_reward", 1),
-        ("fetch_Q_value", 3)
     ]
     methods = [(getattr(self.domain, method_name), range(arg_num))\
         for method_name, arg_num in method_names]
