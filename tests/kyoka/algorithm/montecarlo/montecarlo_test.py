@@ -1,27 +1,24 @@
 from tests.base_unittest import BaseUnitTest
-from kyoka.algorithm.base_rl_algorithm import BaseRLAlgorithm
+from kyoka.algorithm.montecarlo.montecarlo import MonteCarlo
 from kyoka.algorithm.policy.greedy_policy import GreedyPolicy
 from kyoka.algorithm.value_function.base_action_value_function import BaseActionValueFunction
 
 from mock import Mock
 
-class BaseRLAlgorithmTest(BaseUnitTest):
+class MonteCarloTest(BaseUnitTest):
 
   def setUp(self):
-    self.algo = BaseRLAlgorithm()
+    self.algo = MonteCarlo()
 
-  def test_error_msg_when_not_implement_abstract_method(self):
-    self.__check_err_msg(lambda : self.algo.update_value_function("dummy", "dummy", "dummy"), "update_value_function")
-
-  def test_gen_episode(self):
+  def test_update_value_function(self):
     domain = self.__setup_stub_domain()
     value_func = self.__setup_stub_value_function()
     policy = GreedyPolicy(domain, value_func)
-    episode = self.algo.generate_episode(domain, policy)
-    self.eq(3, len(episode))
-    self.eq((0, 1, 1, 1), episode[0])
-    self.eq((1, 2, 3, 9), episode[1])
-    self.eq((3, 4, 7, 49), episode[2])
+    self.algo.update_value_function(domain, policy, value_func)
+    update_func_arg_capture = value_func.update_function.call_args_list
+    expected = [(0, 1, (1, 59)), (1, 2, (2, 39)), (3, 4, (4, 42.25))]
+    for expected, capture in zip(expected, update_func_arg_capture):
+      self.eq(expected, capture[0])
 
 
   def __setup_stub_domain(self):
@@ -35,14 +32,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
 
   def __setup_stub_value_function(self):
     mock_value_func = Mock(spec=BaseActionValueFunction)
-    mock_value_func.calculate_value.return_value = 0
+    mock_value_func.calculate_value.side_effect = lambda state, action: (state, action*10)
+    mock_value_func.deepcopy.return_value = mock_value_func
     return mock_value_func
-
-  def __check_err_msg(self, target_method, target_word):
-    try:
-      target_method()
-    except NotImplementedError as e:
-      self.include(target_word, str(e))
-    else:
-      self.fail("NotImplementedError does not occur")
 

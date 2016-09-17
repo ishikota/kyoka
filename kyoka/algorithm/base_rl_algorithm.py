@@ -1,7 +1,7 @@
 class BaseRLAlgorithm(object):
 
-  def GPI(self, domain, policy, value_function):
-    err_msg = self.__build_err_msg("GPI")
+  def update_value_function(self, domain, policy, value_function):
+    err_msg = self.__build_err_msg("update_value_function")
     raise NotImplementedError(err_msg)
 
   def generate_episode(self, domain, policy):
