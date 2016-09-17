@@ -1,5 +1,5 @@
 from tests.base_unittest import BaseUnitTest
-from kyoka.domain.sample.ticktacktoe_domain import TickTackToeDomain
+from sample.ticktacktoe.ticktacktoe_domain import TickTackToeDomain
 
 class TickTackToeDomainTest(BaseUnitTest):
   """
