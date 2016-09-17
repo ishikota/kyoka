@@ -1,5 +1,6 @@
 from tests.base_unittest import BaseUnitTest
 from kyoka.algorithm.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
+from kyoka.algorithm.value_function.base_action_value_function import BaseActionValueFunction
 from mock import Mock
 
 class EpsilonGreedyPolicyTest(BaseUnitTest):
@@ -23,17 +24,22 @@ class EpsilonGreedyPolicyTest(BaseUnitTest):
 
 
   def __choose_action_with_rand_value(self, rand_val):
-    domain = self.__setup_domain_stub([100, 150, 50], [1,2,3])
+    domain = self.__setup_domain_stub([1,2,3])
+    value_func = self.__setup_value_function_stub([100, 150, 50])
     random = self.__setup_random(rand_val)
-    policy = EpsilonGreedyPolicy(domain, eps=0.3, rand=random)
+    policy = EpsilonGreedyPolicy(domain, value_func, eps=0.3, rand=random)
     return policy.choose_action(Q="dummy", state="dummy")
 
 
-  def __setup_domain_stub(self, fetch_Q_value_return, possible_actions):
+  def __setup_domain_stub(self, possible_actions):
     mock_domain = Mock()
-    mock_domain.fetch_Q_value.side_effect = fetch_Q_value_return
     mock_domain.generate_possible_actions.return_value = possible_actions
     return mock_domain
+
+  def __setup_value_function_stub(self, mock_return):
+    mock_value_func = Mock(spec=BaseActionValueFunction)
+    mock_value_func.calculate_value.side_effect = mock_return
+    return mock_value_func
 
   def __setup_random(self, rand_val):
     random = Mock()

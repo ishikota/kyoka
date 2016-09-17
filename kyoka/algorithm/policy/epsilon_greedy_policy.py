@@ -3,8 +3,8 @@ from kyoka.algorithm.policy.base_policy import BasePolicy
 
 class EpsilonGreedyPolicy(BasePolicy):
 
-  def __init__(self, domain, eps=0.05, rand=None):
-    super(EpsilonGreedyPolicy, self).__init__(domain)
+  def __init__(self, domain, value_function, eps=0.05, rand=None):
+    super(EpsilonGreedyPolicy, self).__init__(domain, value_function)
     self.eps = eps
     self.rand = rand if rand else random
 
@@ -17,7 +17,9 @@ class EpsilonGreedyPolicy(BasePolicy):
 
   def __choose_best_action(self, Q, state):
     actions = self.domain.generate_possible_actions(state)
-    Q_value_for_actions = [self.domain.fetch_Q_value(Q, state, action) for action in actions]
+    pack = lambda state, action: self.pack_arguments_for_value_function(state, action)
+    calc_Q_value = lambda packed_arg: self.value_function.calculate_value(*packed_arg)
+    Q_value_for_actions = [calc_Q_value(pack(state, action)) for action in actions]
     max_Q_value = max(Q_value_for_actions)
     Q_act_pair = zip(Q_value_for_actions, actions)
     best_actions = [act for Q_value, act in Q_act_pair if max_Q_value == Q_value]
