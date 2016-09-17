@@ -21,13 +21,6 @@ class TickTackToeDomainTest(BaseUnitTest):
     state = self.domain.generate_initial_state()
     self.eq((0,0), state)
 
-  def test_generate_initial_Q_table(self):
-    Q_table = self.domain.generate_initial_Q_table()
-    self.eq(2**9, len(Q_table))
-    self.eq(2**9, len(Q_table[0]))
-    self.eq(9, len(Q_table[0][0]))
-    self.eq(0, Q_table[0][0][0])
-
   def test_terminal_state_check_when_initial_state(self):
     state = self.__gen_initial_state()
     self.false(self.domain.is_terminal_state(state))
@@ -97,27 +90,6 @@ class TickTackToeDomainTest(BaseUnitTest):
     domain = TickTackToeDomain(is_first_player=False)
     state = self.__gen_diagonal_win_state()
     self.eq(TickTackToeDomain.REWARD_LOSE, domain.calculate_reward(state))
-
-  def test_fetch_Q_value(self):
-    bin2i = lambda b: int(b, 2)
-    first_player_board = bin2i("000000100")
-    second_player_board = bin2i("000000010")
-    state = (first_player_board, second_player_board)
-    action = 1
-    Q_table = [[[0 for a in range(2)] for j in range(3)] for i in range(5)]
-    Q_table[4][2][0] = 1  # 4 = first_board, 2 = second_board, 0 = log(action, base=2)
-    self.eq(1, self.domain.fetch_Q_value(Q_table, state, action))
-
-  def test_update_Q_value(self):
-    bin2i = lambda b: int(b, 2)
-    first_player_board = bin2i("000000100")
-    second_player_board = bin2i("000000010")
-    state = (first_player_board, second_player_board)
-    action = 1
-    Q_table = [[[0 for a in range(2)] for j in range(3)] for i in range(5)]
-    self.eq(0, self.domain.fetch_Q_value(Q_table, state, action))
-    self.domain.update_Q_value(Q_table, state, action, 1)
-    self.eq(1, self.domain.fetch_Q_value(Q_table, state, action))
 
 
   def __gen_initial_state(self):

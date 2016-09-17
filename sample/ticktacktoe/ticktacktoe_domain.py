@@ -16,13 +16,6 @@ class TickTackToeDomain(BaseDomain):
     state = (first_player_board, second_player_board)
     return state
 
-  def generate_initial_Q_table(self):
-    board_state_num = 2**9
-    action_num = 9
-    Q_table = [[[0 for a in range(action_num)]\
-        for j in range(board_state_num)] for i in range(board_state_num)]
-    return Q_table
-
   def is_terminal_state(self, state):
     return any(map(self.__is_winning, state) + [self.__is_draw(state)])
 
@@ -53,16 +46,6 @@ class TickTackToeDomain(BaseDomain):
       reward = self.REWARD_LOSE
     return reward if self.is_first_player else -reward
 
-  def fetch_Q_value(self, Q_table, state, action):
-    first_player_board, second_player_board = state
-    move_position = int(math.log(action,2))
-    Q_value = Q_table[first_player_board][second_player_board][move_position]
-    return Q_value
-
-  def update_Q_value(self, Q_table, state, action, new_value):
-    first_player_board, second_player_board = state
-    move_position = int(math.log(action,2))
-    Q_table[first_player_board][second_player_board][move_position] = new_value
 
   def __is_winning(self, player_board):
     bin2i = lambda b: int(b, 2)
