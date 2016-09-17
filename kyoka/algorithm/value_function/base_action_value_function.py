@@ -1,7 +1,7 @@
 class BaseActionValueFunction(object):
 
-  def calculate_action_value(self, state, action):
-    err_msg = self.__build_err_msg("calculate_action_value")
+  def calculate_value(self, state, action):
+    err_msg = self.__build_err_msg("calculate_value")
     raise NotImplementedError(err_msg)
 
   def update_function(self, state, action, new_value):

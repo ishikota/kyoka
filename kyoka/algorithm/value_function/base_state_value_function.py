@@ -1,7 +1,7 @@
 class BaseStateValueFunction(object):
 
-  def calculate_state_value(self, state):
-    err_msg = self.__build_err_msg("calculate_state_value")
+  def calculate_value(self, state):
+    err_msg = self.__build_err_msg("calculate_value")
     raise NotImplementedError(err_msg)
 
   def update_function(self, state, new_value):

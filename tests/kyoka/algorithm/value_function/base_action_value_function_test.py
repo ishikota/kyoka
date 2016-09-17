@@ -8,10 +8,10 @@ class BaseActionValueFunctionTest(BaseUnitTest):
 
   def test_error_msg_when_not_implement_abstract_method(self):
     try:
-      self.func.calculate_action_value("dummy", "dummy")
+      self.func.calculate_value("dummy", "dummy")
     except NotImplementedError as e:
       self.include("BaseActionValueFunction", str(e))
-      self.include("calculate_action_value", str(e))
+      self.include("calculate_value", str(e))
     else:
       self.fail("NotImplementedError does not occur")
 

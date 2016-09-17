@@ -3,7 +3,7 @@ from kyoka.algorithm.value_function.base_action_value_function import BaseAction
 
 class TickTackToeTableValueFunction(BaseActionValueFunction):
 
-  def calculate_action_value(self, state, action):
+  def calculate_value(self, state, action):
     first_player_board, second_player_board = state
     move_position = int(math.log(action,2))
     Q_value = self.Q_table[first_player_board][second_player_board][move_position]
