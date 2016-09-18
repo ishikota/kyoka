@@ -8,10 +8,10 @@ class BaseRLAlgorithm(object):
     iteration_counter = 0
     while True:
       delta = self.update_value_function(domain, policy, value_function)
+      iteration_counter += 1
       if finish_rule.satisfy_condition(iteration_counter, delta):
         finish_msg = finish_rule.generate_finish_message(iteration_counter, delta)
         return finish_msg
-      iteration_counter += 1
 
   def generate_episode(self, domain, policy):
     state = domain.generate_initial_state()

@@ -27,7 +27,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     algo = self.TestImplementation()
     finish_rule = self.__setup_stub_finish_rule()
     finish_msg = algo.GPI("dummy", "dummy", "dummy", finish_rule)
-    expected = (1, 2)
+    expected = (2, 2)
     self.eq(expected, finish_msg)
 
 
