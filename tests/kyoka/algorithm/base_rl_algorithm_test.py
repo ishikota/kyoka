@@ -23,6 +23,13 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     self.eq((1, 2, 3, 9), episode[1])
     self.eq((3, 4, 7, 49), episode[2])
 
+  def test_GPI(self):
+    algo = self.TestImplementation()
+    finish_rule = self.__setup_stub_finish_rule()
+    finish_msg = algo.GPI("dummy", "dummy", "dummy", finish_rule)
+    expected = (1, 2)
+    self.eq(expected, finish_msg)
+
 
   def __setup_stub_domain(self):
     mock_domain = Mock()
@@ -38,6 +45,12 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     mock_value_func.calculate_value.return_value = 0
     return mock_value_func
 
+  def __setup_stub_finish_rule(self):
+    mock_finish_fule = Mock()
+    mock_finish_fule.satisfy_condition.side_effect = [False, True]
+    mock_finish_fule.generate_finish_message.side_effect = lambda counter, delta: (counter, delta)
+    return mock_finish_fule
+
   def __check_err_msg(self, target_method, target_word):
     try:
       target_method()
@@ -45,4 +58,14 @@ class BaseRLAlgorithmTest(BaseUnitTest):
       self.include(target_word, str(e))
     else:
       self.fail("NotImplementedError does not occur")
+
+  class TestImplementation(BaseRLAlgorithm):
+
+    def __init__(self):
+      BaseRLAlgorithm.__init__(self)
+      self.update_count = 0
+
+    def update_value_function(self, domain, policy, value_function):
+      self.update_count += 1
+      return self.update_count
 
