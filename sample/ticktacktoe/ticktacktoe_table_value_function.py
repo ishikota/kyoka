@@ -22,13 +22,3 @@ class TickTackToeTableValueFunction(BaseTableActionValueFunction):
     table[first_player_board][second_player_board][move_position] = new_value
     return table
 
-
-  def deepcopy(self):
-    return self
-
-  def save(self, dest_file_path):
-    pass
-
-  def load(self, src_file_path):
-    pass
-
