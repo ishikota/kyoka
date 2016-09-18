@@ -4,24 +4,24 @@ from kyoka.algorithm.value_function.base_table_state_value_function import BaseT
 
 class MonteCarlo(BaseRLAlgorithm):
 
-  def __init__(self):
-    BaseRLAlgorithm.__init__(self)
-    self.update_counter = None
+  __KEY_ADDITIONAL_DATA = "additinal_data_key_montecarlo_update_counter"
 
   def update_value_function(self, domain, policy, value_function):
     self.__validate_value_function(value_function)
     self.__initialize_update_counter_if_needed(value_function)
+    update_counter = value_function.get_additinal_data(self.__KEY_ADDITIONAL_DATA)
     episode = self.generate_episode(domain, policy)
     delta_history = []
     for idx, turn_info in enumerate(episode):
       state, action, _next_state, _reward = turn_info
       Q_value = value_function.calculate_value(state, action)
-      update_count = value_function.fetch_value_from_table(self.update_counter, state, action)
+      update_count = value_function.fetch_value_from_table(update_counter, state, action)
       following_reward = self.__calculate_following_state_reward(idx, episode)
       new_Q_value = self.__calculate_new_Q_value(Q_value, update_count, following_reward)
-      value_function.update_table(self.update_counter, state, action, update_count + 1)
+      value_function.update_table(update_counter, state, action, update_count + 1)
       delta = value_function.update_function(state, action, new_Q_value)
       delta_history.append(delta)
+    value_function.set_additinal_data(self.__KEY_ADDITIONAL_DATA, update_counter)
     return delta_history
 
   def __validate_value_function(self, value_function):
@@ -35,8 +35,9 @@ class MonteCarlo(BaseRLAlgorithm):
         (child class of [BaseTableActionValueFunction])'
 
   def __initialize_update_counter_if_needed(self, value_function):
-    if self.update_counter is None:
-      self.update_counter = value_function.generate_initial_table()
+    if value_function.get_additinal_data(self.__KEY_ADDITIONAL_DATA) is None:
+      update_counter = value_function.generate_initial_table()
+      value_function.set_additinal_data(self.__KEY_ADDITIONAL_DATA, update_counter)
 
   def __calculate_following_state_reward(self, current_turn, episode):
     following_turn_info = episode[current_turn:]

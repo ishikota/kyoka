@@ -20,9 +20,10 @@ class MonteCarloTest(BaseUnitTest):
     delta = self.algo.update_value_function(domain, policy, value_func)
     self.eq([59, 58, 49], delta)
     expected = [(0, 1, 59, 1), (1, 2, 58, 1), (3, 4, 49, 1), (0, 0, 0, 0)]
+    update_counter = value_func.get_additinal_data("additinal_data_key_montecarlo_update_counter")
     for state, action, value, update_count in expected:
       self.eq(value, value_func.fetch_value_from_table(value_func.table, state, action))
-      self.eq(update_count, value_func.fetch_value_from_table(self.algo.update_counter, state, action))
+      self.eq(update_count, value_func.fetch_value_from_table(update_counter, state, action))
 
   def test_update_value_function_twice_for_counter(self):
     domain = self.__setup_stub_domain()
@@ -36,9 +37,22 @@ class MonteCarloTest(BaseUnitTest):
 
     self.eq([-24, -24, -21], delta)
     expected = [(0, 1, 35, 2), (1, 2, 34, 2), (3, 4, 28, 2), (0, 0, 0, 0)]
+    update_counter = value_func.get_additinal_data("additinal_data_key_montecarlo_update_counter")
     for state, action, value, update_count in expected:
       self.eq(value, value_func.fetch_value_from_table(value_func.table, state, action))
-      self.eq(update_count, value_func.fetch_value_from_table(self.algo.update_counter, state, action))
+      self.eq(update_count, value_func.fetch_value_from_table(update_counter, state, action))
+
+  def test_save_update_counter_as_additinal_data(self):
+    domain = self.__setup_stub_domain()
+    value_func = self.TestTableValueFunctionImpl()
+    value_func.setUp()
+    policy = GreedyPolicy(domain, value_func)
+    delta = self.algo.update_value_function(domain, policy, value_func)
+    update_counter = value_func.get_additinal_data("additinal_data_key_montecarlo_update_counter")
+    self.eq(1, update_counter[0][1])
+    self.eq(1, update_counter[1][2])
+    self.eq(1, update_counter[3][4])
+    self.eq(0, update_counter[0][0])
 
   @raises(TypeError)
   def test_table_value_function_validation(self):
