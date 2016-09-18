@@ -20,10 +20,16 @@ class MonteCarlo(BaseRLAlgorithm):
     return sum(following_rewards)
 
   def __calculate_new_Q_value(self, Q_val_info, update_reward):
-    update_count, Q_val_average = Q_val_info
+    update_count, Q_val_average = self.__parse_Q_val_info(Q_val_info)
     new_Q_val = self.__calc_average_in_incremental_way(\
         update_count, update_reward, Q_val_average)
     return (update_count + 1, new_Q_val)
+
+  def __parse_Q_val_info(self, info):
+    if isinstance(info, tuple):
+      return info
+    else:
+      return (0, info)
 
   def __calc_average_in_incremental_way(self, k, r, Q):
     return Q + 1.0 / (k + 1) * (r - Q)
