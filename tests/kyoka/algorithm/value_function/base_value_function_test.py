@@ -38,6 +38,20 @@ class BaseValueFunctionTest(BaseUnitTest):
     restored.load(file_path)
     self.eq("fuga", restored.state)
 
+  def test_save_load_additional_data(self):
+    unique_key = "key4base_value_function_test"
+    file_path = self.__generate_tmp_file_path()
+    original = self.TestActionValueFunction()
+    self.eq(None, original.get_additinal_data(unique_key))
+    original.set_additinal_data(unique_key, "hoge")
+    self.eq("hoge", original.get_additinal_data(unique_key))
+    original.save(file_path)
+    restored = self.TestActionValueFunction()
+    self.eq(None, restored.get_additinal_data(unique_key))
+    restored.load(file_path)
+    self.eq("hoge", restored.get_additinal_data(unique_key))
+
+
   def __generate_tmp_file_path(self):
     return os.path.join(os.path.dirname(__file__), "tmp_file_for_base_value_function_test.tmp")
 
