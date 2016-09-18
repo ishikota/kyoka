@@ -22,9 +22,16 @@ class TickTackToeTableValueFunctionTest(BaseUnitTest):
     second_player_board = bin2i("000000010")
     state = (first_player_board, second_player_board)
     action = 1
+
     self.eq(0, self.func.calculate_value(state, action))
-    self.func.update_function(state, action, 1)
+
+    delta = self.func.update_function(state, action, 1)
     self.eq(1, self.func.calculate_value(state, action))
+    self.eq(1, delta)
+
+    delta = self.func.update_function(state, action, 0)
+    self.eq(0, self.func.calculate_value(state, action))
+    self.eq(-1, delta)
 
   def test_generate_initial_Q_table(self):
     Q_table = self.func._TickTackToeTableValueFunction__generate_initial_Q_table()

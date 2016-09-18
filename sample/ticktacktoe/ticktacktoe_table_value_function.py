@@ -12,7 +12,9 @@ class TickTackToeTableValueFunction(BaseActionValueFunction):
   def update_function(self, state, action, new_value):
     first_player_board, second_player_board = state
     move_position = int(math.log(action,2))
+    delta = new_value - self.Q_table[first_player_board][second_player_board][move_position]
     self.Q_table[first_player_board][second_player_board][move_position] = new_value
+    return delta
 
   def setUp(self):
     self.Q_table = self.__generate_initial_Q_table()
