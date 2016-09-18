@@ -8,14 +8,14 @@ class EpsilonGreedyPolicy(BasePolicy):
     self.eps = eps
     self.rand = rand if rand else random
 
-  def choose_action(self, Q, state):
+  def choose_action(self, state):
     actions = self.domain.generate_possible_actions(state)
-    best_action = self.__choose_best_action(Q, state)
+    best_action = self.__choose_best_action(state)
     probs = self.__calc_select_probability(best_action, actions)
     selected_action_idx = self.__roulette(probs)
     return actions[selected_action_idx]
 
-  def __choose_best_action(self, Q, state):
+  def __choose_best_action(self, state):
     actions = self.domain.generate_possible_actions(state)
     pack = lambda state, action: self.pack_arguments_for_value_function(state, action)
     calc_Q_value = lambda packed_arg: self.value_function.calculate_value(*packed_arg)

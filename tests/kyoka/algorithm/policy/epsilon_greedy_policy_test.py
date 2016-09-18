@@ -15,9 +15,10 @@ class EpsilonGreedyPolicyTest(BaseUnitTest):
     self.eq(3, self.__choose_action_with_rand_value(1-eps))
 
   def xtest_sampling_action(self):
-    domain = self.__setup_domain_stub([100, 150, 50]*100000, [1,2,3])
-    policy = EpsilonGreedyPolicy(domain, eps=0.3)
-    result = [policy.choose_action(Q="dummy", state="dummy") for _ in range(100000)]
+    domain = self.__setup_domain_stub([1,2,3])
+    value_func = self.__setup_value_function_stub([100, 150, 50]*100000)
+    policy = EpsilonGreedyPolicy(domain, value_func, eps=0.3)
+    result = [policy.choose_action(state="dummy") for _ in range(100000)]
     count = (result.count(1), result.count(2), result.count(3))
     self.debug()
     # sample result => count = (10062, 79955, 9983)
@@ -28,7 +29,7 @@ class EpsilonGreedyPolicyTest(BaseUnitTest):
     value_func = self.__setup_value_function_stub([100, 150, 50])
     random = self.__setup_random(rand_val)
     policy = EpsilonGreedyPolicy(domain, value_func, eps=0.3, rand=random)
-    return policy.choose_action(Q="dummy", state="dummy")
+    return policy.choose_action(state="dummy")
 
 
   def __setup_domain_stub(self, possible_actions):
