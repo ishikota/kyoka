@@ -1,4 +1,6 @@
-class BaseActionValueFunction(object):
+from kyoka.algorithm.value_function.base_value_function import BaseValueFunction
+
+class BaseActionValueFunction(BaseValueFunction):
 
   def calculate_value(self, state, action):
     err_msg = self.__build_err_msg("calculate_value")
@@ -11,13 +13,10 @@ class BaseActionValueFunction(object):
   def setUp(self):
     pass
 
-  def deepcopy(self):
-    return self
+  def provide_data_to_store(self):
+    return None
 
-  def save(self, dest_file_path):
-    pass
-
-  def load(self, src_file_path):
+  def receive_data_to_restore(self, restored_data):
     pass
 
 

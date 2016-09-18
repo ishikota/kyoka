@@ -15,9 +15,3 @@ class BaseActionValueFunctionTest(BaseUnitTest):
     else:
       self.fail("NotImplementedError does not occur")
 
-  def test_deepcopy_default_implementation(self):
-    self.func.tmp = "hoge"
-    copy = self.func.deepcopy()
-    copy.tmp = "fuga"
-    self.eq(self.func.tmp, copy.tmp)
-
