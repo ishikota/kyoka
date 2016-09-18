@@ -14,7 +14,8 @@ class MonteCarloTest(BaseUnitTest):
     domain = self.__setup_stub_domain()
     value_func = self.__setup_stub_value_function()
     policy = GreedyPolicy(domain, value_func)
-    self.algo.update_value_function(domain, policy, value_func)
+    delta = self.algo.update_value_function(domain, policy, value_func)
+    self.eq([1]*3, delta)
     update_func_arg_capture = value_func.update_function.call_args_list
     expected = [(0, 1, (1, 59)), (1, 2, (2, 39)), (3, 4, (4, 42.25))]
     for expected, capture in zip(expected, update_func_arg_capture):
@@ -33,6 +34,7 @@ class MonteCarloTest(BaseUnitTest):
   def __setup_stub_value_function(self):
     mock_value_func = Mock(spec=BaseActionValueFunction)
     mock_value_func.calculate_value.side_effect = lambda state, action: 0 if state==0 else (state, action*10)
+    mock_value_func.update_function.return_value = 1
     mock_value_func.deepcopy.return_value = mock_value_func
     return mock_value_func
 

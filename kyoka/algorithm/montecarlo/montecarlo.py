@@ -5,13 +5,15 @@ class MonteCarlo(BaseRLAlgorithm):
   def update_value_function(self, domain, policy, value_function_):
     value_function = value_function_.deepcopy()
     episode = self.generate_episode(domain, policy)
+    delta_memo = []
     for idx, turn_info in enumerate(episode):
       state, action, _next_state, _reward = turn_info
       Q_val_info = value_function.calculate_value(state, action)
       following_reward = self.__calculate_following_state_reward(idx, episode)
       new_Q_val_info = self.__calculate_new_Q_value(Q_val_info, following_reward)
-      value_function.update_function(state, action, new_Q_val_info)
-    return value_function
+      delta = value_function.update_function(state, action, new_Q_val_info)
+      delta_memo.append(delta)
+    return delta_memo
 
 
   def __calculate_following_state_reward(self, current_turn, episode):
