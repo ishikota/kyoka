@@ -14,6 +14,12 @@ class BaseTableStateValueFunction(BaseStateValueFunction):
     self.update_table(self.table, state, new_value)
     return delta
 
+  def provide_data_to_store(self):
+    return self.table
+
+  def receive_data_to_restore(self, restored_data):
+    self.table = restored_data
+
   def generate_initial_table(self):
     err_msg = self.__build_err_msg("generate_initial_table")
     raise NotImplementedError(err_msg)
@@ -25,15 +31,6 @@ class BaseTableStateValueFunction(BaseStateValueFunction):
   def update_table(self, table, state):
     err_msg = self.__build_err_msg("update_table")
     raise NotImplementedError(err_msg)
-
-  def deepcopy(self):
-    return self
-
-  def save(self, dest_file_path):
-    pass
-
-  def load(self, src_file_path):
-    pass
 
 
   def __build_err_msg(self, msg):
