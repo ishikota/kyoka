@@ -2,8 +2,10 @@ from tests.base_unittest import BaseUnitTest
 from kyoka.algorithm.montecarlo.montecarlo import MonteCarlo
 from kyoka.algorithm.policy.greedy_policy import GreedyPolicy
 from kyoka.algorithm.value_function.base_action_value_function import BaseActionValueFunction
+from kyoka.algorithm.value_function.base_table_action_value_function import BaseTableActionValueFunction
 
 from mock import Mock
+from nose.tools import raises
 
 class MonteCarloTest(BaseUnitTest):
 
@@ -12,14 +14,36 @@ class MonteCarloTest(BaseUnitTest):
 
   def test_update_value_function(self):
     domain = self.__setup_stub_domain()
-    value_func = self.__setup_stub_value_function()
+    value_func = self.TestTableValueFunctionImpl()
+    value_func.setUp()
     policy = GreedyPolicy(domain, value_func)
     delta = self.algo.update_value_function(domain, policy, value_func)
-    self.eq([1]*3, delta)
-    update_func_arg_capture = value_func.update_function.call_args_list
-    expected = [(0, 1, (1, 59)), (1, 2, (2, 39)), (3, 4, (4, 42.25))]
-    for expected, capture in zip(expected, update_func_arg_capture):
-      self.eq(expected, capture[0])
+    self.eq([59, 58, 49], delta)
+    expected = [(0, 1, 59, 1), (1, 2, 58, 1), (3, 4, 49, 1), (0, 0, 0, 0)]
+    for state, action, value, update_count in expected:
+      self.eq(value, value_func.fetch_value_from_table(value_func.table, state, action))
+      self.eq(update_count, value_func.fetch_value_from_table(self.algo.update_counter, state, action))
+
+  def test_update_value_function_twice_for_counter(self):
+    domain = self.__setup_stub_domain()
+    value_func = self.TestTableValueFunctionImpl()
+    value_func.setUp()
+    policy = GreedyPolicy(domain, value_func)
+
+    self.algo.update_value_function(domain, policy, value_func)
+    domain.calculate_reward.side_effect = lambda state: state
+    delta = self.algo.update_value_function(domain, policy, value_func)
+
+    self.eq([-24, -24, -21], delta)
+    expected = [(0, 1, 35, 2), (1, 2, 34, 2), (3, 4, 28, 2), (0, 0, 0, 0)]
+    for state, action, value, update_count in expected:
+      self.eq(value, value_func.fetch_value_from_table(value_func.table, state, action))
+      self.eq(update_count, value_func.fetch_value_from_table(self.algo.update_counter, state, action))
+
+  @raises(TypeError)
+  def test_table_value_function_validation(self):
+    value_func = Mock(spec=BaseActionValueFunction)
+    self.algo.update_value_function("dummy", "dummy", value_func)
 
 
   def __setup_stub_domain(self):
@@ -31,10 +55,17 @@ class MonteCarloTest(BaseUnitTest):
     mock_domain.calculate_reward.side_effect = lambda state: state**2
     return mock_domain
 
-  def __setup_stub_value_function(self):
-    mock_value_func = Mock(spec=BaseActionValueFunction)
-    mock_value_func.calculate_value.side_effect = lambda state, action: 0 if state==0 else (state, action*10)
-    mock_value_func.update_function.return_value = 1
-    mock_value_func.deepcopy.return_value = mock_value_func
-    return mock_value_func
+
+  class TestTableValueFunctionImpl(BaseTableActionValueFunction):
+
+    def generate_initial_table(self):
+      return [[0 for j in range(50)] for i in range(4)]
+
+    def fetch_value_from_table(self, table, state, action):
+      return table[state][action]
+
+    def update_table(self, table, state, action, new_value):
+      table[state][action] = new_value
+      return table
+
 
