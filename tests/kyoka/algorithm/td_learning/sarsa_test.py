@@ -17,11 +17,10 @@ class SarsaTest(BaseUnitTest):
     value_func.update_function(1, 2, 10)
     value_func.update_function(3, 4, 100)
     value_func.update_function(7, 8, 1000)
-    self.debug()
     policy = GreedyPolicy(domain, value_func)
     delta = self.algo.update_value_function(domain, policy, value_func)
-    self.eq([1, 4.5, 24.5], delta)
-    expected = [(0, 1, 1), (1, 2, 14.5), (3, 4, 124.5)]
+    self.eq([1, 4.5, -25.5], delta)
+    expected = [(0, 1, 1), (1, 2, 14.5), (3, 4, 74.5)]
     for state, action, value in expected:
       self.eq(value, value_func.fetch_value_from_table(value_func.table, state, action))
 
@@ -31,7 +30,7 @@ class SarsaTest(BaseUnitTest):
     mock_domain.generate_initial_state.return_value = 0
     mock_domain.is_terminal_state.side_effect = lambda state: state == 7
     mock_domain.transit_state.side_effect = lambda state, action: state + action
-    mock_domain.generate_possible_actions.side_effect = lambda state: [state + 1]
+    mock_domain.generate_possible_actions.side_effect = lambda state: [] if state == 7 else [state + 1]
     mock_domain.calculate_reward.side_effect = lambda state: state**2
     return mock_domain
 
