@@ -12,6 +12,9 @@ sys.path.append(root)
 sys.path.append(src_path)
 sys.path.append(sample_path)
 
+import logging as log
+log.basicConfig(format='[%(levelname)s] %(message)s', level=log.INFO)
+
 from kyoka.algorithm.montecarlo.montecarlo import MonteCarlo
 from kyoka.algorithm.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
 from kyoka.algorithm.finish_rule.watch_iteration_count import WatchIterationCount
@@ -27,18 +30,17 @@ domain = TickTackToeDomain()
 value_func = TickTackToeTableValueFunction()
 value_func.setUp()
 if os.path.isfile(VALUE_FUNC_SAVE_DATA_PATH):
-  print "loading value function data from %s" % VALUE_FUNC_SAVE_DATA_PATH
+  log.info("loading value function data from %s" % VALUE_FUNC_SAVE_DATA_PATH)
   value_func.load(VALUE_FUNC_SAVE_DATA_PATH)
-  print "finished loading value function"
+  log.info("finished loading value function")
 policy = EpsilonGreedyPolicy(domain, value_func)
 RL_algo = MonteCarlo()
-finish_rule = WatchIterationCount(target_count=50000)
+finish_rule = WatchIterationCount(target_count=50000, log_interval=10000)
 
-print "start GPI iteration..."
-msg = RL_algo.GPI(domain, policy, value_func, finish_rule)
-print msg
+log.info("start GPI iteration...")
+RL_algo.GPI(domain, policy, value_func, finish_rule)
 
-print "saving value function data into %s" % VALUE_FUNC_SAVE_DATA_PATH
+log.info("saving value function data into %s" % VALUE_FUNC_SAVE_DATA_PATH)
 value_func.save(VALUE_FUNC_SAVE_DATA_PATH)
-print "finished saving value function"
+log.info("finished saving value function")
 
