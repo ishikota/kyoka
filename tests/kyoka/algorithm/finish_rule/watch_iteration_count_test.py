@@ -13,6 +13,11 @@ class BaseFinishRuleTest(BaseUnitTest):
     self.true(self.rule.satisfy_condition(100, "dummy"))
     self.true(self.rule.satisfy_condition(101, "dummy"))
 
+  def test_generate_progress_message(self):
+    msg = self.rule.generate_progress_message(5, "dummy")
+    self.include(str(5), msg)
+    self.include(str(100), msg)
+
   def test_generate_finish_message(self):
     self.include(str(5), self.rule.generate_finish_message(5, "dummy"))
 

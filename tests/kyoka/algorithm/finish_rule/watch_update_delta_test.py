@@ -14,6 +14,13 @@ class WatchUpdateDeltaTest(BaseUnitTest):
     self.false(rule.satisfy_condition("dummy", [1, -1]))
     self.true(rule.satisfy_condition("dummy", [1.9, -1]))
 
+  def test_generate_progress_message(self):
+    rule = WatchUpdateDelta(patience=2, minimum_required_delta=3)
+    rule.satisfy_condition(1, [1.9, -1])
+    msg = rule.generate_progress_message(5, "dummy")
+    self.include(str(5), msg)
+    self.include(str(1), msg)
+
   def test_generate_finish_message(self):
     rule = WatchUpdateDelta(patience=2, minimum_required_delta=3)
     rule.satisfy_condition(1, [1.9, -1])
