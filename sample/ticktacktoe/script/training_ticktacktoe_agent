@@ -18,6 +18,8 @@ log.basicConfig(format='[%(levelname)s] %(message)s', level=log.INFO)
 from kyoka.algorithm.montecarlo.montecarlo import MonteCarlo
 from kyoka.algorithm.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
 from kyoka.algorithm.finish_rule.watch_iteration_count import WatchIterationCount
+from kyoka.algorithm.finish_rule.watch_update_delta import WatchUpdateDelta
+from kyoka.algorithm.finish_rule.manual_interruption import ManualInterruption
 
 from sample.ticktacktoe.ticktacktoe_domain import TickTackToeDomain
 from sample.ticktacktoe.ticktacktoe_table_value_function import TickTackToeTableValueFunction
@@ -25,22 +27,29 @@ from sample.ticktacktoe.ticktacktoe_helper import TickTackToeHelper
 
 
 VALUE_FUNC_SAVE_DATA_PATH = os.path.join(os.path.dirname(__file__), "montecarlo_ticktacktoe_value_function_data.pickle")
+INTERRUPTION_MONITOR_FILE_PATH = os.path.join(os.path.dirname(__file__), "interruption_order.txt")
 
 domain = TickTackToeDomain()
 value_func = TickTackToeTableValueFunction()
 value_func.setUp()
+
 if os.path.isfile(VALUE_FUNC_SAVE_DATA_PATH):
-  log.info("loading value function data from %s" % VALUE_FUNC_SAVE_DATA_PATH)
+  log.info("loading value function from %s" % VALUE_FUNC_SAVE_DATA_PATH)
   value_func.load(VALUE_FUNC_SAVE_DATA_PATH)
   log.info("finished loading value function")
-policy = EpsilonGreedyPolicy(domain, value_func)
+
+policy = EpsilonGreedyPolicy(domain, value_func, eps=0.7)
 RL_algo = MonteCarlo()
-finish_rule = WatchIterationCount(target_count=50000, log_interval=10000)
+watch_iteration = WatchIterationCount(target_count=100000, log_interval=10000)
+watch_delta = WatchUpdateDelta(patience=100, minimum_required_delta=0.0001, log_interval=10000)
+manual_interruption = ManualInterruption(monitor_file_path=INTERRUPTION_MONITOR_FILE_PATH, log_interval=10000)
+finish_rules = [watch_iteration, manual_interruption]
 
-log.info("start GPI iteration...")
-RL_algo.GPI(domain, policy, value_func, finish_rule)
+log.info("started GPI iteration...")
+RL_algo.GPI(domain, policy, value_func, finish_rules)
 
-log.info("saving value function data into %s" % VALUE_FUNC_SAVE_DATA_PATH)
+
+log.info("saving value function into %s" % VALUE_FUNC_SAVE_DATA_PATH)
 value_func.save(VALUE_FUNC_SAVE_DATA_PATH)
 log.info("finished saving value function")
 
