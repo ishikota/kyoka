@@ -16,6 +16,7 @@ import logging as log
 log.basicConfig(format='[%(levelname)s] %(message)s', level=log.INFO)
 
 from kyoka.algorithm.montecarlo.montecarlo import MonteCarlo
+from kyoka.algorithm.td_learning.sarsa import Sarsa
 from kyoka.algorithm.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
 from kyoka.algorithm.finish_rule.watch_iteration_count import WatchIterationCount
 from kyoka.algorithm.finish_rule.watch_update_delta import WatchUpdateDelta
@@ -25,9 +26,20 @@ from sample.ticktacktoe.ticktacktoe_domain import TickTackToeDomain
 from sample.ticktacktoe.ticktacktoe_table_value_function import TickTackToeTableValueFunction
 from sample.ticktacktoe.ticktacktoe_helper import TickTackToeHelper
 
+parser = argparse.ArgumentParser(description="Specify RL algorithm to use")
+parser.add_argument("--algo", required=True, help='"montecarlo" or "sarsa"')
+args = parser.parse_args()
+algo = args.algo
+if algo not in ["montecarlo", "sarsa"]:
+  raise ValueError("unknown algorithm [%s] passed." % algo)
 
-VALUE_FUNC_SAVE_DATA_PATH = os.path.join(os.path.dirname(__file__), "montecarlo_ticktacktoe_value_function_data.pickle")
+VALUE_FUNC_SAVE_DATA_PATH = os.path.join(os.path.dirname(__file__), "%s_ticktacktoe_value_function_data.pickle" % algo)
 INTERRUPTION_MONITOR_FILE_PATH = os.path.join(os.path.dirname(__file__), "interruption_order.txt")
+
+RL_algo = {
+    "montecarlo": lambda : MonteCarlo(),
+    "sarsa": lambda : Sarsa()
+}[algo]()
 
 domain = TickTackToeDomain()
 value_func = TickTackToeTableValueFunction()
@@ -39,7 +51,6 @@ if os.path.isfile(VALUE_FUNC_SAVE_DATA_PATH):
   log.info("finished loading value function")
 
 policy = EpsilonGreedyPolicy(domain, value_func, eps=0.7)
-RL_algo = MonteCarlo()
 watch_iteration = WatchIterationCount(target_count=100000, log_interval=10000)
 watch_delta = WatchUpdateDelta(patience=100, minimum_required_delta=0.0001, log_interval=10000)
 manual_interruption = ManualInterruption(monitor_file_path=INTERRUPTION_MONITOR_FILE_PATH, log_interval=10000)
