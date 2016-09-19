@@ -17,6 +17,8 @@ log.basicConfig(format='[%(levelname)s] %(message)s', level=log.INFO)
 
 from kyoka.algorithm.montecarlo.montecarlo import MonteCarlo
 from kyoka.algorithm.td_learning.sarsa import Sarsa
+from kyoka.algorithm.td_learning.q_learning import QLearning
+
 from kyoka.algorithm.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
 from kyoka.algorithm.finish_rule.watch_iteration_count import WatchIterationCount
 from kyoka.algorithm.finish_rule.watch_update_delta import WatchUpdateDelta
@@ -27,10 +29,10 @@ from sample.ticktacktoe.ticktacktoe_table_value_function import TickTackToeTable
 from sample.ticktacktoe.ticktacktoe_helper import TickTackToeHelper
 
 parser = argparse.ArgumentParser(description="Specify RL algorithm to use")
-parser.add_argument("--algo", required=True, help='"montecarlo" or "sarsa"')
+parser.add_argument("--algo", required=True, help='"montecarlo" or "sarsa" or "qlearning"')
 args = parser.parse_args()
 algo = args.algo
-if algo not in ["montecarlo", "sarsa"]:
+if algo not in ["montecarlo", "sarsa", "qlearning"]:
   raise ValueError("unknown algorithm [%s] passed." % algo)
 
 VALUE_FUNC_SAVE_DATA_PATH = os.path.join(os.path.dirname(__file__), "%s_ticktacktoe_value_function_data.pickle" % algo)
@@ -38,7 +40,8 @@ INTERRUPTION_MONITOR_FILE_PATH = os.path.join(os.path.dirname(__file__), "interr
 
 RL_algo = {
     "montecarlo": lambda : MonteCarlo(),
-    "sarsa": lambda : Sarsa()
+    "sarsa": lambda : Sarsa(),
+    "qlearning": lambda :QLearning()
 }[algo]()
 
 domain = TickTackToeDomain()
