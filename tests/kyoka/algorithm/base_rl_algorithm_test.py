@@ -30,6 +30,15 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     expected = (2, 2)
     self.eq(expected, finish_msg)
 
+  def test_GPI_with_multiple_finish_rules(self):
+    algo = self.TestImplementation()
+    finish_rule1 = self.__setup_stub_finish_rule(satisfy_condition=[False, True])
+    finish_rule2 = self.__setup_stub_finish_rule(satisfy_condition=[True, False])
+    finish_rules = [finish_rule1, finish_rule2]
+    finish_msg = algo.GPI("dummy", "dummy", "dummy", finish_rules)
+    expected = (1, 1)
+    self.eq(expected, finish_msg)
+
 
   def __setup_stub_domain(self):
     mock_domain = Mock()
@@ -45,9 +54,9 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     mock_value_func.calculate_value.return_value = 0
     return mock_value_func
 
-  def __setup_stub_finish_rule(self):
+  def __setup_stub_finish_rule(self, satisfy_condition=[False, True]):
     mock_finish_fule = Mock()
-    mock_finish_fule.satisfy_condition.side_effect = [False, True]
+    mock_finish_fule.satisfy_condition.side_effect = satisfy_condition
     mock_finish_fule.generate_finish_message.side_effect = lambda counter, delta: (counter, delta)
     return mock_finish_fule
 
