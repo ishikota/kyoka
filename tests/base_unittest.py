@@ -5,6 +5,15 @@ class BaseUnitTest(unittest.TestCase):
   def eq(self, expected, target):
     return self.assertEqual(expected, target)
 
+  def almosteq(self, expected, target, tolerance):
+    if isinstance(expected, list):
+      curry = lambda zipped: self.almosteq(zipped[0], zipped[1], tolerance)
+      map(curry, zip(expected, target))
+    else:
+      match = expected - tolerance <= target <= expected + tolerance
+      if not match:
+        return self.fail("%s and %s do not match with tolerance=%f" % (expected, target, tolerance))
+
   def neq(self, expected, target):
     return self.assertNotEqual(expected, target)
 
