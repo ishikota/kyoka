@@ -1,7 +1,7 @@
 from tests.base_unittest import BaseUnitTest
 from kyoka.algorithm.td_learning.sarsa import Sarsa
 from kyoka.algorithm.value_function.base_table_action_value_function import BaseTableActionValueFunction
-from kyoka.algorithm.policy.greedy_policy import GreedyPolicy
+from kyoka.algorithm.policy.base_policy import BasePolicy
 
 from mock import Mock
 
@@ -15,9 +15,10 @@ class SarsaTest(BaseUnitTest):
     value_func = self.TestTableValueFunctionImpl()
     value_func.setUp()
     value_func.update_function(1, 2, 10)
+    value_func.update_function(1, 3, 11)
     value_func.update_function(3, 4, 100)
-    value_func.update_function(7, 8, 1000)
-    policy = GreedyPolicy(domain, value_func)
+    value_func.update_function(3, 5, 101)
+    policy = self.NegativePolicyImple(domain, value_func)
     delta = self.algo.update_value_function(domain, policy, value_func)
     self.eq([1, 4.5, -25.5], delta)
     expected = [(0, 1, 1), (1, 2, 14.5), (3, 4, 74.5)]
@@ -30,7 +31,7 @@ class SarsaTest(BaseUnitTest):
     mock_domain.generate_initial_state.return_value = 0
     mock_domain.is_terminal_state.side_effect = lambda state: state == 7
     mock_domain.transit_state.side_effect = lambda state, action: state + action
-    mock_domain.generate_possible_actions.side_effect = lambda state: [] if state == 7 else [state + 1]
+    mock_domain.generate_possible_actions.side_effect = lambda state: [] if state == 7 else [state + 1, state + 2]
     mock_domain.calculate_reward.side_effect = lambda state: state**2
     return mock_domain
 
@@ -45,4 +46,15 @@ class SarsaTest(BaseUnitTest):
     def update_table(self, table, state, action, new_value):
       table[state][action] = new_value
       return table
+
+  class NegativePolicyImple(BasePolicy):
+
+    def choose_action(self, state):
+      actions = self.domain.generate_possible_actions(state)
+      calc_Q_value = lambda state, action: self.value_function.calculate_value(state, action)
+      Q_value_for_actions = [calc_Q_value(state, action) for action in actions]
+      min_Q_value = min(Q_value_for_actions)
+      Q_act_pair = zip(Q_value_for_actions, actions)
+      worst_actions = [act for Q_value, act in Q_act_pair if min_Q_value == Q_value]
+      return worst_actions[0]
 
