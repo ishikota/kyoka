@@ -26,14 +26,16 @@ class BaseFinishRule(object):
   def __notify_message_if_needed(self, is_satisfied_condition, iteration_count, deltas):
     self.log_interval_counter += 1
     if is_satisfied_condition:
-      message = self.generate_finish_message(iteration_count, deltas)
-      logging.info(message)
+      self.__log(self.generate_finish_message(iteration_count, deltas))
     elif self.log_interval_counter >= self.log_interval:
-      message = self.generate_progress_message(iteration_count, deltas)
-      logging.info(message)
+      self.__log(self.generate_progress_message(iteration_count, deltas))
       self.log_interval_counter = 0
 
   def __build_err_msg(self, msg):
     base_msg = "[ {0} ] class does not implement [ {1} ] method"
     return base_msg.format(self.__class__.__name__, msg)
+
+  def __log(self, message):
+    if message and len(message) != 0:
+      logging.info(message)
 
