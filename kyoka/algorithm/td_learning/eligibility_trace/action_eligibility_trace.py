@@ -41,6 +41,14 @@ class ActionEligibilityTrace:
   def clear(self):
     self.eligibility_holder = self.__generate_action_eligibility_holder()
 
+  def dump(self):
+    return self.get_eligibilities()
+
+  def load(self, serial):
+    self.clear()
+    for state, action, eligibility in serial:
+      self.__update(state, action, eligibility)
+
   def __validate_update_type(self, update_type):
     if not update_type in [self.TYPE_ACCUMULATING, self.TYPE_REPLACING]:
       raise TypeError("unknown update type [ %s ] passed" % update_type)

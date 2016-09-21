@@ -60,6 +60,20 @@ class ActionEligibilityTraceTest(BaseUnitTest):
     self.eq(0, trace.get(0, 0))
     self.eq(0, trace.get(100, 2000))
 
+  def test_dump_load(self):
+    trace1 = ActionEligibilityTrace("accumulating_trace", gamma=0.5, lambda_=0.1)
+    trace1.update(0, 0)
+    trace1.update(0, 0)
+    trace1.update(100, 200)
+    dump = trace1.dump()
+    trace2 = ActionEligibilityTrace("accumulating_trace", gamma=0.5, lambda_=0.1)
+    trace2.load(dump)
+    expected = { 0 : { 0 : 2 }, 100: { 200: 1 } }
+    eligibilities = trace2.get_eligibilities()
+    self.eq(2, len(eligibilities))
+    for state, action, eligibility in eligibilities:
+      self.eq(expected[state][action], eligibility)
+
   @raises(TypeError)
   def test_update_type_validation_when_initialize(self):
     ActionEligibilityTrace("invalid_type", gamma=0.5, lambda_=0.1)
