@@ -31,13 +31,17 @@ from sample.ticktacktoe.ticktacktoe_table_value_function import TickTackToeTable
 from sample.ticktacktoe.ticktacktoe_helper import TickTackToeHelper
 
 parser = argparse.ArgumentParser(description="Specify RL algorithm to use")
-parser.add_argument("--algo", required=True, help='"montecarlo" or "sarsa" or "qlearning" or "sarsalambda" or "qlambda"')
+parser.add_argument("--algo", required=True, help='pass "montecarlo" or "sarsa" or "qlearning" or "sarsalambda" or "qlambda"')
+parser.add_argument("--firstplayer", required=False, default="y", help='pass "yes" if you want to train first player (default is "yes")')
 args = parser.parse_args()
 algo = args.algo
+is_first_player = True if args.firstplayer.lower() in ["yes", "y"] else False
 if algo not in ["montecarlo", "sarsa", "qlearning", "sarsalambda", "qlambda"]:
   raise ValueError("unknown algorithm [%s] passed." % algo)
 
-VALUE_FUNC_SAVE_DATA_PATH = os.path.join(os.path.dirname(__file__), "%s_ticktacktoe_value_function_data.pickle" % algo)
+which_player = "firstplayer" if is_first_player else "secondplayer"
+VALUE_FUNC_FILE_PATH = "%s_%s_ticktacktoe_value_function_data.pickle" % (algo, which_player)
+VALUE_FUNC_SAVE_PATH = os.path.join(os.path.dirname(__file__), VALUE_FUNC_FILE_PATH)
 INTERRUPTION_MONITOR_FILE_PATH = os.path.join(os.path.dirname(__file__), "interruption_order.txt")
 
 RL_algo = {
@@ -48,13 +52,13 @@ RL_algo = {
     "qlambda": lambda :QLambda()
 }[algo]()
 
-domain = TickTackToeDomain()
+domain = TickTackToeDomain(is_first_player=is_first_player)
 value_func = TickTackToeTableValueFunction()
 value_func.setUp()
 
-if os.path.isfile(VALUE_FUNC_SAVE_DATA_PATH):
-  log.info("loading value function from %s" % VALUE_FUNC_SAVE_DATA_PATH)
-  value_func.load(VALUE_FUNC_SAVE_DATA_PATH)
+if os.path.isfile(VALUE_FUNC_SAVE_PATH):
+  log.info("loading value function from %s" % VALUE_FUNC_SAVE_PATH)
+  value_func.load(VALUE_FUNC_SAVE_PATH)
   log.info("finished loading value function")
 
 policy = EpsilonGreedyPolicy(domain, value_func, eps=0.7)
@@ -66,8 +70,7 @@ finish_rules = [watch_iteration, manual_interruption]
 log.info("started GPI iteration...")
 RL_algo.GPI(domain, policy, value_func, finish_rules)
 
-
-log.info("saving value function into %s" % VALUE_FUNC_SAVE_DATA_PATH)
-value_func.save(VALUE_FUNC_SAVE_DATA_PATH)
+log.info("saving value function into %s" % VALUE_FUNC_SAVE_PATH)
+value_func.save(VALUE_FUNC_SAVE_PATH)
 log.info("finished saving value function")
 
