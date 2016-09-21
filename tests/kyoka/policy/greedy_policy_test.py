@@ -1,6 +1,6 @@
 from tests.base_unittest import BaseUnitTest
-from kyoka.algorithm.policy.greedy_policy import GreedyPolicy
-from kyoka.algorithm.value_function.base_state_value_function import BaseStateValueFunction
+from kyoka.policy.greedy_policy import GreedyPolicy
+from kyoka.value_function.base_state_value_function import BaseStateValueFunction
 from mock import Mock
 
 class GreedyPolicyTest(BaseUnitTest):

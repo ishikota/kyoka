@@ -1,6 +1,6 @@
 from kyoka.algorithm.base_rl_algorithm import BaseRLAlgorithm
-from kyoka.algorithm.value_function.base_table_action_value_function import BaseTableActionValueFunction
-from kyoka.algorithm.value_function.base_table_state_value_function import BaseTableStateValueFunction
+from kyoka.value_function.base_table_action_value_function import BaseTableActionValueFunction
+from kyoka.value_function.base_table_state_value_function import BaseTableStateValueFunction
 
 class MonteCarlo(BaseRLAlgorithm):
 

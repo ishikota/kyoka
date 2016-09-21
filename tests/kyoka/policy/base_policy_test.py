@@ -1,8 +1,8 @@
 from tests.base_unittest import BaseUnitTest
 from kyoka.domain.base_domain import BaseDomain
-from kyoka.algorithm.policy.base_policy import BasePolicy
-from kyoka.algorithm.value_function.base_action_value_function import BaseActionValueFunction
-from kyoka.algorithm.value_function.base_state_value_function import BaseStateValueFunction
+from kyoka.policy.base_policy import BasePolicy
+from kyoka.value_function.base_action_value_function import BaseActionValueFunction
+from kyoka.value_function.base_state_value_function import BaseStateValueFunction
 
 from nose.tools import raises
 

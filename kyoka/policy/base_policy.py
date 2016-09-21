@@ -1,5 +1,5 @@
-from kyoka.algorithm.value_function.base_action_value_function import BaseActionValueFunction
-from kyoka.algorithm.value_function.base_state_value_function import BaseStateValueFunction
+from kyoka.value_function.base_action_value_function import BaseActionValueFunction
+from kyoka.value_function.base_state_value_function import BaseStateValueFunction
 
 class BasePolicy(object):
 

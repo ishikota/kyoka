@@ -1,5 +1,5 @@
 from kyoka.algorithm.base_rl_algorithm import BaseRLAlgorithm
-from kyoka.algorithm.policy.greedy_policy import GreedyPolicy
+from kyoka.policy.greedy_policy import GreedyPolicy
 
 class QLearning(BaseRLAlgorithm):
 

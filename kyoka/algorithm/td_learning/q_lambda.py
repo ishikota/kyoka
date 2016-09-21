@@ -1,7 +1,7 @@
 from kyoka.algorithm.base_rl_algorithm import BaseRLAlgorithm
-from kyoka.algorithm.policy.greedy_policy import GreedyPolicy
 from kyoka.algorithm.td_learning.eligibility_trace.action_eligibility_trace\
     import ActionEligibilityTrace as EligibilityTrace
+from kyoka.policy.greedy_policy import GreedyPolicy
 
 class QLambda(BaseRLAlgorithm):
 

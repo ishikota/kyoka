@@ -1,12 +1,12 @@
-from kyoka.algorithm.value_function.base_value_function import BaseValueFunction
+from kyoka.value_function.base_value_function import BaseValueFunction
 
-class BaseActionValueFunction(BaseValueFunction):
+class BaseStateValueFunction(BaseValueFunction):
 
-  def calculate_value(self, state, action):
+  def calculate_value(self, state):
     err_msg = self.__build_err_msg("calculate_value")
     raise NotImplementedError(err_msg)
 
-  def update_function(self, state, action, new_value):
+  def update_function(self, state, new_value):
     err_msg = self.__build_err_msg("update_function")
     raise NotImplementedError(err_msg)
 
@@ -16,7 +16,7 @@ class BaseActionValueFunction(BaseValueFunction):
   def provide_data_to_store(self):
     return None
 
-  def receive_data_to_restore(self, restored_data):
+  def receive_data_to_restore(self, stored_data):
     pass
 
 

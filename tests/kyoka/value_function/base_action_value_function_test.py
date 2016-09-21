@@ -1,5 +1,5 @@
 from tests.base_unittest import BaseUnitTest
-from kyoka.algorithm.value_function.base_action_value_function import BaseActionValueFunction
+from kyoka.value_function.base_action_value_function import BaseActionValueFunction
 
 class BaseActionValueFunctionTest(BaseUnitTest):
 

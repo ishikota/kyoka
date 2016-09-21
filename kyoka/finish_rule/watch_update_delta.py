@@ -1,4 +1,4 @@
-from kyoka.algorithm.finish_rule.base_finish_rule import BaseFinishRule
+from kyoka.finish_rule.base_finish_rule import BaseFinishRule
 
 class WatchUpdateDelta(BaseFinishRule):
 
