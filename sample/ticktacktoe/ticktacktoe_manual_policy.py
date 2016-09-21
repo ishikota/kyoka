@@ -1,4 +1,4 @@
-from kyoka.algorithm.policy.base_policy import BasePolicy
+from kyoka.policy.base_policy import BasePolicy
 
 class TickTackToeManualPolicy(BasePolicy):
 

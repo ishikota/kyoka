@@ -15,7 +15,7 @@ sys.path.append(sample_path)
 import logging as log
 log.basicConfig(format='[%(levelname)s] %(message)s', level=log.INFO)
 
-from kyoka.algorithm.policy.greedy_policy import GreedyPolicy
+from kyoka.policy.greedy_policy import GreedyPolicy
 
 from sample.ticktacktoe.ticktacktoe_domain import TickTackToeDomain
 from sample.ticktacktoe.ticktacktoe_table_value_function import TickTackToeTableValueFunction

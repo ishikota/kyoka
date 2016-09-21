@@ -1,5 +1,5 @@
 from tests.base_unittest import BaseUnitTest
-from kyoka.algorithm.finish_rule.watch_update_delta import WatchUpdateDelta
+from kyoka.finish_rule.watch_update_delta import WatchUpdateDelta
 
 from nose.tools import raises
 

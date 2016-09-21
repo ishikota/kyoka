@@ -1,7 +1,7 @@
 from tests.base_unittest import BaseUnitTest
 from kyoka.algorithm.td_learning.sarsa import Sarsa
-from kyoka.algorithm.value_function.base_table_action_value_function import BaseTableActionValueFunction
-from kyoka.algorithm.policy.base_policy import BasePolicy
+from kyoka.value_function.base_table_action_value_function import BaseTableActionValueFunction
+from kyoka.policy.base_policy import BasePolicy
 
 from mock import Mock
 

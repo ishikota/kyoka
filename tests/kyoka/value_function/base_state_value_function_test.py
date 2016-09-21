@@ -1,5 +1,5 @@
 from tests.base_unittest import BaseUnitTest
-from kyoka.algorithm.value_function.base_state_value_function import BaseStateValueFunction
+from kyoka.value_function.base_state_value_function import BaseStateValueFunction
 
 class BaseStateValueFunctionTest(BaseUnitTest):
 

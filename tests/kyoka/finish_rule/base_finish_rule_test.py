@@ -1,5 +1,5 @@
 from tests.base_unittest import BaseUnitTest
-from kyoka.algorithm.finish_rule.base_finish_rule import BaseFinishRule
+from kyoka.finish_rule.base_finish_rule import BaseFinishRule
 
 from nose.tools import raises
 from mock import patch

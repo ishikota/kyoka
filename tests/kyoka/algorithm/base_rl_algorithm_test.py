@@ -1,7 +1,7 @@
 from tests.base_unittest import BaseUnitTest
 from kyoka.algorithm.base_rl_algorithm import BaseRLAlgorithm
-from kyoka.algorithm.policy.greedy_policy import GreedyPolicy
-from kyoka.algorithm.value_function.base_action_value_function import BaseActionValueFunction
+from kyoka.policy.greedy_policy import GreedyPolicy
+from kyoka.value_function.base_action_value_function import BaseActionValueFunction
 
 from mock import Mock
 

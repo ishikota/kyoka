@@ -1,9 +1,9 @@
 from tests.base_unittest import BaseUnitTest
 from kyoka.algorithm.td_learning.q_lambda import QLambda
-from kyoka.algorithm.value_function.base_table_action_value_function import BaseTableActionValueFunction
-from kyoka.algorithm.policy.base_policy import BasePolicy
 from kyoka.algorithm.td_learning.eligibility_trace.action_eligibility_trace\
     import ActionEligibilityTrace as EligibilityTrace
+from kyoka.value_function.base_table_action_value_function import BaseTableActionValueFunction
+from kyoka.policy.base_policy import BasePolicy
 
 from mock import Mock
 

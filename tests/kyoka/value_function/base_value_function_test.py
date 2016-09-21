@@ -1,8 +1,8 @@
 import os
 from tests.base_unittest import BaseUnitTest
-from kyoka.algorithm.value_function.base_value_function import BaseValueFunction
-from kyoka.algorithm.value_function.base_action_value_function import BaseActionValueFunction
-from kyoka.algorithm.value_function.base_state_value_function import BaseStateValueFunction
+from kyoka.value_function.base_value_function import BaseValueFunction
+from kyoka.value_function.base_action_value_function import BaseActionValueFunction
+from kyoka.value_function.base_state_value_function import BaseStateValueFunction
 
 class BaseValueFunctionTest(BaseUnitTest):
 

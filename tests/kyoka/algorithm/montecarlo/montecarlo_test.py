@@ -1,8 +1,8 @@
 from tests.base_unittest import BaseUnitTest
 from kyoka.algorithm.montecarlo.montecarlo import MonteCarlo
-from kyoka.algorithm.policy.greedy_policy import GreedyPolicy
-from kyoka.algorithm.value_function.base_action_value_function import BaseActionValueFunction
-from kyoka.algorithm.value_function.base_table_action_value_function import BaseTableActionValueFunction
+from kyoka.policy.greedy_policy import GreedyPolicy
+from kyoka.value_function.base_action_value_function import BaseActionValueFunction
+from kyoka.value_function.base_table_action_value_function import BaseTableActionValueFunction
 
 from mock import Mock
 from nose.tools import raises

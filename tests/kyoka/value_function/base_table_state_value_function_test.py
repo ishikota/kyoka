@@ -1,6 +1,6 @@
 import os
 from tests.base_unittest import BaseUnitTest
-from kyoka.algorithm.value_function.base_table_state_value_function import BaseTableStateValueFunction
+from kyoka.value_function.base_table_state_value_function import BaseTableStateValueFunction
 
 class BaseTableStateValueFunctionTest(BaseUnitTest):
 

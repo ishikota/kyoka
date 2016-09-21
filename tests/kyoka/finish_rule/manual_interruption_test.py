@@ -1,7 +1,7 @@
 import os
 
 from tests.base_unittest import BaseUnitTest
-from kyoka.algorithm.finish_rule.manual_interruption import ManualInterruption
+from kyoka.finish_rule.manual_interruption import ManualInterruption
 
 from nose.tools import raises
 

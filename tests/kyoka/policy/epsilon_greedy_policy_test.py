@@ -1,6 +1,6 @@
 from tests.base_unittest import BaseUnitTest
-from kyoka.algorithm.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
-from kyoka.algorithm.value_function.base_action_value_function import BaseActionValueFunction
+from kyoka.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
+from kyoka.value_function.base_action_value_function import BaseActionValueFunction
 from mock import Mock
 
 class EpsilonGreedyPolicyTest(BaseUnitTest):
