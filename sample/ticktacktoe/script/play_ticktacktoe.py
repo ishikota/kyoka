@@ -57,7 +57,7 @@ next_is_first_player = lambda state: bin(state[0]|state[1]).count("1") % 2 == 0
 next_player = lambda state: players[0] if next_is_first_player(state) else players[1]
 show_board = lambda state: log.info("\n" + TickTackToeHelper.visualize_board(state))
 
-log.info("started the game (first player is agent")
+log.info("start the game (%s vs %s)" % tuple(algos))
 state = domain.generate_initial_state()
 show_board(state)
 while not domain.is_terminal_state(state):
