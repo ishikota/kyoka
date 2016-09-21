@@ -4,6 +4,7 @@ from kyoka.algorithm.td_learning.eligibility_trace.action_eligibility_trace\
 
 class SarsaLambda(BaseRLAlgorithm):
 
+  __KEY_ADDITIONAL_DATA = "additinal_data_key_sarsa_lambda_eligibility_trace"
   ACTION_ON_TERMINAL_FLG = "action_on_terminal"
 
   def __init__(self, alpha=0.1, gamma=0.9, eligibility_trace=None):
@@ -12,6 +13,7 @@ class SarsaLambda(BaseRLAlgorithm):
     self.trace = eligibility_trace if eligibility_trace else self.__generate_default_trace()
 
   def update_value_function(self, domain, policy, value_function):
+    self.__setup_trace(value_function)
     current_state = domain.generate_initial_state()
     current_action = policy.choose_action(current_state)
     update_delta_history = []
@@ -29,6 +31,7 @@ class SarsaLambda(BaseRLAlgorithm):
         update_delta_history.append(update_delta)
         self.trace.decay(state, action)
       current_state, current_action = next_state, next_action
+    self.__save_trace(value_function)
     return update_delta_history
 
 
@@ -56,4 +59,12 @@ class SarsaLambda(BaseRLAlgorithm):
 
   def __generate_default_trace(self):
     return EligibilityTrace(EligibilityTrace.TYPE_ACCUMULATING)
+
+  def __setup_trace(self, value_function):
+    trace_dump = value_function.get_additinal_data(self.__KEY_ADDITIONAL_DATA)
+    if trace_dump:
+      self.trace.load(trace_dump)
+
+  def __save_trace(self, value_function):
+    value_function.set_additinal_data(self.__KEY_ADDITIONAL_DATA, self.trace.dump())
 

@@ -5,6 +5,7 @@ from kyoka.policy.greedy_policy import GreedyPolicy
 
 class QLambda(BaseRLAlgorithm):
 
+  __KEY_ADDITIONAL_DATA = "additinal_data_key_q_lambda_eligibility_trace"
   ACTION_ON_TERMINAL_FLG = "action_on_terminal"
 
   def __init__(self, alpha=0.1, gamma=0.9, eligibility_trace=None):
@@ -13,6 +14,7 @@ class QLambda(BaseRLAlgorithm):
     self.trace = eligibility_trace if eligibility_trace else self.__generate_default_trace()
 
   def update_value_function(self, domain, policy, value_function):
+    self.__setup_trace(value_function)
     greedy_policy = GreedyPolicy(domain, value_function)
     current_state = domain.generate_initial_state()
     current_action = policy.choose_action(current_state)
@@ -34,6 +36,7 @@ class QLambda(BaseRLAlgorithm):
       if greedy_action != next_action:
         self.trace.clear()
       current_state, current_action = next_state, next_action
+    self.__save_trace(value_function)
     return update_delta_history
 
   def __calculate_delta(self,\
@@ -61,4 +64,12 @@ class QLambda(BaseRLAlgorithm):
 
   def __generate_default_trace(self):
     return EligibilityTrace(EligibilityTrace.TYPE_ACCUMULATING)
+
+  def __setup_trace(self, value_function):
+    trace_dump = value_function.get_additinal_data(self.__KEY_ADDITIONAL_DATA)
+    if trace_dump:
+      self.trace.load(trace_dump)
+
+  def __save_trace(self, value_function):
+    value_function.set_additinal_data(self.__KEY_ADDITIONAL_DATA, self.trace.dump())
 
