@@ -1,0 +1,79 @@
+#!/usr/local/bin/python
+
+# Resolve path configucation
+import os
+import sys
+import argparse
+
+root = os.path.join(os.path.dirname(__file__), "../"*3)
+src_path = os.path.join(root, "kyoka")
+sample_path = os.path.join(root, "sample")
+sys.path.append(root)
+sys.path.append(src_path)
+sys.path.append(sample_path)
+
+import logging as log
+log.basicConfig(format='[%(levelname)s] %(message)s', level=log.INFO)
+
+from kyoka.algorithm.montecarlo.montecarlo import MonteCarlo
+from kyoka.algorithm.td_learning.sarsa import Sarsa
+from kyoka.algorithm.td_learning.q_learning import QLearning
+from kyoka.algorithm.td_learning.sarsa_lambda import SarsaLambda
+from kyoka.algorithm.td_learning.q_lambda import QLambda
+
+from kyoka.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
+from kyoka.finish_rule.watch_iteration_count import WatchIterationCount
+
+from sample.maze.maze_domain import MazeDomain
+from sample.maze.maze_table_value_function import MazeTableValueFunction
+from sample.maze.maze_helper import MazeHelper
+
+SUPPORT_ALGORITHM = ["human", "montecarlo", "sarsa", "qlearning", "sarsalambda", "qlambda"]
+
+parser = argparse.ArgumentParser(description="Specify RL algorithm to use")
+parser.add_argument("--algo", required=True, help=" or ".join(['"%s"' % algo for algo in SUPPORT_ALGORITHM]))
+parser.add_argument("--maze", required=True, help='pass maze file path')
+args = parser.parse_args()
+algo = args.algo
+maze_type = args.maze
+if algo not in SUPPORT_ALGORITHM:
+  raise ValueError("unknown algorithm [%s] passed." % algo)
+
+VALUE_FUNC_FILE_PATH = "%s_%s_maze_value_function_data.pickle" % (algo, maze_type)
+VALUE_FUNC_SAVE_PATH = os.path.join(os.path.dirname(__file__), VALUE_FUNC_FILE_PATH)
+INTERRUPTION_MONITOR_FILE_PATH = os.path.join(os.path.dirname(__file__), "interruption_order.txt")
+MAZE_FILE_PATH = os.path.join(os.path.dirname(__file__), maze_type + ".txt")
+
+domain = MazeDomain()
+domain.read_maze(MAZE_FILE_PATH)
+value_func = MazeTableValueFunction(domain.get_maze_shape())
+value_func.setUp()
+if os.path.isfile(VALUE_FUNC_SAVE_PATH):
+  log.info("loading value function from %s" % VALUE_FUNC_SAVE_PATH)
+  value_func.load(VALUE_FUNC_SAVE_PATH)
+  log.info("finished loading value function")
+
+policy = EpsilonGreedyPolicy(domain, value_func, eps=0.1)
+watch_iteration = WatchIterationCount(target_count=1, log_interval=10000)
+finish_rules = [watch_iteration]
+
+RL_algo = {
+    "montecarlo": lambda : MonteCarlo(),
+    "sarsa": lambda : Sarsa(),
+    "qlearning": lambda :QLearning(),
+    "sarsalambda": lambda :SarsaLambda(),
+    "qlambda": lambda :QLambda()
+}[algo]()
+
+TEST_LENGTH = 100
+log.info("start to measure performnce for %d episode" % TEST_LENGTH)
+performance_log = []
+for _ in range(TEST_LENGTH):
+  RL_algo.GPI(domain, policy, value_func, finish_rules)
+  step_to_goal = MazeHelper.measure_performance(domain, value_func)
+  performance_log.append(step_to_goal)
+
+log.info("finished to measure performnce for %d episode" % TEST_LENGTH)
+log.info("performance_log = %s" % performance_log)
+log.info("Policy which agent learned is like this.\n%s" % MazeHelper.visualize_policy(domain, value_func))
+
