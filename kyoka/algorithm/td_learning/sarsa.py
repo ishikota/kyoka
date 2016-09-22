@@ -5,6 +5,7 @@ class Sarsa(BaseRLAlgorithm):
   ACTION_ON_TERMINAL_FLG = "action_on_terminal"
 
   def __init__(self, alpha=0.1, gamma=0.9):
+    BaseRLAlgorithm.__init__(self)
     self.alpha = alpha
     self.gamma = gamma
 

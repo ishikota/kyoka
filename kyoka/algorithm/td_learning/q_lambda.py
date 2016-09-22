@@ -9,6 +9,7 @@ class QLambda(BaseRLAlgorithm):
   ACTION_ON_TERMINAL_FLG = "action_on_terminal"
 
   def __init__(self, alpha=0.1, gamma=0.9, eligibility_trace=None):
+    BaseRLAlgorithm.__init__(self)
     self.alpha = alpha
     self.gamma = gamma
     self.trace = eligibility_trace if eligibility_trace else self.__generate_default_trace()
