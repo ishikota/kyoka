@@ -39,6 +39,20 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     expected = (1, 1)
     self.eq(expected, finish_msg)
 
+  def test_set_callback(self):
+    algo = self.TestImplementation()
+    callback = Mock()
+    algo.set_gpi_callback(callback)
+    finish_rule = self.__setup_stub_finish_rule()
+    finish_msg = algo.GPI("domain", "dummy", "value_function", finish_rule)
+    self.eq(1, callback.before_gpi_start.call_count)
+    self.eq(2, callback.before_update.call_count)
+    self.eq(2, callback.after_update.call_count)
+    self.eq(1, callback.after_gpi_finish.call_count)
+    callback.before_gpi_start.assert_called_with("domain", "value_function")
+    callback.before_update.assert_called_with(1, "domain", "value_function")
+    callback.after_update.assert_called_with(1, "domain", "value_function", 2)
+    callback.after_gpi_finish.assert_called_with("domain", "value_function")
 
   def __setup_stub_domain(self):
     mock_domain = Mock()
