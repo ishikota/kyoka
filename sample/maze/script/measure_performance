@@ -27,6 +27,7 @@ from kyoka.finish_rule.watch_iteration_count import WatchIterationCount
 from sample.maze.maze_domain import MazeDomain
 from sample.maze.maze_table_value_function import MazeTableValueFunction
 from sample.maze.maze_helper import MazeHelper
+from sample.maze.maze_performance_logger import MazePerformanceLogger
 
 SUPPORT_ALGORITHM = ["human", "montecarlo", "sarsa", "qlearning", "sarsalambda", "qlambda"]
 
@@ -53,9 +54,11 @@ if os.path.isfile(VALUE_FUNC_SAVE_PATH):
   value_func.load(VALUE_FUNC_SAVE_PATH)
   log.info("finished loading value function")
 
+TEST_LENGTH = 100
 policy = EpsilonGreedyPolicy(domain, value_func, eps=0.1)
-watch_iteration = WatchIterationCount(target_count=1, log_interval=10000)
+watch_iteration = WatchIterationCount(target_count=TEST_LENGTH, log_interval=10000)
 finish_rules = [watch_iteration]
+callback = MazePerformanceLogger()
 
 RL_algo = {
     "montecarlo": lambda : MonteCarlo(),
@@ -64,16 +67,11 @@ RL_algo = {
     "sarsalambda": lambda :SarsaLambda(),
     "qlambda": lambda :QLambda()
 }[algo]()
+RL_algo.set_gpi_callback(callback)
 
-TEST_LENGTH = 100
 log.info("start to measure performnce for %d episode" % TEST_LENGTH)
-performance_log = []
-for _ in range(TEST_LENGTH):
-  RL_algo.GPI(domain, policy, value_func, finish_rules)
-  step_to_goal = MazeHelper.measure_performance(domain, value_func)
-  performance_log.append(step_to_goal)
-
+RL_algo.GPI(domain, policy, value_func, finish_rules)
 log.info("finished to measure performnce for %d episode" % TEST_LENGTH)
-log.info("performance_log = %s" % performance_log)
+log.info("performance_log = %s" % callback.step_log)
 log.info("Policy which agent learned is like this.\n%s" % MazeHelper.visualize_policy(domain, value_func))
 
