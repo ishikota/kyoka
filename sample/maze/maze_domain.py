@@ -17,10 +17,7 @@ class MazeDomain(BaseDomain):
     return (height, width)
 
   def generate_initial_state(self):
-    for row in range(len(self.maze)):
-      for col in range(len(self.maze[0])):
-        if self.maze[row][col] == 'S':
-          return (row, col)
+    return self.__find_cell('S')
 
   def is_terminal_state(self, state):
     row, col = state
@@ -56,4 +53,13 @@ class MazeDomain(BaseDomain):
     goal_count = cells.count('G')
     if start_count != 1 or goal_count != 1:
       raise ValueError("Invalid maze passed. reason: start_count=%d, goal_count=%d")
+
+  def generate_terminal_state(self):
+    return self.__find_cell('G')
+
+  def __find_cell(self, target):
+    for row in range(len(self.maze)):
+      for col in range(len(self.maze[0])):
+        if self.maze[row][col] == target:
+          return (row, col)
 
