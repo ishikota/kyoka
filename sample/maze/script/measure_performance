@@ -13,7 +13,7 @@ sys.path.append(src_path)
 sys.path.append(sample_path)
 
 import logging as log
-log.basicConfig(format='[%(levelname)s] %(message)s', level=log.INFO)
+log.basicConfig(format='[%(levelname)s] %(message)s', level=log.DEBUG)
 
 from kyoka.algorithm.montecarlo.montecarlo import MonteCarlo
 from kyoka.algorithm.td_learning.sarsa import Sarsa
@@ -28,8 +28,10 @@ from sample.maze.maze_domain import MazeDomain
 from sample.maze.maze_table_value_function import MazeTableValueFunction
 from sample.maze.maze_helper import MazeHelper
 from sample.maze.maze_performance_logger import MazePerformanceLogger
+from sample.maze.maze_transformer import MazeTransformer
 
 SUPPORT_ALGORITHM = ["human", "montecarlo", "sarsa", "qlearning", "sarsalambda", "qlambda"]
+SUPPORT_MAZE_TYPE = ["dyna", "blocking"]
 
 parser = argparse.ArgumentParser(description="Specify RL algorithm to use")
 parser.add_argument("--algo", required=True, help=" or ".join(['"%s"' % algo for algo in SUPPORT_ALGORITHM]))
@@ -39,6 +41,8 @@ algo = args.algo
 maze_type = args.maze
 if algo not in SUPPORT_ALGORITHM:
   raise ValueError("unknown algorithm [%s] passed." % algo)
+if maze_type not in SUPPORT_MAZE_TYPE:
+  raise ValueError("unknown maze type [%s] passed." % maze_type)
 
 VALUE_FUNC_FILE_PATH = "%s_%s_maze_value_function_data.pickle" % (algo, maze_type)
 VALUE_FUNC_SAVE_PATH = os.path.join(os.path.dirname(__file__), VALUE_FUNC_FILE_PATH)
@@ -58,7 +62,12 @@ TEST_LENGTH = 100
 policy = EpsilonGreedyPolicy(domain, value_func, eps=0.1)
 watch_iteration = WatchIterationCount(target_count=TEST_LENGTH, log_interval=10000)
 finish_rules = [watch_iteration]
-callback = MazePerformanceLogger()
+callbacks = [MazePerformanceLogger()]
+if maze_type == "blocking":
+  transfomer = MazeTransformer()
+  transformed_maze_filepath = MAZE_FILE_PATH[:-len(".txt")] + "_transformed.txt"
+  transfomer.set_transformation(50, transformed_maze_filepath)
+  callbacks.append(transfomer)
 
 RL_algo = {
     "montecarlo": lambda : MonteCarlo(),
@@ -67,11 +76,11 @@ RL_algo = {
     "sarsalambda": lambda :SarsaLambda(),
     "qlambda": lambda :QLambda()
 }[algo]()
-RL_algo.set_gpi_callback(callback)
+[RL_algo.set_gpi_callback(callback) for callback in callbacks]
 
 log.info("start to measure performnce for %d episode" % TEST_LENGTH)
 RL_algo.GPI(domain, policy, value_func, finish_rules)
 log.info("finished to measure performnce for %d episode" % TEST_LENGTH)
-log.info("performance_log = %s" % callback.step_log)
+log.info("performance_log = %s" % callbacks[0].step_log)
 log.info("Policy which agent learned is like this.\n%s" % MazeHelper.visualize_policy(domain, value_func))
 

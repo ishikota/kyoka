@@ -7,7 +7,7 @@ class MazeHelper:
     return "\n".join(maze)
 
   @classmethod
-  def measure_performance(self, domain, value_function):
+  def measure_performance(self, domain, value_function, step_limit=10000):
     policy = GreedyPolicy(domain, value_function)
     state = domain.generate_initial_state()
     step_counter = 0
@@ -15,6 +15,8 @@ class MazeHelper:
       action = policy.choose_action(state)
       state = domain.transit_state(state, action)
       step_counter += 1
+      if step_counter >= step_limit:
+        break
     return step_counter
 
   @classmethod
