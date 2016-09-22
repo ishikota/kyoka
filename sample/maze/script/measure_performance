@@ -31,7 +31,7 @@ from sample.maze.maze_performance_logger import MazePerformanceLogger
 from sample.maze.maze_transformer import MazeTransformer
 
 SUPPORT_ALGORITHM = ["human", "montecarlo", "sarsa", "qlearning", "sarsalambda", "qlambda"]
-SUPPORT_MAZE_TYPE = ["dyna", "blocking"]
+SUPPORT_MAZE_TYPE = ["dyna", "blocking", "shortcut"]
 
 parser = argparse.ArgumentParser(description="Specify RL algorithm to use")
 parser.add_argument("--algo", required=True, help=" or ".join(['"%s"' % algo for algo in SUPPORT_ALGORITHM]))
@@ -63,7 +63,7 @@ policy = EpsilonGreedyPolicy(domain, value_func, eps=0.1)
 watch_iteration = WatchIterationCount(target_count=TEST_LENGTH, log_interval=10000)
 finish_rules = [watch_iteration]
 callbacks = [MazePerformanceLogger()]
-if maze_type == "blocking":
+if maze_type in ["blocking", "shortcut"]:
   transfomer = MazeTransformer()
   transformed_maze_filepath = MAZE_FILE_PATH[:-len(".txt")] + "_transformed.txt"
   transfomer.set_transformation(50, transformed_maze_filepath)
