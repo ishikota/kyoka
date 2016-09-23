@@ -15,14 +15,17 @@ sys.path.append(sample_path)
 import logging as log
 log.basicConfig(format='[%(levelname)s] %(message)s', level=log.INFO)
 
-from kyoka.algorithm.policy.greedy_policy import GreedyPolicy
+from collections import defaultdict
+
+from kyoka.policy.greedy_policy import GreedyPolicy
 
 from sample.ticktacktoe.ticktacktoe_domain import TickTackToeDomain
 from sample.ticktacktoe.ticktacktoe_table_value_function import TickTackToeTableValueFunction
 from sample.ticktacktoe.ticktacktoe_helper import TickTackToeHelper
 from sample.ticktacktoe.ticktacktoe_manual_policy import TickTackToeManualPolicy
+from sample.ticktacktoe.ticktacktoe_perfect_policy import TickTackToePerfectPolicy
 
-SUPPORT_ALGORITHM = ["human", "montecarlo", "sarsa", "qlearning", "sarsalambda", "qlambda"]
+SUPPORT_ALGORITHM = ["human", "montecarlo", "sarsa", "qlearning", "sarsalambda", "qlambda", "minimax"]
 
 parser = argparse.ArgumentParser(description="Setup game configutation")
 parser.add_argument("--firstplayer", required=True, help=" or ".join(['"%s"' % algo for algo in SUPPORT_ALGORITHM]))
@@ -48,16 +51,19 @@ for idx, func, algo in zip(range(2), value_funcs, algos):
     func.load(value_func_save_path)
     log.info("finished loading value function")
 
-domain = TickTackToeDomain()
-gen_player_builder = lambda algo: TickTackToeManualPolicy if algo == "human" else GreedyPolicy
-builders = [gen_player_builder(algo) for algo in algos]
-players = [builder(domain, func) for builder, func in zip(builders, value_funcs)]
+domains = [TickTackToeDomain(is_first_player=is_first) for is_first in [True, False]]
+player_builder = defaultdict(lambda : GreedyPolicy)
+player_builder["human"] = TickTackToeManualPolicy
+player_builder["minimax"] = TickTackToePerfectPolicy
+builders = [player_builder[algo] for algo in algos]
+players = [builder(domain, func) for builder, domain, func in zip(builders, domains, value_funcs)]
 
 next_is_first_player = lambda state: bin(state[0]|state[1]).count("1") % 2 == 0
 next_player = lambda state: players[0] if next_is_first_player(state) else players[1]
 show_board = lambda state: log.info("\n" + TickTackToeHelper.visualize_board(state))
 
 log.info("start the game (%s vs %s)" % tuple(algos))
+domain = domains[0]
 state = domain.generate_initial_state()
 show_board(state)
 while not domain.is_terminal_state(state):
