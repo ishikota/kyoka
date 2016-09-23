@@ -1,0 +1,105 @@
+#!/usr/local/bin/python
+
+# Resolve path configucation
+import os
+import sys
+import argparse
+
+root = os.path.join(os.path.dirname(__file__), "../"*3)
+src_path = os.path.join(root, "kyoka")
+sample_path = os.path.join(root, "sample")
+sys.path.append(root)
+sys.path.append(src_path)
+sys.path.append(sample_path)
+
+import logging as log
+log.basicConfig(format='[%(levelname)s] %(message)s', level=log.DEBUG)
+
+from kyoka.algorithm.montecarlo.montecarlo import MonteCarlo
+from kyoka.algorithm.td_learning.sarsa import Sarsa
+from kyoka.algorithm.td_learning.q_learning import QLearning
+from kyoka.algorithm.td_learning.sarsa_lambda import SarsaLambda
+from kyoka.algorithm.td_learning.q_lambda import QLambda
+
+from kyoka.policy.greedy_policy import GreedyPolicy
+from kyoka.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
+from kyoka.finish_rule.watch_iteration_count import WatchIterationCount
+
+from sample.ticktacktoe.ticktacktoe_domain import TickTackToeDomain
+from sample.ticktacktoe.ticktacktoe_table_value_function import TickTackToeTableValueFunction
+from sample.ticktacktoe.ticktacktoe_helper import TickTackToeHelper
+from sample.ticktacktoe.ticktacktoe_manual_policy import TickTackToeManualPolicy
+from sample.ticktacktoe.ticktacktoe_perfect_policy import TickTackToePerfectPolicy
+
+SUPPORT_ALGORITHM = ["montecarlo", "sarsa", "qlearning", "sarsalambda", "qlambda", "minimax"]
+
+parser = argparse.ArgumentParser(description="Setup game configutation")
+parser.add_argument("--algo", required=True, help=" or ".join(['"%s"' % algo for algo in SUPPORT_ALGORITHM]))
+parser.add_argument("--firstplayer", required=False, default="y", help='pass "yes" if you want to train first player (default is "yes")')
+args = parser.parse_args()
+algo = args.algo
+is_first_player = True if args.firstplayer.lower() in ["yes", "y"] else False
+if algo not in SUPPORT_ALGORITHM:
+  raise ValueError("unknown algorithm [%s] passed." % algo)
+
+
+which_player = "firstplayer" if is_first_player else "secondplayer"
+VALUE_FUNC_FILE_PATH = "%s_%s_ticktacktoe_value_function_data.pickle" % (algo, which_player)
+VALUE_FUNC_SAVE_PATH = os.path.join(os.path.dirname(__file__), VALUE_FUNC_FILE_PATH)
+
+value_func = TickTackToeTableValueFunction()
+value_func.setUp()
+"""
+if os.path.isfile(VALUE_FUNC_SAVE_PATH):
+  log.info("loading value function from %s" % VALUE_FUNC_SAVE_PATH)
+  value_func.load(VALUE_FUNC_SAVE_PATH)
+  log.info("finished loading value function")
+"""
+
+domain = TickTackToeDomain(is_first_player=is_first_player)
+policy = EpsilonGreedyPolicy(domain, value_func, eps=0.7)
+watch_iteration = WatchIterationCount(target_count=1000, log_interval=10000)
+finish_rules = [watch_iteration]
+
+RL_algo = {
+    "montecarlo": lambda : MonteCarlo(),
+    "sarsa": lambda : Sarsa(),
+    "qlearning": lambda :QLearning(),
+    "sarsalambda": lambda :SarsaLambda(),
+    "qlambda": lambda :QLambda()
+}[algo]()
+
+log.info("started GPI iteration...")
+RL_algo.GPI(domain, policy, value_func, finish_rules)
+log.info("finished GPI iteration...")
+"""
+log.info("saving value function into %s" % VALUE_FUNC_SAVE_PATH)
+value_func.save(VALUE_FUNC_SAVE_PATH)
+log.info("finished saving value function")
+"""
+log.info("start performance test")
+TEST_LENGTH = 100
+
+domains = [TickTackToeDomain(is_first_player=is_first) for is_first in [is_first_player, not is_first_player]]
+value_funcs = [value_func, TickTackToeTableValueFunction()]
+player_builders = [GreedyPolicy, TickTackToePerfectPolicy]
+players = [builder(domain, func) for builder, domain, func in zip(player_builders, domains, value_funcs)]
+players = players if is_first_player else players[::-1]
+
+next_is_first_player = lambda state: bin(state[0]|state[1]).count("1") % 2 == 0
+next_player = lambda state: players[0] if next_is_first_player(state) else players[1]
+show_board = lambda state: log.debug("\n" + TickTackToeHelper.visualize_board(state))
+
+log.info("start performance test for %d times (%s is %s player)" % (TEST_LENGTH, algo, "first" if is_first_player else "second"))
+game_log = []
+for i in range(TEST_LENGTH):
+  domain = domains[0]
+  state = domain.generate_initial_state()
+  show_board(state)
+  while not domain.is_terminal_state(state):
+    action = next_player(state).choose_action(state)
+    state = domain.transit_state(state, action)
+    show_board(state)
+  game_log.append(domain.calculate_reward(state))
+import pdb; pdb.set_trace()
+
