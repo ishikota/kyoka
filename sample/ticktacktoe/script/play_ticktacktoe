@@ -13,7 +13,7 @@ sys.path.append(src_path)
 sys.path.append(sample_path)
 
 import logging as log
-log.basicConfig(format='[%(levelname)s] %(message)s', level=log.INFO)
+log.basicConfig(format='[%(levelname)s] %(message)s', level=log.DEBUG)
 
 from collections import defaultdict
 

@@ -1,5 +1,6 @@
 from kyoka.policy.base_policy import BasePolicy
 import random
+import logging
 
 class TickTackToePerfectPolicy(BasePolicy):
 
@@ -7,7 +8,7 @@ class TickTackToePerfectPolicy(BasePolicy):
     actions = self.domain.generate_possible_actions(state)
     states = [self.domain.transit_state(state, action) for action in actions]
     values = [self.mini(state, -20, 20) for state in states]
-    print zip(actions, values)
+    logging.debug("MiniMax calculation result [(action, score),...] => %s" % zip(actions, values))
     best_actions = [act for act, val in zip(actions, values) if val == max(values)]
     return random.choice(best_actions)
 
