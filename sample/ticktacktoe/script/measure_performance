@@ -45,6 +45,7 @@ if algo not in SUPPORT_ALGORITHM:
 
 TEST_LENGTH = 100
 TEST_GAME_COUNT = 10
+TEST_INTERVAL = 10
 domain = TickTackToeDomain(is_first_player=is_first_player)
 value_func = TickTackToeTableValueFunction()
 value_func.setUp()
@@ -61,6 +62,7 @@ RL_algo = {
 }[algo]()
 
 callback = TickTackToePerformanceLogger()
+callback.set_performance_test_interval(TEST_INTERVAL)
 callback.set_is_first_player(is_first_player)
 callback.set_test_game_count(TEST_GAME_COUNT)
 RL_algo.set_gpi_callback(callback)

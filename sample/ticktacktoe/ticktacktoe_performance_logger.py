@@ -9,14 +9,20 @@ class TickTackToePerformanceLogger(BaseCallback):
 
   def before_gpi_start(self, domain, value_function):
     self.game_log = []
+    self.log_interval_counter = 0
 
   def after_update(self, iteration_count, domain, value_function, delta):
-    players = self.__setup_players(value_function)
-    game_results = [TickTackToeHelper.measure_performance(domain, players)\
+    iteration_count = iteration_count + 1
+    if iteration_count % self.performance_test_interval == 0:
+      players = self.__setup_players(value_function)
+      game_results = [TickTackToeHelper.measure_performance(domain, players)\
         for _ in range(self.test_game_count)]
-    result_count = [game_results.count(result) for result in [-1, 0, 1]]
-    result_rate  = [1.0 * count / len(game_results) for count in result_count]
-    self.game_log.append(result_rate)
+      result_count = [game_results.count(result) for result in [-1, 0, 1]]
+      result_rate  = [1.0 * count / len(game_results) for count in result_count]
+      self.game_log.append((iteration_count, result_rate))
+
+  def set_performance_test_interval(self, interval):
+      self.performance_test_interval = interval
 
   def set_test_game_count(self, count):
     self.test_game_count = count
