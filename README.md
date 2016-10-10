@@ -1,5 +1,6 @@
 # kyoka : Simple Reinforcement Learning Library
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/ishikota/kyoka/blob/master/LICENSE.md)
+[![PyPI](https://img.shields.io/pypi/v/kyoka.svg?maxAge=2592000)]([![PyPI](https://img.shields.io/pypi/v/nine.svg?maxAge=2592000)](https://github.com/ishikota/kyoka))
 ## Implemented algorithmes
 - MonteCarlo
 - Sarsa
@@ -157,4 +158,7 @@ You can also checkout another RL task example *tick-tack-toe* .
 - [smaple: Learning tick-tack-toe by RL](https://github.com/ishikota/kyoka/tree/master/sample/ticktacktoe)
 
 # Installation
-under construction... :bow:
+Please install *kyoka* using pip
+```bash
+pip install kyoka
+```
