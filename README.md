@@ -158,4 +158,7 @@ You can also checkout another RL task example *tick-tack-toe* .
 - [smaple: Learning tick-tack-toe by RL](https://github.com/ishikota/kyoka/tree/master/sample/ticktacktoe)
 
 # Installation
-under construction... :bow:
+Please install *kyoka* using pip
+```bash
+pip install kyoka
+```
