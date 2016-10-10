@@ -47,7 +47,9 @@ S-X----X-
 - `is_terminal_state(state)`
   - returns if passed state is terminal state or not.
   
-```
+```python
+from kyoka.domain.base_domain import BaseDomain
+
 class MazeDomain(BaseDomain):
 
   ACTION_UP = 0
@@ -55,38 +57,38 @@ class MazeDomain(BaseDomain):
   ACTION_RIGHT = 2
   ACTION_LEFT = 3
 
-  // we use current position of the maze as "state". So here we return start position of the maze.
+  # we use current position of the maze as "state". So here we return start position of the maze.
   def generate_initial_state(self):
     return (0, 0)
 
-  // the position of the goal is (row=3, column=2)
+  # the position of the goal is (row=0, column=8)
   def is_terminal_state(self, state):
-    return (3, 2) == state
-  
-  // we can always move to 4 directions.
+    return (0, 8) == state
+
+  # we can always move to 4 directions.
   def generate_possible_actions(self, state):
     return [self.ACTION_UP, self.ACTION_DOWN, self.ACTION_RIGHT, self.ACTION_LEFT]
-  
-  // RL algorithm can get reward only when he reaches to the goal.
+
+  # RL algorithm can get reward only when he reaches to the goal.
   def calculate_reward(self, state):
     return 1 if self.is_terminal_state(state) else 0
 
   def transit_state(self, state, action):
     row, col = state
+    wall_position = [(1,2), (2,2), (3,2), (4,5), (0,7), (1,7), (2,7)]
     height, width = 6, 9
-    if action == self.UP:
+    if action == self.ACTION_UP:
       row = max(0, row-1)
-    elif action == self.DOWN:
+    elif action == self.ACTION_DOWN:
       row = min(height-1, row+1)
-    elif action == self.RIGHT:
+    elif action == self.ACTION_RIGHT:
       col= min(width-1, col+1)
-    elif action == self.LEFT:
+    elif action == self.ACTION_LEFT:
       col = max(0, col-1)
-    if 'X' != self.maze[row][col]:
+    if (row, col) not in wall_position:
       return (row, col)
     else:
-      return state // If destination is the wall or edge of the maze then position does not change.
-    
+      return state # If destination is the wall or edge of the maze then position does not change.
 ```
 
 Ok! next is `ValueFunction`!!
@@ -95,27 +97,31 @@ Ok! next is `ValueFunction`!!
 `BaseActionValueFunction` class requires you to implement 2 methods.
 - `calculate_value(state, action)`
   - fetch current value of state and action pair.
-- `update_value(state, action, new_value)`
-  - update Q-value of passed state and action by passed value.
+- `update_function(state, action, new_value)`
+  - update value of passed state and action pair by passed value.
 
-The state space of this example is very small (state space = |state| x |action| = 12 x 4 = 48).  
-So we prepare the table (2-dimentional array) and save value on it.
+The state space of this example is very small (state space = |state| x |action| = 6 x 9 x 4 = 216).  
+So we prepare the table (3-dimentional array) and save value on it.
 
-```
+```python
+from kyoka.value_function.base_action_value_function import BaseActionValueFunction
+
 class MazeActionValueFunction(BaseActionValueFunction):
 
-  // call this method before start learning
+  # call this method before start learning
   def setUp(self):
-    maze_cell_num, action_num = 48, 4
-    self.table = [[0 for j in range(action_num)] for i in range(maze_cell_num)]
+    maze_width, maze_height, action_num = 6, 9, 4
+    self.table = [[[0 for k in range(action_num)] for j in range(maze_height)] for i in range(maze_width)]
 
-  // just take value from the table
+  # just take value from the table
   def calculate_value(self, state, action):
-    return self.table[state][action]
-  
-  // just insert value into the table
-  def update_value(self, state, action, new_value):
-    self.table[state][action] = new_value
+    row, col = state
+    return self.table[row][col][action]
+
+  # just insert value into the table
+  def update_function(self, state, action, new_value):
+    row, col = state
+    self.table[row][col][action] = new_value
 ```
 
 #### hint: Deep Reinforcement Learning
@@ -129,17 +135,21 @@ The sample implementation of `BaseKerasValueFunction` for maze domain is [here (
 ### Step3. Running RL algorithm and see its result
 OK, here we apply `QLearning` on our *maze*  RL task.
 
-```
-rl_algo = QLearning(alpha=0.1, gamma=0.7) // You can replace RL algorithm like "rl_algo = Sarsa(alpha=0.1, gamma=0.7)"
+```python
+from kyoka.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
+from kyoka.algorithm.td_learning.q_learning import QLearning
+from kyoka.finish_rule.watch_iteration_count import WatchIterationCount
+
+rl_algo = QLearning(alpha=0.1, gamma=0.7) # You can replace RL algorithm like "rl_algo = Sarsa(alpha=0.1, gamma=0.7)"
 domain = MazeDomain()
-policy = EpsilonGreedyPolicy(epsilon=0.1)
-value_function = MazeValueFunction()
+value_function = MazeActionValueFunction()
 value_function.setUp()
-finish_rule = WatchIterationCount(target_count=50)  // finish learning iteration after 50-th GPI iteration
+policy = EpsilonGreedyPolicy(domain, value_function, eps=0.1)
+finish_rule = WatchIterationCount(50)  # finish learning after 50-th iteration
 rl_algo.GPI(domain, policy, value_function, finish_rule)
 ```
 
-That's all !! Let's visualize value function which QLearning learned.
+That's all !! Let's visualize the value function which QLearning learned.
 ```
       -------XG
       --X-v-vX^
@@ -151,14 +161,16 @@ That's all !! Let's visualize value function which QLearning learned.
 
 Looks good!! QLearning found the policy which leads us to goal in 14 steps. (14 step is minimum step to the goal !!)
 
+You can access complete code of this tutorial from [here](https://github.com/ishikota/kyoka/blob/master/sample/maze/readme_sample.py).
+
 ## Sample code
-In sample directory, we prepare complete sample code as jupyter notebook and script.
+In sample directory, we prepared more practical sample code as jupyter notebook and script.
 You can also checkout another RL task example *tick-tack-toe* .
 - [sample: Learning how to escape from maze by RL](https://github.com/ishikota/kyoka/tree/master/sample/maze)
-- [smaple: Learning tick-tack-toe by RL](https://github.com/ishikota/kyoka/tree/master/sample/ticktacktoe)
+- [sample: Learning tick-tack-toe by RL](https://github.com/ishikota/kyoka/tree/master/sample/ticktacktoe)
 
 # Installation
-Please install *kyoka* using pip
+Please install *kyoka* using pip like this
 ```bash
 pip install kyoka
 ```
