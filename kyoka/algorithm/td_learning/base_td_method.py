@@ -14,8 +14,7 @@ class BaseTDMethod(BaseRLAlgorithm):
 
   def __reject_state_value_function(self, value_function):
     if not isinstance(value_function, BaseActionValueFunction):
-      msg = 'TD method requires you to use "ActionValueFunction" \
-            (child class of [ BaseActionValueFunction ])'
+      msg = 'TD method requires you to use "ActionValueFunction" (child class of [ BaseActionValueFunction ])'
       raise TypeError(msg)
 
   def __build_err_msg(self, msg):
