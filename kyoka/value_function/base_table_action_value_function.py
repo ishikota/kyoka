@@ -9,10 +9,7 @@ class BaseTableActionValueFunction(BaseActionValueFunction):
     return self.fetch_value_from_table(self.table, state, action)
 
   def update_function(self, state, action, new_value):
-    old_value = self.fetch_value_from_table(self.table, state, action)
-    delta = new_value - old_value
     self.update_table(self.table, state, action, new_value)
-    return delta
 
   def provide_data_to_store(self):
     return self.table

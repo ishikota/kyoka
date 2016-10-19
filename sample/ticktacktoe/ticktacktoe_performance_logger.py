@@ -11,7 +11,7 @@ class TickTackToePerformanceLogger(BaseCallback):
     self.game_log = []
     self.log_interval_counter = 0
 
-  def after_update(self, iteration_count, domain, value_function, delta):
+  def after_update(self, iteration_count, domain, value_function):
     iteration_count = iteration_count + 1
     if iteration_count % self.performance_test_interval == 0:
       players = self.__setup_players(value_function)

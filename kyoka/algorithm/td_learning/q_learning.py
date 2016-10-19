@@ -14,7 +14,6 @@ class QLearning(BaseRLAlgorithm):
     greedy_policy = GreedyPolicy(domain, value_function)
     state = domain.generate_initial_state()
     action = policy.choose_action(state)
-    delta_history = []
     while not domain.is_terminal_state(state):
       next_state = domain.transit_state(state, action)
       reward = domain.calculate_reward(next_state)
@@ -22,10 +21,8 @@ class QLearning(BaseRLAlgorithm):
       greedy_action = self.__choose_action(domain, greedy_policy, next_state)
       new_Q_value = self.__calculate_new_Q_value(\
           value_function, state, action, next_state, greedy_action, reward)
-      delta = value_function.update_function(state, action, new_Q_value)
-      delta_history.append(delta)
+      value_function.update_function(state, action, new_Q_value)
       state, action = next_state, next_action
-    return delta_history
 
 
   def __calculate_new_Q_value(self,\

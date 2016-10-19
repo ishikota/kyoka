@@ -12,12 +12,12 @@ class BaseRLAlgorithm(object):
     [callback.before_gpi_start(domain, value_function) for callback in self.callbacks]
     while True:
       [callback.before_update(iteration_counter, domain, value_function) for callback in self.callbacks]
-      delta = self.update_value_function(domain, policy, value_function)
-      [callback.after_update(iteration_counter, domain, value_function, delta) for callback in self.callbacks]
+      self.update_value_function(domain, policy, value_function)
+      [callback.after_update(iteration_counter, domain, value_function) for callback in self.callbacks]
       iteration_counter += 1
       for finish_rule in self.__wrap_rule_if_single(finish_rules):
-        if finish_rule.satisfy_condition(iteration_counter, delta):
-          finish_msg = finish_rule.generate_finish_message(iteration_counter, delta)
+        if finish_rule.satisfy_condition(iteration_counter):
+          finish_msg = finish_rule.generate_finish_message(iteration_counter)
           [callback.after_gpi_finish(domain, value_function) for callback in self.callbacks]
           return finish_msg
 

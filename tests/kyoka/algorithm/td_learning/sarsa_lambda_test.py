@@ -23,8 +23,7 @@ class SarsaLambdaTest(BaseUnitTest):
     value_func.update_function(3, 4, 100)
     value_func.update_function(3, 5, 101)
     policy = self.NegativePolicyImple(domain, value_func)
-    delta = self.algo.update_value_function(domain, policy, value_func)
-    self.almosteq([-25.5, -0.255, 0.045, 1, 4.5], sorted(delta), 0.01)
+    self.algo.update_value_function(domain, policy, value_func)
     expected = [(0, 1, 1.045), (1, 2, 14.245), (3, 4, 74.5)]
     for state, action, value in expected:
       self.almosteq(value, value_func.fetch_value_from_table(value_func.table, state, action), 0.01)

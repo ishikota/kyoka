@@ -6,14 +6,14 @@ class WatchIterationCount(BaseFinishRule):
     BaseFinishRule.__init__(self, log_interval)
     self.target_count = target_count
 
-  def check_condition(self, iteration_count, _deltas):
+  def check_condition(self, iteration_count):
     return iteration_count >= self.target_count
 
-  def generate_progress_message(self, iteration_count, deltas):
+  def generate_progress_message(self, iteration_count):
     base_msg = "Finished %d / %d iterations"
     return base_msg % (iteration_count, self.target_count)
 
-  def generate_finish_message(self, iteration_count, deltas):
+  def generate_finish_message(self, iteration_count):
     base_msg = "Completed GPI iteration for %d times."
     return base_msg % iteration_count
 

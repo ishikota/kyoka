@@ -22,13 +22,11 @@ class BaseTableStateValueFunctionTest(BaseUnitTest):
     state = 2
     self.eq(0, self.func.calculate_value(state))
 
-    delta = self.func.update_function(state, 1)
+    self.func.update_function(state, 1)
     self.eq(1, self.func.calculate_value(state))
-    self.eq(1, delta)
 
-    delta = self.func.update_function(state, 0)
+    self.func.update_function(state, 0)
     self.eq(0, self.func.calculate_value(state))
-    self.eq(-1, delta)
 
   def test_store_and_restore_table(self):
     file_path = self.__generate_tmp_file_path()

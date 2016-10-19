@@ -9,10 +9,7 @@ class BaseTableStateValueFunction(BaseStateValueFunction):
     return self.fetch_value_from_table(self.table, state)
 
   def update_function(self, state, new_value):
-    old_value = self.fetch_value_from_table(self.table, state)
-    delta = new_value - old_value
     self.update_table(self.table, state, new_value)
-    return delta
 
   def provide_data_to_store(self):
     return self.table
