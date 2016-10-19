@@ -9,13 +9,13 @@ class ManualInterruption(BaseFinishRule):
     BaseFinishRule.__init__(self, log_interval)
     self.monitor_file_path = monitor_file_path
 
-  def check_condition(self, _iteration_count, _deltas):
+  def check_condition(self, _iteration_count):
     return self.__order_found_in_monitoring_file(self.monitor_file_path, self.TARGET_WARD)
 
-  def generate_progress_message(self, _iteration_count, _deltas):
+  def generate_progress_message(self, _iteration_count):
     return None
 
-  def generate_finish_message(self, iteration_count, _deltas):
+  def generate_finish_message(self, iteration_count):
     base_msg = "Interrupt GPI after %d iterations because interupption order found in [ %s ]."
     return base_msg % (iteration_count, self.monitor_file_path)
 

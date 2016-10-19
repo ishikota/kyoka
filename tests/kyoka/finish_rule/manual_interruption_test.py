@@ -18,18 +18,18 @@ class ManualInterruptionTest(BaseUnitTest):
 
   def test_satisfy_condition(self):
     file_path = self.__generate_tmp_file_path()
-    self.false(self.rule.satisfy_condition(1, "dummy"))
+    self.false(self.rule.satisfy_condition(1))
     self.__write_word(file_path, "hoge")
-    self.false(self.rule.satisfy_condition(1, "dummy"))
+    self.false(self.rule.satisfy_condition(1))
     self.__write_word(file_path, "stop")
-    self.true(self.rule.satisfy_condition(1, "dummy"))
+    self.true(self.rule.satisfy_condition(1))
 
   def test_generate_progress_message(self):
-    self.eq(None, self.rule.generate_progress_message(5, "dummy"))
+    self.eq(None, self.rule.generate_progress_message(5))
 
   def test_generate_finish_message(self):
     file_path = self.__generate_tmp_file_path()
-    msg = self.rule.generate_finish_message(5, "dummy")
+    msg = self.rule.generate_finish_message(5)
     self.include(str(5), msg)
     self.include(file_path, msg)
 

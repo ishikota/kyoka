@@ -27,7 +27,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     algo = self.TestImplementation()
     finish_rule = self.__setup_stub_finish_rule()
     finish_msg = algo.GPI("dummy", "dummy", "dummy", finish_rule)
-    expected = (2, 2)
+    expected = 2
     self.eq(expected, finish_msg)
 
   def test_GPI_with_multiple_finish_rules(self):
@@ -36,7 +36,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     finish_rule2 = self.__setup_stub_finish_rule(satisfy_condition=[True, False])
     finish_rules = [finish_rule1, finish_rule2]
     finish_msg = algo.GPI("dummy", "dummy", "dummy", finish_rules)
-    expected = (1, 1)
+    expected = 1
     self.eq(expected, finish_msg)
 
   def test_set_callback(self):
@@ -51,7 +51,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     self.eq(1, callback.after_gpi_finish.call_count)
     callback.before_gpi_start.assert_called_with("domain", "value_function")
     callback.before_update.assert_called_with(1, "domain", "value_function")
-    callback.after_update.assert_called_with(1, "domain", "value_function", 2)
+    callback.after_update.assert_called_with(1, "domain", "value_function")
     callback.after_gpi_finish.assert_called_with("domain", "value_function")
 
   def __setup_stub_domain(self):
@@ -71,7 +71,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
   def __setup_stub_finish_rule(self, satisfy_condition=[False, True]):
     mock_finish_fule = Mock()
     mock_finish_fule.satisfy_condition.side_effect = satisfy_condition
-    mock_finish_fule.generate_finish_message.side_effect = lambda counter, delta: (counter, delta)
+    mock_finish_fule.generate_finish_message.side_effect = lambda counter: counter
     return mock_finish_fule
 
   def __check_err_msg(self, target_method, target_word):
