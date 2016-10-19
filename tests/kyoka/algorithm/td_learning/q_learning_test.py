@@ -5,7 +5,6 @@ from kyoka.value_function.base_table_action_value_function import BaseTableActio
 from kyoka.policy.base_policy import BasePolicy
 
 from mock import Mock
-from nose.tools import raises
 
 class QLearningTest(BaseUnitTest):
 
@@ -26,10 +25,11 @@ class QLearningTest(BaseUnitTest):
     for state, action, value in expected:
       self.eq(value, value_func.fetch_value_from_table(value_func.table, state, action))
 
-  @raises(TypeError)
   def test_reject_state_value_function(self):
     value_func = Mock(spec=BaseStateValueFunction)
-    self.algo.update_value_function("dummy", "dummy", value_func)
+    with self.assertRaises(TypeError) as e:
+      self.algo.update_value_function("dummy", "dummy", value_func)
+    self.include("TD method requires you", e.exception.message)
 
   def __setup_stub_domain(self):
     mock_domain = Mock()

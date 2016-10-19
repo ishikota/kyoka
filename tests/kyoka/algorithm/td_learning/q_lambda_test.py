@@ -7,7 +7,6 @@ from kyoka.value_function.base_table_action_value_function import BaseTableActio
 from kyoka.policy.base_policy import BasePolicy
 
 from mock import Mock
-from nose.tools import raises
 
 class QLambaTest(BaseUnitTest):
 
@@ -54,12 +53,13 @@ class QLambaTest(BaseUnitTest):
     for state, action, eligibility in eligibilities:
       self.almosteq(expected[state][action], eligibility, 0.001)
 
-  @raises(TypeError)
   def test_reject_state_value_function(self):
     domain = self.__setup_stub_domain()
     value_func = self.TestTableStateValueFunctionImpl()
     policy = self.CheetPolicyImple(domain, value_func)
-    self.algo.update_value_function(domain, policy, value_func)
+    with self.assertRaises(TypeError) as e:
+      self.algo.update_value_function(domain, policy, value_func)
+    self.include("TD method requires you", e.exception.message)
 
   def __setup_stub_domain(self):
     mock_domain = Mock()
