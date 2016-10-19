@@ -2,6 +2,7 @@ from tests.base_unittest import BaseUnitTest
 from kyoka.algorithm.montecarlo.montecarlo import MonteCarlo
 from kyoka.policy.greedy_policy import GreedyPolicy
 from kyoka.value_function.base_action_value_function import BaseActionValueFunction
+from kyoka.value_function.base_table_state_value_function import BaseTableStateValueFunction
 from kyoka.value_function.base_table_action_value_function import BaseTableActionValueFunction
 
 from mock import Mock
@@ -12,9 +13,21 @@ class MonteCarloTest(BaseUnitTest):
   def setUp(self):
     self.algo = MonteCarlo()
 
-  def test_update_value_function(self):
+  def test_update_state_value_function(self):
     domain = self.__setup_stub_domain()
-    value_func = self.TestTableValueFunctionImpl()
+    value_func = self.TestTableStateValueFunctionImpl()
+    value_func.setUp()
+    policy = GreedyPolicy(domain, value_func)
+    self.algo.update_value_function(domain, policy, value_func)
+    expected = [(1, 59, 1), (3, 58, 1), (7, 49, 1), (0, 0, 0)]
+    update_counter = value_func.get_additinal_data("additinal_data_key_montecarlo_update_counter")
+    for state, value, update_count in expected:
+      self.eq(value, value_func.fetch_value_from_table(value_func.table, state))
+      self.eq(update_count, value_func.fetch_value_from_table(update_counter, state))
+
+  def test_update_action_value_function(self):
+    domain = self.__setup_stub_domain()
+    value_func = self.TestTableActionValueFunctionImpl()
     value_func.setUp()
     policy = GreedyPolicy(domain, value_func)
     self.algo.update_value_function(domain, policy, value_func)
@@ -24,9 +37,9 @@ class MonteCarloTest(BaseUnitTest):
       self.eq(value, value_func.fetch_value_from_table(value_func.table, state, action))
       self.eq(update_count, value_func.fetch_value_from_table(update_counter, state, action))
 
-  def test_update_value_function_twice_for_counter(self):
+  def test_update_action_value_function_twice_for_counter(self):
     domain = self.__setup_stub_domain()
-    value_func = self.TestTableValueFunctionImpl()
+    value_func = self.TestTableActionValueFunctionImpl()
     value_func.setUp()
     policy = GreedyPolicy(domain, value_func)
 
@@ -42,7 +55,7 @@ class MonteCarloTest(BaseUnitTest):
 
   def test_save_update_counter_as_additinal_data(self):
     domain = self.__setup_stub_domain()
-    value_func = self.TestTableValueFunctionImpl()
+    value_func = self.TestTableActionValueFunctionImpl()
     value_func.setUp()
     policy = GreedyPolicy(domain, value_func)
     self.algo.update_value_function(domain, policy, value_func)
@@ -68,7 +81,7 @@ class MonteCarloTest(BaseUnitTest):
     return mock_domain
 
 
-  class TestTableValueFunctionImpl(BaseTableActionValueFunction):
+  class TestTableActionValueFunctionImpl(BaseTableActionValueFunction):
 
     def generate_initial_table(self):
       return [[0 for j in range(50)] for i in range(4)]
@@ -79,5 +92,18 @@ class MonteCarloTest(BaseUnitTest):
     def update_table(self, table, state, action, new_value):
       table[state][action] = new_value
       return table
+
+  class TestTableStateValueFunctionImpl(BaseTableStateValueFunction):
+
+    def generate_initial_table(self):
+      return [0 for j in range(50)]
+
+    def fetch_value_from_table(self, table, state):
+      return table[state]
+
+    def update_table(self, table, state, new_value):
+      table[state] = new_value
+      return table
+
 
 

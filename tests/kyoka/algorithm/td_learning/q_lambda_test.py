@@ -2,6 +2,7 @@ from tests.base_unittest import BaseUnitTest
 from kyoka.algorithm.td_learning.q_lambda import QLambda
 from kyoka.algorithm.td_learning.eligibility_trace.action_eligibility_trace\
     import ActionEligibilityTrace as EligibilityTrace
+from kyoka.value_function.base_table_state_value_function import BaseTableStateValueFunction
 from kyoka.value_function.base_table_action_value_function import BaseTableActionValueFunction
 from kyoka.policy.base_policy import BasePolicy
 
@@ -16,7 +17,7 @@ class QLambaTest(BaseUnitTest):
 
   def test_update_value_function(self):
     domain = self.__setup_stub_domain()
-    value_func = self.TestTableValueFunctionImpl()
+    value_func = self.TestTableActionValueFunctionImpl()
     value_func.setUp()
     value_func.update_function(1, 2, 10)
     value_func.update_function(1, 3, 11)
@@ -32,7 +33,7 @@ class QLambaTest(BaseUnitTest):
 
   def test_set_eligibility_trace_as_additinal_data(self):
     domain = self.__setup_stub_domain()
-    value_func = self.TestTableValueFunctionImpl()
+    value_func = self.TestTableActionValueFunctionImpl()
     value_func.setUp()
     value_func.update_function(1, 2, 10)
     value_func.update_function(1, 3, 11)
@@ -52,6 +53,14 @@ class QLambaTest(BaseUnitTest):
     for state, action, eligibility in eligibilities:
       self.almosteq(expected[state][action], eligibility, 0.001)
 
+  def test_reject_state_value_function(self):
+    domain = self.__setup_stub_domain()
+    value_func = self.TestTableStateValueFunctionImpl()
+    policy = self.CheetPolicyImple(domain, value_func)
+    with self.assertRaises(TypeError) as e:
+      self.algo.update_value_function(domain, policy, value_func)
+    self.include("TD method requires you", e.exception.message)
+
   def __setup_stub_domain(self):
     mock_domain = Mock()
     mock_domain.generate_initial_state.return_value = 0
@@ -61,7 +70,7 @@ class QLambaTest(BaseUnitTest):
     mock_domain.calculate_reward.side_effect = lambda state: state**2
     return mock_domain
 
-  class TestTableValueFunctionImpl(BaseTableActionValueFunction):
+  class TestTableActionValueFunctionImpl(BaseTableActionValueFunction):
 
     def generate_initial_table(self):
       return [[0 for j in range(13)] for i in range(11)]
@@ -71,6 +80,18 @@ class QLambaTest(BaseUnitTest):
       return table[state][action]
 
     def update_table(self, table, state, action, new_value):
+      table[state][action] = new_value
+      return table
+
+  class TestTableStateValueFunctionImpl(BaseTableStateValueFunction):
+
+    def generate_initial_table(self):
+      return [0 for j in range(50)]
+
+    def fetch_value_from_table(self, table, state):
+      return table[state]
+
+    def update_table(self, table, state, new_value):
       table[state][action] = new_value
       return table
 

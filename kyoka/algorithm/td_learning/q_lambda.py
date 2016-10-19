@@ -1,20 +1,20 @@
-from kyoka.algorithm.base_rl_algorithm import BaseRLAlgorithm
+from kyoka.algorithm.td_learning.base_td_method import BaseTDMethod
 from kyoka.algorithm.td_learning.eligibility_trace.action_eligibility_trace\
     import ActionEligibilityTrace as EligibilityTrace
 from kyoka.policy.greedy_policy import GreedyPolicy
 
-class QLambda(BaseRLAlgorithm):
+class QLambda(BaseTDMethod):
 
   __KEY_ADDITIONAL_DATA = "additinal_data_key_q_lambda_eligibility_trace"
   ACTION_ON_TERMINAL_FLG = "action_on_terminal"
 
   def __init__(self, alpha=0.1, gamma=0.9, eligibility_trace=None):
-    BaseRLAlgorithm.__init__(self)
+    BaseTDMethod.__init__(self)
     self.alpha = alpha
     self.gamma = gamma
     self.trace = eligibility_trace if eligibility_trace else self.__generate_default_trace()
 
-  def update_value_function(self, domain, policy, value_function):
+  def update_action_value_function(self, domain, policy, value_function):
     self.__setup_trace(value_function)
     greedy_policy = GreedyPolicy(domain, value_function)
     current_state = domain.generate_initial_state()

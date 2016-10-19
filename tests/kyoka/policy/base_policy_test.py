@@ -24,12 +24,12 @@ class BasePolicyTest(BaseUnitTest):
   def test_pack_arguments_for_value_function_when_action_value_function(self):
     policy = BasePolicy(BaseDomain(), BaseActionValueFunction())
     packed = policy.pack_arguments_for_value_function("state", "action")
-    self.eq(("state", "action"), packed)
+    self.eq(["state", "action"], packed)
 
   def test_pack_arguments_for_value_function_when_state_value_function(self):
     policy = BasePolicy(BaseDomain(), BaseStateValueFunction())
     packed = policy.pack_arguments_for_value_function("state", "action")
-    self.eq(("state"), packed)
+    self.eq(["state"], packed)
 
   @raises(ValueError)
   def test_pack_arguments_for_value_function_when_illegal_state(self):

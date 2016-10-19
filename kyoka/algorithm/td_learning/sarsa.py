@@ -1,15 +1,15 @@
-from kyoka.algorithm.base_rl_algorithm import BaseRLAlgorithm
+from kyoka.algorithm.td_learning.base_td_method import BaseTDMethod
 
-class Sarsa(BaseRLAlgorithm):
+class Sarsa(BaseTDMethod):
 
   ACTION_ON_TERMINAL_FLG = "action_on_terminal"
 
   def __init__(self, alpha=0.1, gamma=0.9):
-    BaseRLAlgorithm.__init__(self)
+    BaseTDMethod.__init__(self)
     self.alpha = alpha
     self.gamma = gamma
 
-  def update_value_function(self, domain, policy, value_function):
+  def update_action_value_function(self, domain, policy, value_function):
     state = domain.generate_initial_state()
     action = policy.choose_action(state)
     while not domain.is_terminal_state(state):

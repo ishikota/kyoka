@@ -13,9 +13,9 @@ class BasePolicy(object):
 
   def pack_arguments_for_value_function(self, state, action):
     if isinstance(self.value_function, BaseStateValueFunction):
-      return (state)
+      return [state]
     elif isinstance(self.value_function, BaseActionValueFunction):
-      return (state, action)
+      return [state, action]
     else:
       raise ValueError("Invalid value function is set")
 
