@@ -17,7 +17,6 @@ class SarsaLambda(BaseRLAlgorithm):
     self.__setup_trace(value_function)
     current_state = domain.generate_initial_state()
     current_action = policy.choose_action(current_state)
-    update_delta_history = []
     while not domain.is_terminal_state(current_state):
       next_state = domain.transit_state(current_state, current_action)
       reward = domain.calculate_reward(next_state)
@@ -28,12 +27,10 @@ class SarsaLambda(BaseRLAlgorithm):
       for state, action, eligibility in self.trace.get_eligibilities():
         new_Q_value = self.__calculate_new_Q_value(\
             value_function, state, action, eligibility, delta)
-        update_delta = value_function.update_function(state, action, new_Q_value)
-        update_delta_history.append(update_delta)
+        value_function.update_function(state, action, new_Q_value)
         self.trace.decay(state, action)
       current_state, current_action = next_state, next_action
     self.__save_trace(value_function)
-    return update_delta_history
 
 
   def __calculate_delta(self,\

@@ -19,8 +19,7 @@ class QLearningTest(BaseUnitTest):
     value_func.update_function(3, 4, 100)
     value_func.update_function(3, 5, 101)
     policy = self.NegativePolicyImple(domain, value_func)
-    delta = self.algo.update_value_function(domain, policy, value_func)
-    self.almosteq([1.05, 4.55, -25.5], delta, tolerance=0.0001)
+    self.algo.update_value_function(domain, policy, value_func)
     expected = [(0, 1, 1.05), (1, 2, 14.55), (3, 4, 74.5)]
     for state, action, value in expected:
       self.eq(value, value_func.fetch_value_from_table(value_func.table, state, action))

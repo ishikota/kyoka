@@ -25,8 +25,7 @@ class QLambaTest(BaseUnitTest):
     value_func.update_function(10, 11, 1000)
     value_func.update_function(10, 12, 10000)
     policy = self.CheetPolicyImple(domain, value_func)
-    delta = self.algo.update_value_function(domain, policy, value_func)
-    self.almosteq([-279.5, 0.075, 1.05, 5, 7.5, 500], sorted(delta), tolerance=0.0001)
+    self.algo.update_value_function(domain, policy, value_func)
     expected = [(0, 1, 1.125), (1, 3, 23.5), (4, 6, 600), (10, 11, 720.5)]
     for state, action, value in expected:
       self.eq(value, value_func.fetch_value_from_table(value_func.table, state, action))

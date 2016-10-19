@@ -17,8 +17,7 @@ class MonteCarloTest(BaseUnitTest):
     value_func = self.TestTableValueFunctionImpl()
     value_func.setUp()
     policy = GreedyPolicy(domain, value_func)
-    delta = self.algo.update_value_function(domain, policy, value_func)
-    self.eq([59, 58, 49], delta)
+    self.algo.update_value_function(domain, policy, value_func)
     expected = [(0, 1, 59, 1), (1, 2, 58, 1), (3, 4, 49, 1), (0, 0, 0, 0)]
     update_counter = value_func.get_additinal_data("additinal_data_key_montecarlo_update_counter")
     for state, action, value, update_count in expected:
@@ -33,9 +32,8 @@ class MonteCarloTest(BaseUnitTest):
 
     self.algo.update_value_function(domain, policy, value_func)
     domain.calculate_reward.side_effect = lambda state: state
-    delta = self.algo.update_value_function(domain, policy, value_func)
+    self.algo.update_value_function(domain, policy, value_func)
 
-    self.eq([-24, -24, -21], delta)
     expected = [(0, 1, 35, 2), (1, 2, 34, 2), (3, 4, 28, 2), (0, 0, 0, 0)]
     update_counter = value_func.get_additinal_data("additinal_data_key_montecarlo_update_counter")
     for state, action, value, update_count in expected:
@@ -47,7 +45,7 @@ class MonteCarloTest(BaseUnitTest):
     value_func = self.TestTableValueFunctionImpl()
     value_func.setUp()
     policy = GreedyPolicy(domain, value_func)
-    delta = self.algo.update_value_function(domain, policy, value_func)
+    self.algo.update_value_function(domain, policy, value_func)
     update_counter = value_func.get_additinal_data("additinal_data_key_montecarlo_update_counter")
     self.eq(1, update_counter[0][1])
     self.eq(1, update_counter[1][2])

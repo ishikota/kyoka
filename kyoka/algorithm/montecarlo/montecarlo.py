@@ -11,7 +11,6 @@ class MonteCarlo(BaseRLAlgorithm):
     self.__initialize_update_counter_if_needed(value_function)
     update_counter = value_function.get_additinal_data(self.__KEY_ADDITIONAL_DATA)
     episode = self.generate_episode(domain, policy)
-    delta_history = []
     for idx, turn_info in enumerate(episode):
       state, action, _next_state, _reward = turn_info
       Q_value = value_function.calculate_value(state, action)
@@ -19,10 +18,8 @@ class MonteCarlo(BaseRLAlgorithm):
       following_reward = self.__calculate_following_state_reward(idx, episode)
       new_Q_value = self.__calculate_new_Q_value(Q_value, update_count, following_reward)
       value_function.update_table(update_counter, state, action, update_count + 1)
-      delta = value_function.update_function(state, action, new_Q_value)
-      delta_history.append(delta)
+      value_function.update_function(state, action, new_Q_value)
     value_function.set_additinal_data(self.__KEY_ADDITIONAL_DATA, update_counter)
-    return delta_history
 
   def __validate_value_function(self, value_function):
     valid_type = isinstance(value_function, BaseTableActionValueFunction) or \
