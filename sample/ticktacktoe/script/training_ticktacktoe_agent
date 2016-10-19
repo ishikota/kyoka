@@ -23,7 +23,6 @@ from kyoka.algorithm.td_learning.q_lambda import QLambda
 
 from kyoka.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
 from kyoka.finish_rule.watch_iteration_count import WatchIterationCount
-from kyoka.finish_rule.watch_update_delta import WatchUpdateDelta
 from kyoka.finish_rule.manual_interruption import ManualInterruption
 
 from sample.ticktacktoe.ticktacktoe_domain import TickTackToeDomain
@@ -63,7 +62,6 @@ if os.path.isfile(VALUE_FUNC_SAVE_PATH):
 
 policy = EpsilonGreedyPolicy(domain, value_func, eps=0.7)
 watch_iteration = WatchIterationCount(target_count=100000, log_interval=10000)
-watch_delta = WatchUpdateDelta(patience=100, minimum_required_delta=0.0001, log_interval=10000)
 manual_interruption = ManualInterruption(monitor_file_path=INTERRUPTION_MONITOR_FILE_PATH, log_interval=10000)
 finish_rules = [watch_iteration, manual_interruption]
 

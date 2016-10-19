@@ -29,11 +29,9 @@ class MazeTableValueFunctionTest(BaseUnitTest):
 
     self.eq(0, self.func.calculate_value(state, action))
 
-    delta = self.func.update_function(state, action, 1)
+    self.func.update_function(state, action, 1)
     self.eq(1, self.func.calculate_value(state, action))
-    self.eq(1, delta)
 
-    delta = self.func.update_function(state, action, 0)
+    self.func.update_function(state, action, 0)
     self.eq(0, self.func.calculate_value(state, action))
-    self.eq(-1, delta)
 
