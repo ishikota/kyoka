@@ -2,6 +2,7 @@ from kyoka.algorithm.base_rl_algorithm import BaseRLAlgorithm
 from kyoka.algorithm.td_learning.eligibility_trace.action_eligibility_trace\
     import ActionEligibilityTrace as EligibilityTrace
 from kyoka.policy.greedy_policy import GreedyPolicy
+from kyoka.algorithm.td_learning.utils import reject_state_value_function
 
 class QLambda(BaseRLAlgorithm):
 
@@ -15,6 +16,7 @@ class QLambda(BaseRLAlgorithm):
     self.trace = eligibility_trace if eligibility_trace else self.__generate_default_trace()
 
   def update_value_function(self, domain, policy, value_function):
+    reject_state_value_function(value_function)
     self.__setup_trace(value_function)
     greedy_policy = GreedyPolicy(domain, value_function)
     current_state = domain.generate_initial_state()

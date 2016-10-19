@@ -1,6 +1,7 @@
 from kyoka.algorithm.base_rl_algorithm import BaseRLAlgorithm
 from kyoka.algorithm.td_learning.eligibility_trace.action_eligibility_trace\
     import ActionEligibilityTrace as EligibilityTrace
+from kyoka.algorithm.td_learning.utils import reject_state_value_function
 
 class SarsaLambda(BaseRLAlgorithm):
 
@@ -14,6 +15,7 @@ class SarsaLambda(BaseRLAlgorithm):
     self.trace = eligibility_trace if eligibility_trace else self.__generate_default_trace()
 
   def update_value_function(self, domain, policy, value_function):
+    reject_state_value_function(value_function)
     self.__setup_trace(value_function)
     current_state = domain.generate_initial_state()
     current_action = policy.choose_action(current_state)

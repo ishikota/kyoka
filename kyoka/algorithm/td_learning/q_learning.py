@@ -1,5 +1,6 @@
 from kyoka.algorithm.base_rl_algorithm import BaseRLAlgorithm
 from kyoka.policy.greedy_policy import GreedyPolicy
+from kyoka.algorithm.td_learning.utils import reject_state_value_function
 
 class QLearning(BaseRLAlgorithm):
 
@@ -11,6 +12,7 @@ class QLearning(BaseRLAlgorithm):
     self.gamma = gamma
 
   def update_value_function(self, domain, policy, value_function):
+    reject_state_value_function(value_function)
     greedy_policy = GreedyPolicy(domain, value_function)
     state = domain.generate_initial_state()
     action = policy.choose_action(state)
