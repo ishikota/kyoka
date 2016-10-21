@@ -37,7 +37,7 @@ class BaseDeepQLearningActionValueFunction(BaseActionValueFunction):
 
   def setUp(self):
     self.Q = self.initialize_network()
-    self.sync_target_network()
+    self.reset_target_network()
     self.use_target_network_flg = False
 
   def use_target_network(self, use_target_net):
@@ -49,7 +49,7 @@ class BaseDeepQLearningActionValueFunction(BaseActionValueFunction):
     else:
       return self.predict_action_value(self.Q, state, action)
 
-  def sync_target_network(self):
+  def reset_target_network(self):
     self.Q_hat = self.deepcopy_network(self.Q)
 
   def provide_data_to_store(self):

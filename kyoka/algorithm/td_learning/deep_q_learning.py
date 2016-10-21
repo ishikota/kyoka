@@ -14,7 +14,7 @@ class DeepQLearning(BaseTDMethod):
     self.C = C
     self.minibatch_size = minibatch_size
     self.replay_start_size = replay_start_size
-    self.sync_step_counter = 0
+    self.reset_step_counter = 0
 
   def update_action_value_function(self, domain, policy, value_function):
     phi = lambda s: value_function.preprocess_state(s)
@@ -34,11 +34,11 @@ class DeepQLearning(BaseTDMethod):
       learning_minibatch= self.__gen_learning_minibatch(greedy_policy, value_function, experience_minibatch)
       value_function.train_on_minibatch(value_function.Q, learning_minibatch)
 
-      if self.sync_step_counter >= self.C:
-        value_function.sync_target_network()
-        self.sync_step_counter = 0
+      if self.reset_step_counter >= self.C:
+        value_function.reset_target_network()
+        self.reset_step_counter = 0
       else:
-        self.sync_step_counter += 1
+        self.reset_step_counter += 1
 
       state = next_state
 

@@ -69,11 +69,11 @@ class BaseDeepQLearningActionValueFunctionTest(BaseUnitTest):
     func.use_target_network(True)
     self.eq(6, func.calculate_value(2, 3))
 
-  def test_sync_target_network(self):
+  def test_reset_target_network(self):
     func = self.TestImple()
     func.setUp()
     func.Q = 2
-    func.sync_target_network()
+    func.reset_target_network()
     self.eq(3, func.Q_hat)
 
 

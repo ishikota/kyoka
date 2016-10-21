@@ -42,10 +42,10 @@ class DeepQLearningTest(BaseUnitTest):
   def test_update_value_function_reset_target_network(self):
     with patch('random.sample', side_effect=lambda lst, n: lst[-n:]):
       self.algo.update_value_function(self.domain, self.policy, self.value_func)
-    self.eq(2, self.algo.sync_step_counter)
+    self.eq(2, self.algo.reset_step_counter)
     self.eq("Q_hat_network_0", self.value_func.Q_hat.name)
     self.algo.update_value_function(self.domain, self.policy, self.value_func)
-    self.eq(0, self.algo.sync_step_counter)
+    self.eq(0, self.algo.reset_step_counter)
     self.eq("Q_hat_network_1", self.value_func.Q_hat.name)
 
   def test_initialize_replay_memory(self):
