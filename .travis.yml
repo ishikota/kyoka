@@ -1,5 +1,10 @@
 language: python
 python:
   - 2.7
+install:
+  - pip install python-coveralls
+  - pip install coverage
 script:
-  - nosetests
+  - nosetests --with-coverage --cover-package=kyoka
+after_success:
+  - coveralls
