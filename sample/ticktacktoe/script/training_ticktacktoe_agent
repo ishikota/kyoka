@@ -61,14 +61,14 @@ if os.path.isfile(VALUE_FUNC_SAVE_PATH):
   log.info("finished loading value function")
 
 policy = EpsilonGreedyPolicy(eps=0.7)
-watch_iteration = WatchIterationCount(target_count=100000, log_interval=10000)
 manual_interruption = ManualInterruption(monitor_file_path=INTERRUPTION_MONITOR_FILE_PATH, log_interval=10000)
-finish_rules = [watch_iteration, manual_interruption]
+finish_rules = [manual_interruption]
 
 log.info("started GPI iteration...")
-RL_algo.GPI(domain, policy, value_func, finish_rules)
+RL_algo.setUp(domain, policy, value_func)
+RL_algo.run_gpi(100000, finish_rules=finish_rules)
 
 log.info("saving value function into %s" % VALUE_FUNC_SAVE_PATH)
-#value_func.save(VALUE_FUNC_SAVE_PATH)
+value_func.save(VALUE_FUNC_SAVE_PATH)
 log.info("finished saving value function")
 
