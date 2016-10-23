@@ -16,8 +16,8 @@ class BaseRLAlgorithmTest(BaseUnitTest):
   def test_gen_episode(self):
     domain = self.__setup_stub_domain()
     value_func = self.__setup_stub_value_function()
-    policy = GreedyPolicy(domain, value_func)
-    episode = self.algo.generate_episode(domain, policy)
+    policy = GreedyPolicy()
+    episode = self.algo.generate_episode(domain, value_func, policy)
     self.eq(3, len(episode))
     self.eq((0, 1, 1, 1), episode[0])
     self.eq((1, 2, 3, 9), episode[1])
@@ -88,7 +88,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
       BaseRLAlgorithm.__init__(self)
       self.update_count = 0
 
-    def update_value_function(self, domain, policy, value_function):
+    def update_value_function(self, _domain, _policy, _value_function):
       self.update_count += 1
       return self.update_count
 

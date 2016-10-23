@@ -9,16 +9,16 @@ class QLearning(BaseTDMethod):
     BaseTDMethod.__init__(self)
     self.alpha = alpha
     self.gamma = gamma
+    self.greedy_policy = GreedyPolicy()
 
   def update_action_value_function(self, domain, policy, value_function):
-    greedy_policy = GreedyPolicy(domain, value_function)
     state = domain.generate_initial_state()
-    action = policy.choose_action(state)
+    action = policy.choose_action(domain, value_function, state)
     while not domain.is_terminal_state(state):
       next_state = domain.transit_state(state, action)
       reward = domain.calculate_reward(next_state)
-      next_action = self.__choose_action(domain, policy, next_state)
-      greedy_action = self.__choose_action(domain, greedy_policy, next_state)
+      next_action = self.__choose_action(domain, policy, value_function, next_state)
+      greedy_action = self.__choose_action(domain, self.greedy_policy, value_function, next_state)
       new_Q_value = self.__calculate_new_Q_value(\
           value_function, state, action, next_state, greedy_action, reward)
       value_function.update_function(state, action, new_Q_value)
@@ -31,11 +31,11 @@ class QLearning(BaseTDMethod):
     greedy_Q_value = self.__calculate_value(value_function, next_state, greedy_action)
     return Q_value + self.alpha * (reward + self.gamma * greedy_Q_value - Q_value)
 
-  def __choose_action(self, domain, policy, state):
+  def __choose_action(self, domain, policy, value_function, state):
     if domain.is_terminal_state(state):
       return self.ACTION_ON_TERMINAL_FLG
     else:
-      return policy.choose_action(state)
+      return policy.choose_action(domain, value_function, state)
 
   def __calculate_value(self, value_function, next_state, next_action):
     if self.ACTION_ON_TERMINAL_FLG == next_action:

@@ -19,7 +19,7 @@ class QLearningTest(BaseUnitTest):
     value_func.update_function(1, 3, 11)
     value_func.update_function(3, 4, 100)
     value_func.update_function(3, 5, 101)
-    policy = self.NegativePolicyImple(domain, value_func)
+    policy = self.NegativePolicyImple()
     self.algo.update_value_function(domain, policy, value_func)
     expected = [(0, 1, 1.05), (1, 2, 14.55), (3, 4, 74.5)]
     for state, action, value in expected:
@@ -58,9 +58,9 @@ class QLearningTest(BaseUnitTest):
 
   class NegativePolicyImple(BasePolicy):
 
-    def choose_action(self, state):
-      actions = self.domain.generate_possible_actions(state)
-      calc_Q_value = lambda state, action: self.value_function.calculate_value(state, action)
+    def choose_action(self, domain, value_function, state):
+      actions = domain.generate_possible_actions(state)
+      calc_Q_value = lambda state, action: value_function.calculate_value(state, action)
       Q_value_for_actions = [calc_Q_value(state, action) for action in actions]
       min_Q_value = min(Q_value_for_actions)
       Q_act_pair = zip(Q_value_for_actions, actions)

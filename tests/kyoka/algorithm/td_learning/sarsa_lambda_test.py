@@ -23,7 +23,7 @@ class SarsaLambdaTest(BaseUnitTest):
     value_func.update_function(1, 3, 11)
     value_func.update_function(3, 4, 100)
     value_func.update_function(3, 5, 101)
-    policy = self.NegativePolicyImple(domain, value_func)
+    policy = self.NegativePolicyImple()
     self.algo.update_value_function(domain, policy, value_func)
     expected = [(0, 1, 1.045), (1, 2, 14.245), (3, 4, 74.5)]
     for state, action, value in expected:
@@ -37,7 +37,7 @@ class SarsaLambdaTest(BaseUnitTest):
     value_func.update_function(1, 3, 11)
     value_func.update_function(3, 4, 100)
     value_func.update_function(3, 5, 101)
-    policy = self.NegativePolicyImple(domain, value_func)
+    policy = self.NegativePolicyImple()
     self.algo.update_value_function(domain, policy, value_func)
 
     eligibility_dump = value_func.get_additinal_data("additinal_data_key_sarsa_lambda_eligibility_trace")
@@ -52,7 +52,7 @@ class SarsaLambdaTest(BaseUnitTest):
   def test_reject_state_value_function(self):
     domain = self.__setup_stub_domain()
     value_func = self.TestTableStateValueFunctionImpl()
-    policy = self.NegativePolicyImple(domain, value_func)
+    policy = self.NegativePolicyImple()
     with self.assertRaises(TypeError) as e:
       self.algo.update_value_function(domain, policy, value_func)
     self.include("TD method requires you", e.exception.message)
@@ -92,9 +92,9 @@ class SarsaLambdaTest(BaseUnitTest):
 
   class NegativePolicyImple(BasePolicy):
 
-    def choose_action(self, state):
-      actions = self.domain.generate_possible_actions(state)
-      calc_Q_value = lambda state, action: self.value_function.calculate_value(state, action)
+    def choose_action(self, domain, value_function, state):
+      actions = domain.generate_possible_actions(state)
+      calc_Q_value = lambda state, action: value_function.calculate_value(state, action)
       Q_value_for_actions = [calc_Q_value(state, action) for action in actions]
       min_Q_value = min(Q_value_for_actions)
       Q_act_pair = zip(Q_value_for_actions, actions)
