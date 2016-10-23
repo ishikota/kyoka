@@ -15,7 +15,7 @@ class TickTackToePerformanceLogger(BaseCallback):
     iteration_count = iteration_count + 1
     if iteration_count % self.performance_test_interval == 0:
       players = self.__setup_players(value_function)
-      game_results = [TickTackToeHelper.measure_performance(domain, players)\
+      game_results = [TickTackToeHelper.measure_performance(domain, value_function, players)\
         for _ in range(self.test_game_count)]
       result_count = [game_results.count(result) for result in [-1, 0, 1]]
       result_rate  = [1.0 * count / len(game_results) for count in result_count]
@@ -34,9 +34,7 @@ class TickTackToePerformanceLogger(BaseCallback):
     domains = [TickTackToeDomain(is_first_player=is_first)\
         for is_first in [self.is_first_player, not self.is_first_player]]
     value_funcs = [value_function, TickTackToeTableValueFunction()]
-    player_builders = [GreedyPolicy, TickTackToePerfectPolicy]
-    players = [builder(domain, func) for builder, domain, func in\
-        zip(player_builders, domains, value_funcs)]
+    players = [GreedyPolicy(), TickTackToePerfectPolicy()]
     players = players if self.is_first_player else players[::-1]
     return players
 
