@@ -49,7 +49,7 @@ TEST_INTERVAL = 10
 domain = TickTackToeDomain(is_first_player=is_first_player)
 value_func = TickTackToeTableValueFunction()
 value_func.setUp()
-policy = EpsilonGreedyPolicy(domain, value_func, eps=0.7)
+policy = EpsilonGreedyPolicy(eps=0.7)
 watch_iteration = WatchIterationCount(target_count=TEST_LENGTH, log_interval=10)
 finish_rules = [watch_iteration]
 

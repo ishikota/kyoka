@@ -16,11 +16,11 @@ class SarsaLambda(BaseTDMethod):
   def update_action_value_function(self, domain, policy, value_function):
     self.__setup_trace(value_function)
     current_state = domain.generate_initial_state()
-    current_action = policy.choose_action(current_state)
+    current_action = policy.choose_action(domain, value_function, current_state)
     while not domain.is_terminal_state(current_state):
       next_state = domain.transit_state(current_state, current_action)
       reward = domain.calculate_reward(next_state)
-      next_action = self.__choose_action(domain, policy, next_state)
+      next_action = self.__choose_action(domain, policy, value_function, next_state)
       delta = self.__calculate_delta(\
           value_function, current_state, current_action, next_state, next_action, reward)
       self.trace.update(current_state, current_action)
@@ -43,11 +43,11 @@ class SarsaLambda(BaseTDMethod):
     Q_value = self.__calculate_value(value_function, state, action)
     return Q_value + self.alpha * delta * eligibility
 
-  def __choose_action(self, domain, policy, state):
+  def __choose_action(self, domain, policy, value_function, state):
     if domain.is_terminal_state(state):
       return self.ACTION_ON_TERMINAL_FLG
     else:
-      return policy.choose_action(state)
+      return policy.choose_action(domain, value_function, state)
 
   def __calculate_value(self, value_function, next_state, next_action):
     if self.ACTION_ON_TERMINAL_FLG == next_action:

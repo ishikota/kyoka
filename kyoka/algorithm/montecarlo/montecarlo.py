@@ -12,14 +12,14 @@ class MonteCarlo(BaseRLAlgorithm):
     self.__validate_value_function(value_function)
     self.__initialize_update_counter_if_needed(value_function)
     update_counter = value_function.get_additinal_data(self.__KEY_ADDITIONAL_DATA)
-    episode = self.generate_episode(domain, policy)
+    episode = self.generate_episode(domain, value_function, policy)
     for idx, turn_info in enumerate(episode):
       if isinstance(value_function, BaseActionValueFunction):
         self.__update_action_value_function(\
-                domain, policy, value_function, update_counter, episode, idx, turn_info)
+                domain, value_function, update_counter, episode, idx, turn_info)
       elif isinstance(value_function, BaseStateValueFunction):
         self.__update_state_value_function(\
-                domain, policy, value_function, update_counter, episode, idx, turn_info)
+                domain, value_function, update_counter, episode, idx, turn_info)
     value_function.set_additinal_data(self.__KEY_ADDITIONAL_DATA, update_counter)
 
   def __validate_value_function(self, value_function):
@@ -38,7 +38,7 @@ class MonteCarlo(BaseRLAlgorithm):
       value_function.set_additinal_data(self.__KEY_ADDITIONAL_DATA, update_counter)
 
   def __update_action_value_function(\
-          self, domain, policy, value_function, update_counter, episode, idx, turn_info):
+          self, domain, value_function, update_counter, episode, idx, turn_info):
       state, action, _next_state, _reward = turn_info
       Q_value = value_function.calculate_value(state, action)
       update_count = value_function.fetch_value_from_table(update_counter, state, action)
@@ -48,7 +48,7 @@ class MonteCarlo(BaseRLAlgorithm):
       value_function.update_function(state, action, new_Q_value)
 
   def __update_state_value_function(\
-          self, domain, policy, value_function, update_counter, episode, idx, turn_info):
+          self, domain, value_function, update_counter, episode, idx, turn_info):
       state, action, next_state, reward = turn_info
       Q_value = value_function.calculate_value(next_state)
       update_count = value_function.fetch_value_from_table(update_counter, next_state)

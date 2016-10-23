@@ -59,7 +59,7 @@ if os.path.isfile(VALUE_FUNC_SAVE_PATH):
   log.info("finished loading value function")
 
 TEST_LENGTH = 100
-policy = EpsilonGreedyPolicy(domain, value_func, eps=0.1)
+policy = EpsilonGreedyPolicy(eps=0.1)
 watch_iteration = WatchIterationCount(target_count=TEST_LENGTH, log_interval=10000)
 finish_rules = [watch_iteration]
 callbacks = [MazePerformanceLogger()]

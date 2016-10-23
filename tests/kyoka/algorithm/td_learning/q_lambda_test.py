@@ -25,7 +25,7 @@ class QLambaTest(BaseUnitTest):
     value_func.update_function(4, 6, 100)
     value_func.update_function(10, 11, 1000)
     value_func.update_function(10, 12, 10000)
-    policy = self.CheetPolicyImple(domain, value_func)
+    policy = self.CheetPolicyImple()
     self.algo.update_value_function(domain, policy, value_func)
     expected = [(0, 1, 1.125), (1, 3, 23.5), (4, 6, 600), (10, 11, 720.5)]
     for state, action, value in expected:
@@ -41,7 +41,7 @@ class QLambaTest(BaseUnitTest):
     value_func.update_function(4, 6, 100)
     value_func.update_function(10, 11, 1000)
     value_func.update_function(10, 12, 10000)
-    policy = self.CheetPolicyImple(domain, value_func)
+    policy = self.CheetPolicyImple()
     self.algo.update_value_function(domain, policy, value_func)
 
     eligibility_dump = value_func.get_additinal_data("additinal_data_key_q_lambda_eligibility_trace")
@@ -56,7 +56,7 @@ class QLambaTest(BaseUnitTest):
   def test_reject_state_value_function(self):
     domain = self.__setup_stub_domain()
     value_func = self.TestTableStateValueFunctionImpl()
-    policy = self.CheetPolicyImple(domain, value_func)
+    policy = self.CheetPolicyImple()
     with self.assertRaises(TypeError) as e:
       self.algo.update_value_function(domain, policy, value_func)
     self.include("TD method requires you", e.exception.message)
@@ -97,7 +97,7 @@ class QLambaTest(BaseUnitTest):
 
   class CheetPolicyImple(BasePolicy):
 
-    def choose_action(self, state):
+    def choose_action(self, domain, value_function, state):
       state_action_map = {
           0: 1,
           1: 3,

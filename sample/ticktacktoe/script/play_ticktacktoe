@@ -55,11 +55,10 @@ domains = [TickTackToeDomain(is_first_player=is_first) for is_first in [True, Fa
 player_builder = defaultdict(lambda : GreedyPolicy)
 player_builder["human"] = TickTackToeManualPolicy
 player_builder["minimax"] = TickTackToePerfectPolicy
-builders = [player_builder[algo] for algo in algos]
-players = [builder(domain, func) for builder, domain, func in zip(builders, domains, value_funcs)]
+players = [player_builder[algo]() for algo in algos]
 
 next_is_first_player = lambda state: bin(state[0]|state[1]).count("1") % 2 == 0
-next_player = lambda state: players[0] if next_is_first_player(state) else players[1]
+next_player_idx = lambda state: 0 if next_is_first_player(state) else 1
 show_board = lambda state: log.info("\n" + TickTackToeHelper.visualize_board(state))
 
 log.info("start the game (%s vs %s)" % tuple(algos))
@@ -67,7 +66,9 @@ domain = domains[0]
 state = domain.generate_initial_state()
 show_board(state)
 while not domain.is_terminal_state(state):
-  action = next_player(state).choose_action(state)
+  idx = next_player_idx(state)
+  domain, player, value_func = domains[idx], players[idx], value_funcs[idx]
+  action = player.choose_action(domain, value_func, state)
   state = domain.transit_state(state, action)
   show_board(state)
 

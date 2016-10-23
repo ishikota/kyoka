@@ -23,12 +23,12 @@ class TickTackToeHelper:
     return board[::-1]
 
   @classmethod
-  def measure_performance(self, domain, players):
+  def measure_performance(self, domain, value_function, players):
     next_is_first_player = lambda state: bin(state[0]|state[1]).count("1") % 2 == 0
     next_player = lambda state: players[0] if next_is_first_player(state) else players[1]
     state = domain.generate_initial_state()
     while not domain.is_terminal_state(state):
-      action = next_player(state).choose_action(state)
+      action = next_player(state).choose_action(domain, value_function, state)
       state = domain.transit_state(state, action)
     return domain.calculate_reward(state)
 

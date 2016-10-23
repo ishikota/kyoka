@@ -21,11 +21,11 @@ class BaseRLAlgorithm(object):
           [callback.after_gpi_finish(domain, value_function) for callback in self.callbacks]
           return finish_msg
 
-  def generate_episode(self, domain, policy):
+  def generate_episode(self, domain, value_function, policy):
     state = domain.generate_initial_state()
     episode = []
     while not domain.is_terminal_state(state):
-      action = policy.choose_action(state)
+      action = policy.choose_action(domain, value_function, state)
       next_state = domain.transit_state(state, action)
       reward = domain.calculate_reward(next_state)
       episode.append((state, action, next_state, reward))

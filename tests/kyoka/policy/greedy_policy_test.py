@@ -8,16 +8,16 @@ class GreedyPolicyTest(BaseUnitTest):
   def test_choose_action_when_best_action_is_single(self):
     domain = self.__setup_domain_stub([1,2,3])
     value_func = self.__setup_value_function_stub([100, 50, 150])
-    policy = GreedyPolicy(domain, value_func)
-    greedy_action = policy.choose_action(state="dummy")
+    policy = GreedyPolicy()
+    greedy_action = policy.choose_action(domain, value_func, state="dummy")
     self.eq(3, greedy_action)
 
   def test_choose_action_when_best_action_is_multiple(self):
     domain = self.__setup_domain_stub([1,2,3])
     value_func = self.__setup_value_function_stub([100, 50, 100])
     random = self.__setup_random()
-    policy = GreedyPolicy(domain, value_func, rand=random)
-    greedy_action = policy.choose_action(state="dummy")
+    policy = GreedyPolicy(rand=random)
+    greedy_action = policy.choose_action(domain, value_func, state="dummy")
     self.eq(3, greedy_action)
 
   def __setup_domain_stub(self, possible_actions):

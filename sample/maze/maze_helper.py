@@ -8,11 +8,11 @@ class MazeHelper:
 
   @classmethod
   def measure_performance(self, domain, value_function, step_limit=10000):
-    policy = GreedyPolicy(domain, value_function)
+    policy = GreedyPolicy()
     state = domain.generate_initial_state()
     step_counter = 0
     while not domain.is_terminal_state(state):
-      action = policy.choose_action(state)
+      action = policy.choose_action(domain, value_function, state)
       state = domain.transit_state(state, action)
       step_counter += 1
       if step_counter >= step_limit:
