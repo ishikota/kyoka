@@ -3,18 +3,14 @@ from kyoka.value_function.base_state_value_function import BaseStateValueFunctio
 
 class BasePolicy(object):
 
-  def __init__(self, domain, value_function):
-    self.domain = domain
-    self.value_function = value_function
-
-  def choose_action(self, state, action=None):
+  def choose_action(self, domain, value_function, state, action=None):
     err_msg = self.__build_err_msg("choose_action")
     raise NotImplementedError(err_msg)
 
-  def pack_arguments_for_value_function(self, state, action):
-    if isinstance(self.value_function, BaseStateValueFunction):
+  def pack_arguments_for_value_function(self, value_function, state, action):
+    if isinstance(value_function, BaseStateValueFunction):
       return [state]
-    elif isinstance(self.value_function, BaseActionValueFunction):
+    elif isinstance(value_function, BaseActionValueFunction):
       return [state, action]
     else:
       raise ValueError("Invalid value function is set")

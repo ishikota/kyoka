@@ -3,22 +3,21 @@ from kyoka.policy.base_policy import BasePolicy
 
 class EpsilonGreedyPolicy(BasePolicy):
 
-  def __init__(self, domain, value_function, eps=0.05, rand=None):
-    super(EpsilonGreedyPolicy, self).__init__(domain, value_function)
+  def __init__(self, eps=0.05, rand=None):
     self.eps = eps
     self.rand = rand if rand else random
 
-  def choose_action(self, state):
-    actions = self.domain.generate_possible_actions(state)
-    best_action = self.__choose_best_action(state)
+  def choose_action(self, domain, value_function, state):
+    actions = domain.generate_possible_actions(state)
+    best_action = self.__choose_best_action(domain, value_function, state)
     probs = self.__calc_select_probability(best_action, actions)
     selected_action_idx = self.__roulette(probs)
     return actions[selected_action_idx]
 
-  def __choose_best_action(self, state):
-    actions = self.domain.generate_possible_actions(state)
-    pack = lambda state, action: self.pack_arguments_for_value_function(state, action)
-    calc_Q_value = lambda packed_arg: self.value_function.calculate_value(*packed_arg)
+  def __choose_best_action(self, domain, value_func, state):
+    actions = domain.generate_possible_actions(state)
+    pack = lambda state, action: self.pack_arguments_for_value_function(value_func, state, action)
+    calc_Q_value = lambda packed_arg: value_func.calculate_value(*packed_arg)
     Q_value_for_actions = [calc_Q_value(pack(state, action)) for action in actions]
     max_Q_value = max(Q_value_for_actions)
     Q_act_pair = zip(Q_value_for_actions, actions)
