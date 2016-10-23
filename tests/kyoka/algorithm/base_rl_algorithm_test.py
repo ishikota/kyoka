@@ -10,13 +10,23 @@ class BaseRLAlgorithmTest(BaseUnitTest):
   def setUp(self):
     self.algo = BaseRLAlgorithm()
 
+  def test_setUp(self):
+    algo = BaseRLAlgorithm()
+    mock_func = Mock()
+    algo.setUp(domain=0, policy=1, value_function=mock_func)
+    self.eq(0, algo.domain)
+    self.eq(1, algo.policy)
+    self.eq(mock_func, algo.value_function)
+    mock_func.setUp.assert_called()
+
   def test_error_msg_when_not_implement_abstract_method(self):
     self.__check_err_msg(lambda : self.algo.update_value_function("dummy", "dummy", "dummy"), "update_value_function")
 
   def test_gen_episode(self):
     domain = self.__setup_stub_domain()
-    value_func = self.__setup_stub_value_function()
     policy = GreedyPolicy()
+    value_func = self.__setup_stub_value_function()
+    self.algo.setUp(domain, policy, value_func)
     episode = self.algo.generate_episode(domain, value_func, policy)
     self.eq(3, len(episode))
     self.eq((0, 1, 1, 1), episode[0])
@@ -25,34 +35,43 @@ class BaseRLAlgorithmTest(BaseUnitTest):
 
   def test_GPI(self):
     algo = self.TestImplementation()
+    domain = self.__setup_stub_domain()
+    policy = GreedyPolicy()
+    value_func = self.__setup_stub_value_function()
+    algo.setUp(domain, policy, value_func)
     finish_rule = self.__setup_stub_finish_rule()
-    finish_msg = algo.GPI("dummy", "dummy", "dummy", finish_rule)
+    finish_msg = algo.run_gpi(nb_iteration="dummy", finish_rules=finish_rule)
     expected = 2
     self.eq(expected, finish_msg)
 
   def test_GPI_with_multiple_finish_rules(self):
     algo = self.TestImplementation()
+    domain = self.__setup_stub_domain()
+    policy = GreedyPolicy()
+    value_func = self.__setup_stub_value_function()
+    algo.setUp(domain, policy, value_func)
     finish_rule1 = self.__setup_stub_finish_rule(satisfy_condition=[False, True])
     finish_rule2 = self.__setup_stub_finish_rule(satisfy_condition=[True, False])
     finish_rules = [finish_rule1, finish_rule2]
-    finish_msg = algo.GPI("dummy", "dummy", "dummy", finish_rules)
+    finish_msg = algo.run_gpi(nb_iteration="dummy", finish_rules=finish_rules)
     expected = 1
     self.eq(expected, finish_msg)
 
   def test_set_callback(self):
     algo = self.TestImplementation()
+    value_func = Mock(name="value_func")
+    algo.setUp("domain", "dummy", value_func)
     callback = Mock()
-    algo.set_gpi_callback(callback)
     finish_rule = self.__setup_stub_finish_rule()
-    finish_msg = algo.GPI("domain", "dummy", "value_function", finish_rule)
+    finish_msg = algo.run_gpi(nb_iteration="dummy", finish_rules=finish_rule, callbacks=callback)
     self.eq(1, callback.before_gpi_start.call_count)
     self.eq(2, callback.before_update.call_count)
     self.eq(2, callback.after_update.call_count)
     self.eq(1, callback.after_gpi_finish.call_count)
-    callback.before_gpi_start.assert_called_with("domain", "value_function")
-    callback.before_update.assert_called_with(1, "domain", "value_function")
-    callback.after_update.assert_called_with(1, "domain", "value_function")
-    callback.after_gpi_finish.assert_called_with("domain", "value_function")
+    callback.before_gpi_start.assert_called_with("domain", value_func)
+    callback.before_update.assert_called_with(1, "domain", value_func)
+    callback.after_update.assert_called_with(1, "domain", value_func)
+    callback.after_gpi_finish.assert_called_with("domain", value_func)
 
   def __setup_stub_domain(self):
     mock_domain = Mock()
