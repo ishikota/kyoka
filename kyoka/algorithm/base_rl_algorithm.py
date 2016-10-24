@@ -1,24 +1,46 @@
+from kyoka.finish_rule.watch_iteration_count import WatchIterationCount
+
 class BaseRLAlgorithm(object):
 
-  def __init__(self):
-    self.callbacks = []
+  def setUp(self, domain, policy, value_function):
+    self.domain = domain
+    self.value_function = value_function
+    self.value_function.setUp()
+    self.policy = policy
+
+  def save(self, save_dir_path):
+    self.value_function.save(save_dir_path)
+    self.save_algorithm_state(save_dir_path)
+
+  def load(self, load_dir_path):
+    self.value_function.load(load_dir_path)
+    self.load_algorithm_state(load_dir_path)
+
+  def save_algorithm_state(self, save_dir_path):
+    pass
+
+  def load_algorithm_state(self, load_dir_path):
+    pass
 
   def update_value_function(self, domain, policy, value_function):
     err_msg = self.__build_err_msg("update_value_function")
     raise NotImplementedError(err_msg)
 
-  def GPI(self, domain, policy, value_function, finish_rules, debug=False):
+  def run_gpi(self, nb_iteration, finish_rules=[], callbacks=[]):
+    callbacks = self.__wrap_item_if_single(callbacks)
+    finish_rules = self.__wrap_item_if_single(finish_rules)
+    finish_rules.append(WatchIterationCount(nb_iteration))
     iteration_counter = 0
-    [callback.before_gpi_start(domain, value_function) for callback in self.callbacks]
+    [callback.before_gpi_start(self.domain, self.value_function) for callback in callbacks]
     while True:
-      [callback.before_update(iteration_counter, domain, value_function) for callback in self.callbacks]
-      self.update_value_function(domain, policy, value_function)
-      [callback.after_update(iteration_counter, domain, value_function) for callback in self.callbacks]
+      [callback.before_update(iteration_counter, self.domain, self.value_function) for callback in callbacks]
+      self.update_value_function(self.domain, self.policy, self.value_function)
+      [callback.after_update(iteration_counter, self.domain, self.value_function) for callback in callbacks]
       iteration_counter += 1
-      for finish_rule in self.__wrap_rule_if_single(finish_rules):
+      for finish_rule in finish_rules:
         if finish_rule.satisfy_condition(iteration_counter):
           finish_msg = finish_rule.generate_finish_message(iteration_counter)
-          [callback.after_gpi_finish(domain, value_function) for callback in self.callbacks]
+          [callback.after_gpi_finish(self.domain, self.value_function) for callback in callbacks]
           return finish_msg
 
   def generate_episode(self, domain, value_function, policy):
@@ -32,12 +54,9 @@ class BaseRLAlgorithm(object):
       state = next_state
     return episode
 
-  def set_gpi_callback(self, callback):
-    self.callbacks.append(callback)
 
-
-  def __wrap_rule_if_single(self, finish_rule):
-    return [finish_rule] if not isinstance(finish_rule, list) else finish_rule
+  def __wrap_item_if_single(self, item):
+    return [item] if not isinstance(item, list) else item
 
   def __build_err_msg(self, msg):
     return "Accessed [ {0} ] method of BaseRLAlgorithm which should be overridden".format(msg)

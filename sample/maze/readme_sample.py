@@ -2,7 +2,6 @@ from kyoka.domain.base_domain import BaseDomain
 from kyoka.value_function.base_action_value_function import BaseActionValueFunction
 from kyoka.policy.greedy_policy import GreedyPolicy
 from kyoka.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
-from kyoka.finish_rule.watch_iteration_count import WatchIterationCount
 
 from kyoka.algorithm.td_learning.sarsa import Sarsa
 from kyoka.algorithm.td_learning.q_learning import QLearning
@@ -106,8 +105,7 @@ rl_algo = QLearning(alpha=0.1, gamma=0.7)
 #rl_algo = QLambda(alpha=0.1, gamma=0.7)
 domain = MazeDomain()
 value_function = MazeActionValueFunction()
-value_function.setUp()
-policy = EpsilonGreedyPolicy(domain, value_function, eps=0.1)
-finish_rule = WatchIterationCount(target_count=50)  # finish learning iteration after 50-th GPI iteration
-rl_algo.GPI(domain, policy, value_function, finish_rule)
+policy = EpsilonGreedyPolicy(eps=0.1)
+rl_algo.setUp(domain, policy, value_function)
+rl_algo.run_gpi(nb_iteration=50)
 print MazeHelper.visualize_policy(domain, value_function)

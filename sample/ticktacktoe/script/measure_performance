@@ -50,8 +50,6 @@ domain = TickTackToeDomain(is_first_player=is_first_player)
 value_func = TickTackToeTableValueFunction()
 value_func.setUp()
 policy = EpsilonGreedyPolicy(eps=0.7)
-watch_iteration = WatchIterationCount(target_count=TEST_LENGTH, log_interval=10)
-finish_rules = [watch_iteration]
 
 RL_algo = {
     "montecarlo": lambda : MonteCarlo(),
@@ -65,10 +63,10 @@ callback = TickTackToePerformanceLogger()
 callback.set_performance_test_interval(TEST_INTERVAL)
 callback.set_is_first_player(is_first_player)
 callback.set_test_game_count(TEST_GAME_COUNT)
-RL_algo.set_gpi_callback(callback)
 
 log.info("start to measure performnce for %d episode" % TEST_LENGTH)
-RL_algo.GPI(domain, policy, value_func, finish_rules)
+RL_algo.setUp(domain, policy, value_func)
+RL_algo.run_gpi(TEST_LENGTH, callbacks=callback)
 log.info("finished to measure performnce for %d episode" % TEST_LENGTH)
 log.info("performance log = %s" % callback.game_log)
 

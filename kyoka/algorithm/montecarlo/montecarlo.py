@@ -4,23 +4,36 @@ from kyoka.value_function.base_state_value_function import BaseStateValueFunctio
 from kyoka.value_function.base_table_action_value_function import BaseTableActionValueFunction
 from kyoka.value_function.base_table_state_value_function import BaseTableStateValueFunction
 
+import os
+import pickle
+
 class MonteCarlo(BaseRLAlgorithm):
 
-  __KEY_ADDITIONAL_DATA = "additinal_data_key_montecarlo_update_counter"
+  SAVE_FILE_NAME = "montecarlo_algorithm_state.pickle"
+
+  def setUp(self, domain, policy, value_function):
+    super(MonteCarlo, self).setUp(domain, policy, value_function)
+    self.__validate_value_function(value_function)
+    self.update_counter = value_function.generate_initial_table()
 
   def update_value_function(self, domain, policy, value_function):
-    self.__validate_value_function(value_function)
-    self.__initialize_update_counter_if_needed(value_function)
-    update_counter = value_function.get_additinal_data(self.__KEY_ADDITIONAL_DATA)
     episode = self.generate_episode(domain, value_function, policy)
     for idx, turn_info in enumerate(episode):
       if isinstance(value_function, BaseActionValueFunction):
         self.__update_action_value_function(\
-                domain, value_function, update_counter, episode, idx, turn_info)
+                domain, value_function, self.update_counter, episode, idx, turn_info)
       elif isinstance(value_function, BaseStateValueFunction):
         self.__update_state_value_function(\
-                domain, value_function, update_counter, episode, idx, turn_info)
-    value_function.set_additinal_data(self.__KEY_ADDITIONAL_DATA, update_counter)
+                domain, value_function, self.update_counter, episode, idx, turn_info)
+
+  def save_algorithm_state(self, save_dir_path):
+    self.__pickle_data(self.__gen_save_file_path(save_dir_path), self.update_counter)
+
+  def load_algorithm_state(self, load_dir_path):
+    if not os.path.exists(self.__gen_save_file_path(load_dir_path)):
+      raise IOError('The saved data of "MonteCarlo" algorithm is not found in [ %s ]'% load_dir_path)
+    self.update_counter = self.__unpickle_data(self.__gen_save_file_path(load_dir_path))
+
 
   def __validate_value_function(self, value_function):
     valid_type = isinstance(value_function, BaseTableActionValueFunction) or \
@@ -31,11 +44,6 @@ class MonteCarlo(BaseRLAlgorithm):
   def __build_type_error_message(self):
     return 'MonteCarlo method requires you to use "table" type function.\
         (child class of [BaseTableStateValueFunction or BaseTableActionValueFunction])'
-
-  def __initialize_update_counter_if_needed(self, value_function):
-    if value_function.get_additinal_data(self.__KEY_ADDITIONAL_DATA) is None:
-      update_counter = value_function.generate_initial_table()
-      value_function.set_additinal_data(self.__KEY_ADDITIONAL_DATA, update_counter)
 
   def __update_action_value_function(\
           self, domain, value_function, update_counter, episode, idx, turn_info):
@@ -67,4 +75,15 @@ class MonteCarlo(BaseRLAlgorithm):
 
   def __calc_average_in_incremental_way(self, k, r, Q):
     return Q + 1.0 / (k + 1) * (r - Q)
+
+  def __gen_save_file_path(self, base_dir_path):
+    return os.path.join(base_dir_path, self.SAVE_FILE_NAME)
+
+  def __pickle_data(self, file_path, data):
+    with open(file_path, "wb") as f:
+      pickle.dump(data, f)
+
+  def __unpickle_data(self, file_path):
+    with open(file_path, "rb") as f:
+      return pickle.load(f)
 

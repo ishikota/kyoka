@@ -53,15 +53,9 @@ domain = MazeDomain()
 domain.read_maze(MAZE_FILE_PATH)
 value_func = MazeTableValueFunction(domain.get_maze_shape())
 value_func.setUp()
-if os.path.isfile(VALUE_FUNC_SAVE_PATH):
-  log.info("loading value function from %s" % VALUE_FUNC_SAVE_PATH)
-  value_func.load(VALUE_FUNC_SAVE_PATH)
-  log.info("finished loading value function")
 
 TEST_LENGTH = 100
 policy = EpsilonGreedyPolicy(eps=0.1)
-watch_iteration = WatchIterationCount(target_count=TEST_LENGTH, log_interval=10000)
-finish_rules = [watch_iteration]
 callbacks = [MazePerformanceLogger()]
 if maze_type in ["blocking", "shortcut"]:
   transfomer = MazeTransformer()
@@ -76,10 +70,10 @@ RL_algo = {
     "sarsalambda": lambda :SarsaLambda(),
     "qlambda": lambda :QLambda()
 }[algo]()
-[RL_algo.set_gpi_callback(callback) for callback in callbacks]
 
 log.info("start to measure performnce for %d episode" % TEST_LENGTH)
-RL_algo.GPI(domain, policy, value_func, finish_rules)
+RL_algo.setUp(domain, policy, value_func)
+RL_algo.run_gpi(TEST_LENGTH, callbacks=callbacks)
 log.info("finished to measure performnce for %d episode" % TEST_LENGTH)
 log.info("performance_log = %s" % callbacks[0].step_log)
 log.info("Policy which agent learned is like this.\n%s" % MazeHelper.visualize_policy(domain, value_func))

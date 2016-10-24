@@ -39,8 +39,8 @@ if algo not in ["montecarlo", "sarsa", "qlearning", "sarsalambda", "qlambda"]:
   raise ValueError("unknown algorithm [%s] passed." % algo)
 
 which_player = "firstplayer" if is_first_player else "secondplayer"
-VALUE_FUNC_FILE_PATH = "%s_%s_ticktacktoe_value_function_data.pickle" % (algo, which_player)
-VALUE_FUNC_SAVE_PATH = os.path.join(os.path.dirname(__file__), VALUE_FUNC_FILE_PATH)
+VALUE_FUNC_DIR_PATH = "%s_%s_ticktacktoe_value_function_data" % (algo, which_player)
+VALUE_FUNC_SAVE_PATH = os.path.join(os.path.dirname(__file__), VALUE_FUNC_DIR_PATH)
 INTERRUPTION_MONITOR_FILE_PATH = os.path.join(os.path.dirname(__file__), "interruption_order.txt")
 
 RL_algo = {
@@ -53,22 +53,24 @@ RL_algo = {
 
 domain = TickTackToeDomain(is_first_player=is_first_player)
 value_func = TickTackToeTableValueFunction()
-value_func.setUp()
 
-if os.path.isfile(VALUE_FUNC_SAVE_PATH):
-  log.info("loading value function from %s" % VALUE_FUNC_SAVE_PATH)
-  value_func.load(VALUE_FUNC_SAVE_PATH)
-  log.info("finished loading value function")
 
 policy = EpsilonGreedyPolicy(eps=0.7)
-watch_iteration = WatchIterationCount(target_count=100000, log_interval=10000)
 manual_interruption = ManualInterruption(monitor_file_path=INTERRUPTION_MONITOR_FILE_PATH, log_interval=10000)
-finish_rules = [watch_iteration, manual_interruption]
+finish_rules = [manual_interruption]
+
+RL_algo.setUp(domain, policy, value_func)
+if os.path.exists(VALUE_FUNC_SAVE_PATH):
+  log.info("loading value function from %s" % VALUE_FUNC_SAVE_PATH)
+  RL_algo.load(VALUE_FUNC_SAVE_PATH)
+  log.info("finished loading value function")
 
 log.info("started GPI iteration...")
-RL_algo.GPI(domain, policy, value_func, finish_rules)
+RL_algo.run_gpi(10, finish_rules=finish_rules)
 
 log.info("saving value function into %s" % VALUE_FUNC_SAVE_PATH)
-#value_func.save(VALUE_FUNC_SAVE_PATH)
+if not os.path.exists(os.path.join(os.path.dirname(__file__), VALUE_FUNC_DIR_PATH)):
+  os.mkdir(os.path.join(os.path.dirname(__file__), VALUE_FUNC_DIR_PATH))
+RL_algo.save(VALUE_FUNC_SAVE_PATH)
 log.info("finished saving value function")
 

@@ -2,19 +2,35 @@ from kyoka.algorithm.td_learning.base_td_method import BaseTDMethod
 from kyoka.algorithm.td_learning.eligibility_trace.action_eligibility_trace\
     import ActionEligibilityTrace as EligibilityTrace
 
+import os
+import pickle
+
 class SarsaLambda(BaseTDMethod):
 
-  __KEY_ADDITIONAL_DATA = "additinal_data_key_sarsa_lambda_eligibility_trace"
+  SAVE_FILE_NAME = "sarsalambda_algorithm_state.pickle"
   ACTION_ON_TERMINAL_FLG = "action_on_terminal"
 
   def __init__(self, alpha=0.1, gamma=0.9, eligibility_trace=None):
     BaseTDMethod.__init__(self)
     self.alpha = alpha
     self.gamma = gamma
-    self.trace = eligibility_trace if eligibility_trace else self.__generate_default_trace()
+    self.trace = eligibility_trace
+
+  def setUp(self, domain, policy, value_function):
+    super(SarsaLambda, self).setUp(domain, policy, value_function)
+    if self.trace is None:
+      self.trace = EligibilityTrace(EligibilityTrace.TYPE_ACCUMULATING)
+
+  def save_algorithm_state(self, save_dir_path):
+    self.__pickle_data(self.__gen_save_file_path(save_dir_path), self.trace.dump())
+
+  def load_algorithm_state(self, load_dir_path):
+    new_trace = EligibilityTrace(EligibilityTrace.TYPE_ACCUMULATING)
+    trace_serial = self.__unpickle_data(self.__gen_save_file_path(load_dir_path))
+    new_trace.load(trace_serial)
+    self.trace = new_trace
 
   def update_action_value_function(self, domain, policy, value_function):
-    self.__setup_trace(value_function)
     current_state = domain.generate_initial_state()
     current_action = policy.choose_action(domain, value_function, current_state)
     while not domain.is_terminal_state(current_state):
@@ -30,7 +46,6 @@ class SarsaLambda(BaseTDMethod):
         value_function.update_function(state, action, new_Q_value)
         self.trace.decay(state, action)
       current_state, current_action = next_state, next_action
-    self.__save_trace(value_function)
 
 
   def __calculate_delta(self,\
@@ -55,14 +70,14 @@ class SarsaLambda(BaseTDMethod):
     else:
       return value_function.calculate_value(next_state, next_action)
 
-  def __generate_default_trace(self):
-    return EligibilityTrace(EligibilityTrace.TYPE_ACCUMULATING)
+  def __gen_save_file_path(self, base_dir_path):
+    return os.path.join(base_dir_path, self.SAVE_FILE_NAME)
 
-  def __setup_trace(self, value_function):
-    trace_dump = value_function.get_additinal_data(self.__KEY_ADDITIONAL_DATA)
-    if trace_dump:
-      self.trace.load(trace_dump)
+  def __pickle_data(self, file_path, data):
+    with open(file_path, "wb") as f:
+      pickle.dump(data, f)
 
-  def __save_trace(self, value_function):
-    value_function.set_additinal_data(self.__KEY_ADDITIONAL_DATA, self.trace.dump())
+  def __unpickle_data(self, file_path):
+    with open(file_path, "rb") as f:
+      return pickle.load(f)
 

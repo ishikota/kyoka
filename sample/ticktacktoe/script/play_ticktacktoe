@@ -37,8 +37,8 @@ for algo in algos:
     raise ValueError("unknown algorithm [%s] passed." % algo)
 
 
-VALUE_FUNC_FILE_PATH = "%s_%s_ticktacktoe_value_function_data.pickle"
-BASE_VALUE_FUNC_SAVE_PATH = os.path.join(os.path.dirname(__file__), VALUE_FUNC_FILE_PATH)
+VALUE_FUNC_DIR_PATH = "%s_%s_ticktacktoe_value_function_data"
+BASE_VALUE_FUNC_SAVE_PATH = os.path.join(os.path.dirname(__file__), VALUE_FUNC_DIR_PATH)
 
 value_funcs = [TickTackToeTableValueFunction() for _ in range(2)]
 [func.setUp() for func in value_funcs]

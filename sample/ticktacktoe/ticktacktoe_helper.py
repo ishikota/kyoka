@@ -1,3 +1,5 @@
+from sample.ticktacktoe.ticktacktoe_domain import TickTackToeDomain
+
 class TickTackToeHelper:
 
   @classmethod
@@ -24,11 +26,14 @@ class TickTackToeHelper:
 
   @classmethod
   def measure_performance(self, domain, value_function, players):
+    domains = [TickTackToeDomain(is_first_player=flg) for flg in [True, False]]
     next_is_first_player = lambda state: bin(state[0]|state[1]).count("1") % 2 == 0
-    next_player = lambda state: players[0] if next_is_first_player(state) else players[1]
+    next_player_idx = lambda state: 0 if next_is_first_player(state) else 1
     state = domain.generate_initial_state()
     while not domain.is_terminal_state(state):
-      action = next_player(state).choose_action(domain, value_function, state)
+      idx = next_player_idx(state)
+      player_domain, player = domains[idx], players[idx]
+      action = player.choose_action(player_domain, value_function, state)
       state = domain.transit_state(state, action)
     return domain.calculate_reward(state)
 
