@@ -39,9 +39,8 @@ class BaseRLAlgorithm(object):
       iteration_counter += 1
       for finish_rule in finish_rules:
         if finish_rule.satisfy_condition(iteration_counter):
-          finish_msg = finish_rule.generate_finish_message(iteration_counter)
           [callback.after_gpi_finish(self.domain, self.value_function) for callback in callbacks]
-          return finish_msg
+          return
 
   def generate_episode(self, domain, value_function, policy):
     state = domain.generate_initial_state()
