@@ -6,6 +6,9 @@ class WatchIterationCount(BaseFinishRule):
     BaseFinishRule.__init__(self, log_interval)
     self.target_count = target_count
 
+  def define_log_tag(self):
+    return "Progress"
+
   def check_condition(self, iteration_count):
     return iteration_count >= self.target_count
 

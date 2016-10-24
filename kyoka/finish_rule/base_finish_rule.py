@@ -1,4 +1,3 @@
-import logging
 
 class BaseFinishRule(object):
 
@@ -10,6 +9,20 @@ class BaseFinishRule(object):
     is_satisfied = self.check_condition(iteration_count)
     self.__notify_message_if_needed(is_satisfied, iteration_count)
     return is_satisfied
+
+  def log_progress(self, iteration_count):
+    self.__log(self.generate_progress_message(iteration_count))
+
+  def log_finish_message(self, iteration_count):
+    self.__log(self.generate_finish_message(iteration_count))
+
+  def define_log_tag(self):
+    err_msg = self.__build_err_msg("define_log_tag")
+    raise NotImplementedError(err_msg)
+
+  def check_condition(self, iteration_count):
+    err_msg = self.__build_err_msg("check_condition")
+    raise NotImplementedError(err_msg)
 
   def check_condition(self, iteration_count):
     err_msg = self.__build_err_msg("check_condition")
@@ -26,9 +39,9 @@ class BaseFinishRule(object):
   def __notify_message_if_needed(self, is_satisfied_condition, iteration_count):
     self.log_interval_counter += 1
     if is_satisfied_condition:
-      self.__log(self.generate_finish_message(iteration_count))
+      self.log_finish_message(iteration_count)
     elif self.log_interval_counter >= self.log_interval:
-      self.__log(self.generate_progress_message(iteration_count))
+      self.log_progress(iteration_count)
       self.log_interval_counter = 0
 
   def __build_err_msg(self, msg):
@@ -37,5 +50,5 @@ class BaseFinishRule(object):
 
   def __log(self, message):
     if message and len(message) != 0:
-      logging.info(message)
+      print "[%s] %s" % (self.define_log_tag(), message)
 

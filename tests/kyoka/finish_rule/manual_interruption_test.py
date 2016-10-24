@@ -16,6 +16,9 @@ class ManualInterruptionTest(BaseUnitTest):
     if os.path.isfile(file_path):
       os.remove(file_path)
 
+  def test_define_log_tag(self):
+    self.eq("ManualInterruption", self.rule.define_log_tag())
+
   def test_satisfy_condition(self):
     file_path = self.__generate_tmp_file_path()
     self.false(self.rule.satisfy_condition(1))

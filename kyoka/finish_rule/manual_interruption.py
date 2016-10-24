@@ -9,6 +9,9 @@ class ManualInterruption(BaseFinishRule):
     BaseFinishRule.__init__(self, log_interval)
     self.monitor_file_path = monitor_file_path
 
+  def define_log_tag(self):
+    return "ManualInterruption"
+
   def check_condition(self, _iteration_count):
     return self.__order_found_in_monitoring_file(self.monitor_file_path, self.TARGET_WARD)
 

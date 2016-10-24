@@ -8,6 +8,9 @@ class BaseFinishRuleTest(BaseUnitTest):
   def setUp(self):
     self.rule = WatchIterationCount(target_count=100)
 
+  def test_define_log_tag(self):
+    self.eq("Progress", self.rule.define_log_tag())
+
   def test_satisfy_condition(self):
     self.false(self.rule.satisfy_condition(99))
     self.true(self.rule.satisfy_condition(100))
