@@ -66,10 +66,15 @@ class ActionEligibilityTraceTest(BaseUnitTest):
     trace1.update(0, 0)
     trace1.update(100, 200)
     dump = trace1.dump()
-    trace2 = ActionEligibilityTrace("accumulating_trace", gamma=0.5, lambda_=0.1)
+
+    trace2 = ActionEligibilityTrace("replacing_trace", discard_threshold=1, gamma=1.0, lambda_=0.5)
     trace2.load(dump)
     expected = { 0 : { 0 : 2 }, 100: { 200: 1 } }
     eligibilities = trace2.get_eligibilities()
+    self.eq(trace1.update_type, trace2.update_type)
+    self.eq(trace1.discard_threshold, trace2.discard_threshold)
+    self.eq(trace1.gamma, trace2.gamma)
+    self.eq(trace1.lambda_, trace2.lambda_)
     self.eq(2, len(eligibilities))
     for state, action, eligibility in eligibilities:
       self.eq(expected[state][action], eligibility)
