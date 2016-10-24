@@ -68,9 +68,9 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     value_func = self.__setup_stub_value_function()
     algo.setUp(domain, policy, value_func)
     finish_rule = self.TestFinishRule()
-    algo.run_gpi(nb_iteration="dummy", finish_rules=finish_rule)
+    algo.run_gpi(nb_iteration=2, finish_rules=finish_rule)
     expected = "[test_tag] finish:2\n"
-    self.eq(expected, self.capture.getvalue())
+    self.true(self.capture.getvalue().endswith(expected))
 
   def test_GPI_with_multiple_finish_rules(self):
     algo = self.TestImplementation()
@@ -81,10 +81,10 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     finish_rule1 = self.TestFinishRule([False, True])
     finish_rule2 = self.TestFinishRule([True, False])
     finish_rules = [finish_rule1, finish_rule2]
-    finish_msg = algo.run_gpi(nb_iteration="dummy", finish_rules=finish_rules)
+    finish_msg = algo.run_gpi(nb_iteration=2, finish_rules=finish_rules)
     expected = 1
     expected = "[test_tag] finish:1\n"
-    self.eq(expected, self.capture.getvalue())
+    self.true(self.capture.getvalue().endswith(expected))
 
   def test_set_callback(self):
     algo = self.TestImplementation()
@@ -92,7 +92,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     algo.setUp("domain", "dummy", value_func)
     callback = Mock()
     finish_rule = self.TestFinishRule()
-    finish_msg = algo.run_gpi(nb_iteration="dummy", finish_rules=finish_rule, callbacks=callback)
+    finish_msg = algo.run_gpi(nb_iteration=2, finish_rules=finish_rule, callbacks=callback)
     self.eq(1, callback.before_gpi_start.call_count)
     self.eq(2, callback.before_update.call_count)
     self.eq(2, callback.after_update.call_count)
@@ -137,6 +137,9 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     def check_condition(self, iteration_count):
       self.return_idx += 1
       return self.return_value[self.return_idx-1]
+
+    def generate_start_message(self):
+      return ""
 
     def generate_progress_message(self, iteration_count):
       return "%s:%s" % ("progress", iteration_count)

@@ -10,6 +10,9 @@ class BaseFinishRule(object):
     self.__notify_message_if_needed(is_satisfied, iteration_count)
     return is_satisfied
 
+  def log_start_message(self):
+    self.__log(self.generate_start_message())
+
   def log_progress(self, iteration_count):
     self.__log(self.generate_progress_message(iteration_count))
 
@@ -26,6 +29,10 @@ class BaseFinishRule(object):
 
   def check_condition(self, iteration_count):
     err_msg = self.__build_err_msg("check_condition")
+    raise NotImplementedError(err_msg)
+
+  def generate_start_message(self):
+    err_msg = self.__build_err_msg("generate_start_message")
     raise NotImplementedError(err_msg)
 
   def generate_progress_message(self, iteration_count):

@@ -30,8 +30,10 @@ class BaseRLAlgorithm(object):
     callbacks = self.__wrap_item_if_single(callbacks)
     finish_rules = self.__wrap_item_if_single(finish_rules)
     finish_rules.append(WatchIterationCount(nb_iteration))
-    iteration_counter = 0
+    [finish_rule.log_start_message() for finish_rule in finish_rules]
     [callback.before_gpi_start(self.domain, self.value_function) for callback in callbacks]
+
+    iteration_counter = 0
     while True:
       [callback.before_update(iteration_counter, self.domain, self.value_function) for callback in callbacks]
       self.update_value_function(self.domain, self.policy, self.value_function)

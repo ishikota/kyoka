@@ -16,6 +16,9 @@ class BaseFinishRuleTest(BaseUnitTest):
     self.true(self.rule.satisfy_condition(100))
     self.true(self.rule.satisfy_condition(101))
 
+  def test_generat_start_message(self):
+    self.include(str(100), self.rule.generate_start_message())
+
   def test_generate_progress_message(self):
     msg = self.rule.generate_progress_message(5)
     self.include(str(5), msg)

@@ -12,6 +12,9 @@ class WatchIterationCount(BaseFinishRule):
   def check_condition(self, iteration_count):
     return iteration_count >= self.target_count
 
+  def generate_start_message(self):
+    return "Start GPI iteration for %d times" % self.target_count
+
   def generate_progress_message(self, iteration_count):
     base_msg = "Finished %d / %d iterations"
     return base_msg % (iteration_count, self.target_count)

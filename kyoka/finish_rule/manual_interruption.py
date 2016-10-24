@@ -15,6 +15,9 @@ class ManualInterruption(BaseFinishRule):
   def check_condition(self, _iteration_count):
     return self.__order_found_in_monitoring_file(self.monitor_file_path, self.TARGET_WARD)
 
+  def generate_start_message(self):
+    return 'Write word "%s" on file "%s" will finish the GPI' % (self.TARGET_WARD, self.monitor_file_path)
+
   def generate_progress_message(self, _iteration_count):
     return None
 

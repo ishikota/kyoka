@@ -32,6 +32,11 @@ class BaseFinishRuleTest(BaseUnitTest):
     self.true(rule.satisfy_condition(0))
     self.eq('[test_tag] finish:0\n', self.capture.getvalue())
 
+  def test_log_start_message(self):
+    rule = self.TestImplementation()
+    rule.log_start_message()
+    self.eq('[test_tag] start\n', self.capture.getvalue())
+
   def test_log_progress(self):
     rule = self.TestImplementation()
     rule.log_progress(1)
@@ -65,6 +70,9 @@ class BaseFinishRuleTest(BaseUnitTest):
 
     def check_condition(self, iteration_count):
       return iteration_count == 0
+
+    def generate_start_message(self):
+      return "start"
 
     def generate_progress_message(self, iteration_count):
       return "%s:%s" % ("progress", iteration_count)

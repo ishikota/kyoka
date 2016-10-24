@@ -27,6 +27,10 @@ class ManualInterruptionTest(BaseUnitTest):
     self.__write_word(file_path, "stop")
     self.true(self.rule.satisfy_condition(1))
 
+  def test_generate_start_message(self):
+    self.include(self.rule.TARGET_WARD, self.rule.generate_start_message())
+    self.include(self.rule.monitor_file_path, self.rule.generate_start_message())
+
   def test_generate_progress_message(self):
     self.eq(None, self.rule.generate_progress_message(5))
 
