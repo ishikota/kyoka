@@ -19,6 +19,25 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     self.eq(mock_func, algo.value_function)
     mock_func.setUp.assert_called()
 
+  def test_save(self):
+    algo = self.TestImplementation()
+    mock_func = Mock()
+    algo.setUp(domain=0, policy=1, value_function=mock_func)
+    algo.save("hoge")
+    mock_func.save.assert_called_with("hoge")
+    self.eq(1, algo.save_count)
+    self.eq(0, algo.load_count)
+
+  def test_load(self):
+    algo = self.TestImplementation()
+    mock_func = Mock()
+    algo.setUp(domain=0, policy=1, value_function=mock_func)
+    algo.load("hoge")
+    mock_func.load.assert_called_with("hoge")
+    self.eq(0, algo.save_count)
+    self.eq(1, algo.load_count)
+
+
   def test_error_msg_when_not_implement_abstract_method(self):
     self.__check_err_msg(lambda : self.algo.update_value_function("dummy", "dummy", "dummy"), "update_value_function")
 
@@ -106,6 +125,14 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     def __init__(self):
       BaseRLAlgorithm.__init__(self)
       self.update_count = 0
+      self.save_count = 0
+      self.load_count = 0
+
+    def save_algorithm_state(self, save_dir_path):
+      self.save_count += 1
+
+    def load_algorithm_state(self, load_dir_path):
+      self.load_count += 1
 
     def update_value_function(self, _domain, _policy, _value_function):
       self.update_count += 1

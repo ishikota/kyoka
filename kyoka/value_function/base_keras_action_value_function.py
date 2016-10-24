@@ -26,12 +26,6 @@ class BaseKerasActionValueFunction(BaseActionValueFunction):
   def load_model_weights(self, file_path):
     self.model.load_weights(file_path)
 
-  def provide_data_to_store(self):
-    pass
-
-  def receive_data_to_restore(self, restored_data):
-    pass
-
   def generate_model(self):
     err_msg = self.__build_err_msg("generate_model")
     raise NotImplementedError(err_msg)

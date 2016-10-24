@@ -53,10 +53,6 @@ domain = MazeDomain()
 domain.read_maze(MAZE_FILE_PATH)
 value_func = MazeTableValueFunction(domain.get_maze_shape())
 value_func.setUp()
-if os.path.isfile(VALUE_FUNC_SAVE_PATH):
-  log.info("loading value function from %s" % VALUE_FUNC_SAVE_PATH)
-  value_func.load(VALUE_FUNC_SAVE_PATH)
-  log.info("finished loading value function")
 
 TEST_LENGTH = 100
 policy = EpsilonGreedyPolicy(eps=0.1)

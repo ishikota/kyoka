@@ -8,6 +8,20 @@ class BaseRLAlgorithm(object):
     self.value_function.setUp()
     self.policy = policy
 
+  def save(self, save_dir_path):
+    self.value_function.save(save_dir_path)
+    self.save_algorithm_state(save_dir_path)
+
+  def load(self, load_dir_path):
+    self.value_function.load(load_dir_path)
+    self.load_algorithm_state(load_dir_path)
+
+  def save_algorithm_state(self, save_dir_path):
+    pass
+
+  def load_algorithm_state(self, load_dir_path):
+    pass
+
   def update_value_function(self, domain, policy, value_function):
     err_msg = self.__build_err_msg("update_value_function")
     raise NotImplementedError(err_msg)

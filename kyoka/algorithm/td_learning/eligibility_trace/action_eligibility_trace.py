@@ -42,11 +42,13 @@ class ActionEligibilityTrace:
     self.eligibility_holder = self.__generate_action_eligibility_holder()
 
   def dump(self):
-    return self.get_eligibilities()
+    return (self.update_type, self.discard_threshold,\
+            self.gamma, self.lambda_, self.get_eligibilities())
 
   def load(self, serial):
     self.clear()
-    for state, action, eligibility in serial:
+    self.update_type, self.discard_threshold, self.gamma, self.lambda_, eligibilities = serial
+    for state, action, eligibility in eligibilities:
       self.__update(state, action, eligibility)
 
   def __validate_update_type(self, update_type):
