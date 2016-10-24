@@ -13,12 +13,6 @@ class BaseActionValueFunction(BaseValueFunction):
   def setUp(self):
     pass
 
-  def provide_data_to_store(self):
-    return None
-
-  def receive_data_to_restore(self, restored_data):
-    pass
-
 
   def __build_err_msg(self, msg):
     base_msg = "[ {0} ] class does not implement [ {1} ] method"
