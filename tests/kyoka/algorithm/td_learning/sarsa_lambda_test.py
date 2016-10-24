@@ -8,12 +8,28 @@ from kyoka.policy.base_policy import BasePolicy
 
 from mock import Mock
 
+import os
+
 class SarsaLambdaTest(BaseUnitTest):
 
   def setUp(self):
     trace = EligibilityTrace(EligibilityTrace.TYPE_ACCUMULATING,\
         discard_threshold=0.0001+0.0001, gamma=0.1, lambda_=0.1)
     self.algo = SarsaLambda(alpha=0.5, gamma=0.1, eligibility_trace=trace)
+
+  def tearDown(self):
+    dir_path = self.__generate_tmp_dir_path()
+    file_path = os.path.join(dir_path, "sarsalambda_algorithm_state.pickle")
+    if os.path.exists(dir_path):
+      if os.path.exists(file_path):
+        os.remove(file_path)
+      os.rmdir(dir_path)
+
+  def test_setUp(self):
+    self.algo = SarsaLambda(alpha=0.5, gamma=0.1)
+    self.eq(None, self.algo.trace)
+    self.algo.setUp("dummy", "dummy", Mock(name="value_func"))
+    self.neq(None, self.algo.trace)
 
   def test_update_value_function(self):
     domain = self.__setup_stub_domain()
@@ -29,22 +45,28 @@ class SarsaLambdaTest(BaseUnitTest):
     for state, action, value in expected:
       self.almosteq(value, value_func.fetch_value_from_table(value_func.table, state, action), 0.01)
 
-  def test_set_eligibility_trace_as_additinal_data(self):
+  def test_save_and_load_eligibility_trace(self):
+    dir_path = self.__generate_tmp_dir_path()
+    file_path = os.path.join(dir_path, "sarsalambda_algorithm_state.pickle")
+    os.mkdir(dir_path)
+
     domain = self.__setup_stub_domain()
+    policy = self.NegativePolicyImple()
     value_func = self.TestTableActionValueFunctionImpl()
-    value_func.setUp()
+    self.algo.setUp(domain, policy, value_func)
     value_func.update_function(1, 2, 10)
     value_func.update_function(1, 3, 11)
     value_func.update_function(3, 4, 100)
     value_func.update_function(3, 5, 101)
-    policy = self.NegativePolicyImple()
     self.algo.update_value_function(domain, policy, value_func)
+    self.algo.save_algorithm_state(dir_path)
+    self.true(os.path.exists(file_path))
 
-    eligibility_dump = value_func.get_additinal_data("additinal_data_key_sarsa_lambda_eligibility_trace")
-    trace = EligibilityTrace(EligibilityTrace.TYPE_ACCUMULATING)
-    trace.load(eligibility_dump)
+    new_algo = SarsaLambda(alpha=0.5, gamma=0.1)
+    new_algo.setUp(domain, policy, value_func)
+    new_algo.load_algorithm_state(dir_path)
     expected = { 3: { 4 : 0.01 } }
-    eligibilities = trace.get_eligibilities()
+    eligibilities = new_algo.trace.get_eligibilities()
     self.eq(1, len(eligibilities))
     for state, action, eligibility in eligibilities:
       self.almosteq(expected[state][action], eligibility, 0.001)
@@ -65,6 +87,9 @@ class SarsaLambdaTest(BaseUnitTest):
     mock_domain.generate_possible_actions.side_effect = lambda state: [] if state == 7 else [state + 1, state + 2]
     mock_domain.calculate_reward.side_effect = lambda state: state**2
     return mock_domain
+
+  def __generate_tmp_dir_path(self):
+    return os.path.join(os.path.dirname(__file__), "tmp")
 
   class TestTableActionValueFunctionImpl(BaseTableActionValueFunction):
 
