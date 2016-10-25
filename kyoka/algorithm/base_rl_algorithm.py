@@ -26,12 +26,15 @@ class BaseRLAlgorithm(object):
     err_msg = self.__build_err_msg("update_value_function")
     raise NotImplementedError(err_msg)
 
-  def run_gpi(self, nb_iteration, finish_rules=[], callbacks=[]):
+  def run_gpi(self, nb_iteration, finish_rules=[], callbacks=[], verbose=1):
     callbacks = self.__wrap_item_if_single(callbacks)
     finish_rules = self.__wrap_item_if_single(finish_rules)
-    finish_rules.append(WatchIterationCount(nb_iteration))
-    iteration_counter = 0
+    default_finish_rule = WatchIterationCount(nb_iteration, log_interval=float('inf') if verbose==0 else 1)
+    finish_rules.append(default_finish_rule)
+    [finish_rule.log_start_message() for finish_rule in finish_rules]
     [callback.before_gpi_start(self.domain, self.value_function) for callback in callbacks]
+
+    iteration_counter = 0
     while True:
       [callback.before_update(iteration_counter, self.domain, self.value_function) for callback in callbacks]
       self.update_value_function(self.domain, self.policy, self.value_function)
@@ -39,9 +42,10 @@ class BaseRLAlgorithm(object):
       iteration_counter += 1
       for finish_rule in finish_rules:
         if finish_rule.satisfy_condition(iteration_counter):
-          finish_msg = finish_rule.generate_finish_message(iteration_counter)
           [callback.after_gpi_finish(self.domain, self.value_function) for callback in callbacks]
-          return finish_msg
+          if finish_rule != default_finish_rule:
+            default_finish_rule.log_finish_message(iteration_counter)
+          return
 
   def generate_episode(self, domain, value_function, policy):
     state = domain.generate_initial_state()

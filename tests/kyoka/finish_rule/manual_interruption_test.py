@@ -16,6 +16,9 @@ class ManualInterruptionTest(BaseUnitTest):
     if os.path.isfile(file_path):
       os.remove(file_path)
 
+  def test_define_log_tag(self):
+    self.eq("ManualInterruption", self.rule.define_log_tag())
+
   def test_satisfy_condition(self):
     file_path = self.__generate_tmp_file_path()
     self.false(self.rule.satisfy_condition(1))
@@ -23,6 +26,10 @@ class ManualInterruptionTest(BaseUnitTest):
     self.false(self.rule.satisfy_condition(1))
     self.__write_word(file_path, "stop")
     self.true(self.rule.satisfy_condition(1))
+
+  def test_generate_start_message(self):
+    self.include(self.rule.TARGET_WARD, self.rule.generate_start_message())
+    self.include(self.rule.monitor_file_path, self.rule.generate_start_message())
 
   def test_generate_progress_message(self):
     self.eq(None, self.rule.generate_progress_message(5))

@@ -2,13 +2,22 @@ from tests.base_unittest import BaseUnitTest
 from kyoka.algorithm.base_rl_algorithm import BaseRLAlgorithm
 from kyoka.policy.greedy_policy import GreedyPolicy
 from kyoka.value_function.base_action_value_function import BaseActionValueFunction
+from kyoka.finish_rule.base_finish_rule import BaseFinishRule
 
 from mock import Mock
+
+import StringIO
+import sys
 
 class BaseRLAlgorithmTest(BaseUnitTest):
 
   def setUp(self):
     self.algo = BaseRLAlgorithm()
+    self.capture = StringIO.StringIO()
+    sys.stdout = self.capture
+
+  def tearDown(self):
+    sys.stdout = sys.__stdout__
 
   def test_setUp(self):
     algo = BaseRLAlgorithm()
@@ -58,10 +67,10 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     policy = GreedyPolicy()
     value_func = self.__setup_stub_value_function()
     algo.setUp(domain, policy, value_func)
-    finish_rule = self.__setup_stub_finish_rule()
-    finish_msg = algo.run_gpi(nb_iteration="dummy", finish_rules=finish_rule)
-    expected = 2
-    self.eq(expected, finish_msg)
+    finish_rule = self.TestFinishRule()
+    algo.run_gpi(nb_iteration=2, finish_rules=finish_rule)
+    expected = "[test_tag] finish:2\n"
+    self.include(expected, self.capture.getvalue())
 
   def test_GPI_with_multiple_finish_rules(self):
     algo = self.TestImplementation()
@@ -69,20 +78,59 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     policy = GreedyPolicy()
     value_func = self.__setup_stub_value_function()
     algo.setUp(domain, policy, value_func)
-    finish_rule1 = self.__setup_stub_finish_rule(satisfy_condition=[False, True])
-    finish_rule2 = self.__setup_stub_finish_rule(satisfy_condition=[True, False])
+    finish_rule1 = self.TestFinishRule([False, True])
+    finish_rule2 = self.TestFinishRule([True, False])
     finish_rules = [finish_rule1, finish_rule2]
-    finish_msg = algo.run_gpi(nb_iteration="dummy", finish_rules=finish_rules)
+    finish_msg = algo.run_gpi(nb_iteration=2, finish_rules=finish_rules)
     expected = 1
-    self.eq(expected, finish_msg)
+    expected = "[test_tag] finish:1\n"
+    self.include(expected, self.capture.getvalue())
+
+  def test_verbose_mode(self):
+    algo = self.TestImplementation()
+    domain = self.__setup_stub_domain()
+    policy = GreedyPolicy()
+    value_func = self.__setup_stub_value_function()
+    algo.setUp(domain, policy, value_func)
+
+    capture = StringIO.StringIO()
+    sys.stdout = capture
+    algo.run_gpi(nb_iteration=2, finish_rules=self.TestFinishRule())
+    self.include("[Progress] Finished", capture.getvalue())
+
+    capture = StringIO.StringIO()
+    sys.stdout = capture
+    algo.run_gpi(nb_iteration=2, finish_rules=self.TestFinishRule(), verbose=0)
+    self.not_include("[Progress] Finished", capture.getvalue())
+
+  def test_defult_finish_message_must_be_logged(self):
+    algo = self.TestImplementation()
+    domain = self.__setup_stub_domain()
+    policy = GreedyPolicy()
+    value_func = self.__setup_stub_value_function()
+    algo.setUp(domain, policy, value_func)
+    finish_rule = self.TestFinishRule()
+    algo.run_gpi(nb_iteration=2, finish_rules=finish_rule)
+
+    expected = "[Progress] Completed"
+    self.include(expected, self.capture.getvalue())
+
+  def test_not_to_log_duplicated_default_finish_message(self):
+    algo = self.TestImplementation()
+    domain = self.__setup_stub_domain()
+    policy = GreedyPolicy()
+    value_func = self.__setup_stub_value_function()
+    algo.setUp(domain, policy, value_func)
+    algo.run_gpi(nb_iteration=2)
+    self.eq(1, self.capture.getvalue().count("[Progress] Completed"))
 
   def test_set_callback(self):
     algo = self.TestImplementation()
     value_func = Mock(name="value_func")
     algo.setUp("domain", "dummy", value_func)
     callback = Mock()
-    finish_rule = self.__setup_stub_finish_rule()
-    finish_msg = algo.run_gpi(nb_iteration="dummy", finish_rules=finish_rule, callbacks=callback)
+    finish_rule = self.TestFinishRule()
+    finish_msg = algo.run_gpi(nb_iteration=2, finish_rules=finish_rule, callbacks=callback)
     self.eq(1, callback.before_gpi_start.call_count)
     self.eq(2, callback.before_update.call_count)
     self.eq(2, callback.after_update.call_count)
@@ -106,12 +154,6 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     mock_value_func.calculate_value.return_value = 0
     return mock_value_func
 
-  def __setup_stub_finish_rule(self, satisfy_condition=[False, True]):
-    mock_finish_fule = Mock()
-    mock_finish_fule.satisfy_condition.side_effect = satisfy_condition
-    mock_finish_fule.generate_finish_message.side_effect = lambda counter: counter
-    return mock_finish_fule
-
   def __check_err_msg(self, target_method, target_word):
     try:
       target_method()
@@ -119,6 +161,30 @@ class BaseRLAlgorithmTest(BaseUnitTest):
       self.include(target_word, str(e))
     else:
       self.fail("NotImplementedError does not occur")
+
+  class TestFinishRule(BaseFinishRule):
+
+    def __init__(self, return_value=[False, True]):
+      BaseFinishRule.__init__(self)
+      self.return_value = return_value
+      self.return_idx = 0
+
+    def define_log_tag(self):
+      return "test_tag"
+
+    def check_condition(self, iteration_count):
+      self.return_idx += 1
+      return self.return_value[self.return_idx-1]
+
+    def generate_start_message(self):
+      return ""
+
+    def generate_progress_message(self, iteration_count):
+      return "%s:%s" % ("progress", iteration_count)
+
+    def generate_finish_message(self, iteration_count):
+      return "%s:%s" % ("finish", iteration_count)
+
 
   class TestImplementation(BaseRLAlgorithm):
 
