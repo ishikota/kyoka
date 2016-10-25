@@ -26,10 +26,10 @@ class BaseRLAlgorithm(object):
     err_msg = self.__build_err_msg("update_value_function")
     raise NotImplementedError(err_msg)
 
-  def run_gpi(self, nb_iteration, finish_rules=[], callbacks=[]):
+  def run_gpi(self, nb_iteration, finish_rules=[], callbacks=[], verbose=1):
     callbacks = self.__wrap_item_if_single(callbacks)
     finish_rules = self.__wrap_item_if_single(finish_rules)
-    finish_rules.append(WatchIterationCount(nb_iteration))
+    finish_rules.append(WatchIterationCount(nb_iteration, log_interval=float('inf') if verbose==0 else 1))
     [finish_rule.log_start_message() for finish_rule in finish_rules]
     [callback.before_gpi_start(self.domain, self.value_function) for callback in callbacks]
 

@@ -86,6 +86,23 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     expected = "[test_tag] finish:1\n"
     self.true(self.capture.getvalue().endswith(expected))
 
+  def test_verbose_mode(self):
+    algo = self.TestImplementation()
+    domain = self.__setup_stub_domain()
+    policy = GreedyPolicy()
+    value_func = self.__setup_stub_value_function()
+    algo.setUp(domain, policy, value_func)
+
+    capture = StringIO.StringIO()
+    sys.stdout = capture
+    algo.run_gpi(nb_iteration=2, finish_rules=self.TestFinishRule())
+    self.include("[Progress] Finished", capture.getvalue())
+
+    capture = StringIO.StringIO()
+    sys.stdout = capture
+    algo.run_gpi(nb_iteration=2, finish_rules=self.TestFinishRule(), verbose=0)
+    self.not_include("[Progress] Finished", capture.getvalue())
+
   def test_set_callback(self):
     algo = self.TestImplementation()
     value_func = Mock(name="value_func")
