@@ -115,6 +115,15 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     expected = "[Progress] Completed"
     self.include(expected, self.capture.getvalue())
 
+  def test_not_to_log_duplicated_default_finish_message(self):
+    algo = self.TestImplementation()
+    domain = self.__setup_stub_domain()
+    policy = GreedyPolicy()
+    value_func = self.__setup_stub_value_function()
+    algo.setUp(domain, policy, value_func)
+    algo.run_gpi(nb_iteration=2)
+    self.eq(1, self.capture.getvalue().count("[Progress] Completed"))
+
   def test_set_callback(self):
     algo = self.TestImplementation()
     value_func = Mock(name="value_func")

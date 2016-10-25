@@ -43,7 +43,8 @@ class BaseRLAlgorithm(object):
       for finish_rule in finish_rules:
         if finish_rule.satisfy_condition(iteration_counter):
           [callback.after_gpi_finish(self.domain, self.value_function) for callback in callbacks]
-          default_finish_rule.log_finish_message(iteration_counter)
+          if finish_rule != default_finish_rule:
+            default_finish_rule.log_finish_message(iteration_counter)
           return
 
   def generate_episode(self, domain, value_function, policy):
