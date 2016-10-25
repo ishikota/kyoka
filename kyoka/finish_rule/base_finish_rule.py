@@ -1,7 +1,7 @@
 
 class BaseFinishRule(object):
 
-  def __init__(self, log_interval=100):
+  def __init__(self, log_interval=1):
     self.log_interval = log_interval
     self.log_interval_counter = 0
 

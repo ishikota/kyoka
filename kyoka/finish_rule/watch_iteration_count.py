@@ -3,7 +3,7 @@ from kyoka.finish_rule.base_finish_rule import BaseFinishRule
 
 class WatchIterationCount(BaseFinishRule):
 
-  def __init__(self, target_count, log_interval=100):
+  def __init__(self, target_count, log_interval=1):
     BaseFinishRule.__init__(self, log_interval)
     self.target_count = target_count
     self.start_time = self.last_update_time = 0
