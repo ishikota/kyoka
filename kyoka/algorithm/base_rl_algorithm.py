@@ -29,7 +29,8 @@ class BaseRLAlgorithm(object):
   def run_gpi(self, nb_iteration, finish_rules=[], callbacks=[], verbose=1):
     callbacks = self.__wrap_item_if_single(callbacks)
     finish_rules = self.__wrap_item_if_single(finish_rules)
-    finish_rules.append(WatchIterationCount(nb_iteration, log_interval=float('inf') if verbose==0 else 1))
+    default_finish_rule = WatchIterationCount(nb_iteration, log_interval=float('inf') if verbose==0 else 1)
+    finish_rules.append(default_finish_rule)
     [finish_rule.log_start_message() for finish_rule in finish_rules]
     [callback.before_gpi_start(self.domain, self.value_function) for callback in callbacks]
 
@@ -42,6 +43,7 @@ class BaseRLAlgorithm(object):
       for finish_rule in finish_rules:
         if finish_rule.satisfy_condition(iteration_counter):
           [callback.after_gpi_finish(self.domain, self.value_function) for callback in callbacks]
+          default_finish_rule.log_finish_message(iteration_counter)
           return
 
   def generate_episode(self, domain, value_function, policy):

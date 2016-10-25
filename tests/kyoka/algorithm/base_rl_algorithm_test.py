@@ -70,7 +70,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     finish_rule = self.TestFinishRule()
     algo.run_gpi(nb_iteration=2, finish_rules=finish_rule)
     expected = "[test_tag] finish:2\n"
-    self.true(self.capture.getvalue().endswith(expected))
+    self.include(expected, self.capture.getvalue())
 
   def test_GPI_with_multiple_finish_rules(self):
     algo = self.TestImplementation()
@@ -84,7 +84,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     finish_msg = algo.run_gpi(nb_iteration=2, finish_rules=finish_rules)
     expected = 1
     expected = "[test_tag] finish:1\n"
-    self.true(self.capture.getvalue().endswith(expected))
+    self.include(expected, self.capture.getvalue())
 
   def test_verbose_mode(self):
     algo = self.TestImplementation()
@@ -102,6 +102,18 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     sys.stdout = capture
     algo.run_gpi(nb_iteration=2, finish_rules=self.TestFinishRule(), verbose=0)
     self.not_include("[Progress] Finished", capture.getvalue())
+
+  def test_defult_finish_message_must_be_logged(self):
+    algo = self.TestImplementation()
+    domain = self.__setup_stub_domain()
+    policy = GreedyPolicy()
+    value_func = self.__setup_stub_value_function()
+    algo.setUp(domain, policy, value_func)
+    finish_rule = self.TestFinishRule()
+    algo.run_gpi(nb_iteration=2, finish_rules=finish_rule)
+
+    expected = "[Progress] Completed"
+    self.include(expected, self.capture.getvalue())
 
   def test_set_callback(self):
     algo = self.TestImplementation()
