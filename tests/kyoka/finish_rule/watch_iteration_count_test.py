@@ -30,9 +30,15 @@ class BaseFinishRuleTest(BaseUnitTest):
     self.include(str(5), msg)
     self.include(str(100), msg)
 
-  def test_calculation_time_in_prgress_message(self):
+  def test_calculation_time_in_message(self):
     rule = WatchIterationCount(target_count=100, log_interval=1)
-    mock_time_return = [1477394336.834469, 1477394338.815435, 1477394340.965727, 1477394343.925256]
+    mock_time_return = [
+            1477394336.834469,
+            1477394338.815435,
+            1477394340.965727,
+            1477394343.925256,
+            1477394689.794632
+    ]
     expected_calc_time = [1.9809658527374268, 2.150292158126831, 2.959528923034668]
     with patch('time.time', side_effect=mock_time_return):
       rule.log_start_message()
@@ -41,6 +47,12 @@ class BaseFinishRuleTest(BaseUnitTest):
         sys.stdout = capture
         rule.satisfy_condition(1)
         self.include("%.1f" % expected, capture.getvalue())
+
+      expected_total_calc_time = mock_time_return[-1] - mock_time_return[0]
+      capture = StringIO.StringIO()
+      sys.stdout = capture
+      rule.satisfy_condition(100)
+      self.include("%d" % expected_total_calc_time, capture.getvalue())
 
   def test_generate_finish_message(self):
     self.include(str(5), self.rule.generate_finish_message(5))

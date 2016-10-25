@@ -6,7 +6,7 @@ class WatchIterationCount(BaseFinishRule):
   def __init__(self, target_count, log_interval=100):
     BaseFinishRule.__init__(self, log_interval)
     self.target_count = target_count
-    self.last_update_time = 0
+    self.start_time = self.last_update_time = 0
 
   def define_log_tag(self):
     return "Progress"
@@ -15,7 +15,7 @@ class WatchIterationCount(BaseFinishRule):
     return iteration_count >= self.target_count
 
   def generate_start_message(self):
-    self.last_update_time = time.time()
+    self.start_time = self.last_update_time = time.time()
     return "Start GPI iteration for %d times" % self.target_count
 
   def generate_progress_message(self, iteration_count):
@@ -26,8 +26,8 @@ class WatchIterationCount(BaseFinishRule):
     return msg
 
   def generate_finish_message(self, iteration_count):
-    base_msg = "Completed GPI iteration for %d times."
-    return base_msg % iteration_count
+    base_msg = "Completed GPI iteration for %d times. (total time: %ds)"
+    return base_msg % (iteration_count, time.time() - self.start_time)
 
   def __build_err_msg(self, msg):
     base_msg = "[ {0} ] class does not implement [ {1} ] method"
