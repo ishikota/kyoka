@@ -12,9 +12,6 @@ sys.path.append(root)
 sys.path.append(src_path)
 sys.path.append(sample_path)
 
-import logging as log
-log.basicConfig(format='[%(levelname)s] %(message)s', level=log.DEBUG)
-
 from kyoka.algorithm.montecarlo.montecarlo import MonteCarlo
 from kyoka.algorithm.td_learning.sarsa import Sarsa
 from kyoka.algorithm.td_learning.q_learning import QLearning
@@ -27,7 +24,7 @@ from kyoka.finish_rule.watch_iteration_count import WatchIterationCount
 from sample.maze.maze_domain import MazeDomain
 from sample.maze.maze_table_value_function import MazeTableValueFunction
 from sample.maze.maze_helper import MazeHelper
-from sample.maze.maze_performance_logger import MazePerformanceLogger
+from sample.maze.maze_performance_watcher import MazePerformanceWatcher
 from sample.maze.maze_transformer import MazeTransformer
 
 SUPPORT_ALGORITHM = ["human", "montecarlo", "sarsa", "qlearning", "sarsalambda", "qlambda"]
@@ -56,7 +53,7 @@ value_func.setUp()
 
 TEST_LENGTH = 100
 policy = EpsilonGreedyPolicy(eps=0.1)
-callbacks = [MazePerformanceLogger()]
+callbacks = [MazePerformanceWatcher()]
 if maze_type in ["blocking", "shortcut"]:
   transfomer = MazeTransformer()
   transformed_maze_filepath = MAZE_FILE_PATH[:-len(".txt")] + "_transformed.txt"
@@ -71,10 +68,6 @@ RL_algo = {
     "qlambda": lambda :QLambda()
 }[algo]()
 
-log.info("start to measure performnce for %d episode" % TEST_LENGTH)
 RL_algo.setUp(domain, policy, value_func)
 RL_algo.run_gpi(TEST_LENGTH, callbacks=callbacks)
-log.info("finished to measure performnce for %d episode" % TEST_LENGTH)
-log.info("performance_log = %s" % callbacks[0].step_log)
-log.info("Policy which agent learned is like this.\n%s" % MazeHelper.visualize_policy(domain, value_func))
 
