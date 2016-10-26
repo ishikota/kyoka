@@ -27,6 +27,8 @@ class BaseRLAlgorithm(object):
     raise NotImplementedError(err_msg)
 
   def run_gpi(self, nb_iteration, finish_rules=[], callbacks=[], verbose=1):
+    if not all([hasattr(self, attr) for attr in ["domain", "value_function", "policy"]]):
+      raise Exception('You need to call "setUp" method before calling "run_gpi" method.')
     callbacks = self.__wrap_item_if_single(callbacks)
     finish_rules = self.__wrap_item_if_single(finish_rules)
     default_finish_rule = WatchIterationCount(nb_iteration, log_interval=float('inf') if verbose==0 else 1)

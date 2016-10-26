@@ -140,6 +140,14 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     callback.after_update.assert_called_with(1, "domain", value_func)
     callback.after_gpi_finish.assert_called_with("domain", value_func)
 
+  def test_error_when_run_gpi_called_without_setup(self):
+    algo = self.TestImplementation()
+    with self.assertRaises(Exception) as e:
+      algo.run_gpi(nb_iteration=2)
+    self.include("setUp", e.exception.message)
+    self.include("run_gpi", e.exception.message)
+
+
   def __setup_stub_domain(self):
     mock_domain = Mock()
     mock_domain.generate_initial_state.return_value = 0
