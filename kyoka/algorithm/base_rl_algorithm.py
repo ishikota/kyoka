@@ -1,4 +1,4 @@
-from kyoka.finish_rule.watch_iteration_count import WatchIterationCount
+from kyoka.callback.finish_rule.watch_iteration_count import WatchIterationCount
 
 class BaseRLAlgorithm(object):
 
@@ -26,28 +26,26 @@ class BaseRLAlgorithm(object):
     err_msg = self.__build_err_msg("update_value_function")
     raise NotImplementedError(err_msg)
 
-  def run_gpi(self, nb_iteration, finish_rules=[], callbacks=[], verbose=1):
+  def run_gpi(self, nb_iteration, callbacks=[], verbose=1):
     if not all([hasattr(self, attr) for attr in ["domain", "value_function", "policy"]]):
       raise Exception('You need to call "setUp" method before calling "run_gpi" method.')
     callbacks = self.__wrap_item_if_single(callbacks)
-    finish_rules = self.__wrap_item_if_single(finish_rules)
-    default_finish_rule = WatchIterationCount(nb_iteration, log_interval=float('inf') if verbose==0 else 1)
-    finish_rules.append(default_finish_rule)
-    [finish_rule.log_start_message() for finish_rule in finish_rules]
+    default_finish_rule = WatchIterationCount(nb_iteration, verbose)
+    callbacks.insert(0, default_finish_rule)
     [callback.before_gpi_start(self.domain, self.value_function) for callback in callbacks]
 
-    iteration_counter = 0
+    iteration_counter = 1
     while True:
       [callback.before_update(iteration_counter, self.domain, self.value_function) for callback in callbacks]
       self.update_value_function(self.domain, self.policy, self.value_function)
       [callback.after_update(iteration_counter, self.domain, self.value_function) for callback in callbacks]
-      iteration_counter += 1
-      for finish_rule in finish_rules:
-        if finish_rule.satisfy_condition(iteration_counter):
+      for finish_rule in callbacks:
+        if finish_rule.interrupt_gpi(iteration_counter, self.domain, self.value_function):
           [callback.after_gpi_finish(self.domain, self.value_function) for callback in callbacks]
           if finish_rule != default_finish_rule:
-            default_finish_rule.log_finish_message(iteration_counter)
+            default_finish_rule.log(default_finish_rule.generate_finish_message(iteration_counter))
           return
+      iteration_counter += 1
 
   def generate_episode(self, domain, value_function, policy):
     state = domain.generate_initial_state()
