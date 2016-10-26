@@ -19,7 +19,6 @@ from kyoka.algorithm.td_learning.sarsa_lambda import SarsaLambda
 from kyoka.algorithm.td_learning.q_lambda import QLambda
 
 from kyoka.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
-from kyoka.finish_rule.watch_iteration_count import WatchIterationCount
 
 from sample.maze.maze_domain import MazeDomain
 from sample.maze.maze_table_value_function import MazeTableValueFunction
