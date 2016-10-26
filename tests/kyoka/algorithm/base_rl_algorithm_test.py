@@ -2,7 +2,7 @@ from tests.base_unittest import BaseUnitTest
 from kyoka.algorithm.base_rl_algorithm import BaseRLAlgorithm
 from kyoka.policy.greedy_policy import GreedyPolicy
 from kyoka.value_function.base_action_value_function import BaseActionValueFunction
-from kyoka.finish_rule.base_finish_rule import BaseFinishRule
+from kyoka.callback.finish_rule.base_finish_rule import BaseFinishRule
 
 from mock import Mock
 
@@ -68,7 +68,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     value_func = self.__setup_stub_value_function()
     algo.setUp(domain, policy, value_func)
     finish_rule = self.TestFinishRule()
-    algo.run_gpi(nb_iteration=2, finish_rules=finish_rule)
+    algo.run_gpi(nb_iteration=3, callbacks=finish_rule)
     expected = "[test_tag] finish:2\n"
     self.include(expected, self.capture.getvalue())
 
@@ -81,7 +81,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     finish_rule1 = self.TestFinishRule([False, True])
     finish_rule2 = self.TestFinishRule([True, False])
     finish_rules = [finish_rule1, finish_rule2]
-    finish_msg = algo.run_gpi(nb_iteration=2, finish_rules=finish_rules)
+    finish_msg = algo.run_gpi(nb_iteration=2, callbacks=finish_rules)
     expected = 1
     expected = "[test_tag] finish:1\n"
     self.include(expected, self.capture.getvalue())
@@ -95,12 +95,12 @@ class BaseRLAlgorithmTest(BaseUnitTest):
 
     capture = StringIO.StringIO()
     sys.stdout = capture
-    algo.run_gpi(nb_iteration=2, finish_rules=self.TestFinishRule())
+    algo.run_gpi(nb_iteration=2, callbacks=self.TestFinishRule())
     self.include("[Progress] Finished", capture.getvalue())
 
     capture = StringIO.StringIO()
     sys.stdout = capture
-    algo.run_gpi(nb_iteration=2, finish_rules=self.TestFinishRule(), verbose=0)
+    algo.run_gpi(nb_iteration=2, callbacks=self.TestFinishRule(), verbose=0)
     self.not_include("[Progress] Finished", capture.getvalue())
 
   def test_defult_finish_message_must_be_logged(self):
@@ -110,7 +110,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     value_func = self.__setup_stub_value_function()
     algo.setUp(domain, policy, value_func)
     finish_rule = self.TestFinishRule()
-    algo.run_gpi(nb_iteration=2, finish_rules=finish_rule)
+    algo.run_gpi(nb_iteration=2, callbacks=finish_rule)
 
     expected = "[Progress] Completed"
     self.include(expected, self.capture.getvalue())
@@ -129,16 +129,25 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     value_func = Mock(name="value_func")
     algo.setUp("domain", "dummy", value_func)
     callback = Mock()
+    callback.interrupt_gpi.return_value = False
     finish_rule = self.TestFinishRule()
-    finish_msg = algo.run_gpi(nb_iteration=2, finish_rules=finish_rule, callbacks=callback)
+    finish_msg = algo.run_gpi(nb_iteration=2, callbacks=[callback, finish_rule])
     self.eq(1, callback.before_gpi_start.call_count)
     self.eq(2, callback.before_update.call_count)
     self.eq(2, callback.after_update.call_count)
     self.eq(1, callback.after_gpi_finish.call_count)
     callback.before_gpi_start.assert_called_with("domain", value_func)
-    callback.before_update.assert_called_with(1, "domain", value_func)
-    callback.after_update.assert_called_with(1, "domain", value_func)
+    callback.before_update.assert_called_with(2, "domain", value_func)
+    callback.after_update.assert_called_with(2, "domain", value_func)
     callback.after_gpi_finish.assert_called_with("domain", value_func)
+
+  def test_error_when_run_gpi_called_without_setup(self):
+    algo = self.TestImplementation()
+    with self.assertRaises(Exception) as e:
+      algo.run_gpi(nb_iteration=2)
+    self.include("setUp", e.exception.message)
+    self.include("run_gpi", e.exception.message)
+
 
   def __setup_stub_domain(self):
     mock_domain = Mock()
@@ -172,15 +181,12 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     def define_log_tag(self):
       return "test_tag"
 
-    def check_condition(self, iteration_count):
+    def check_condition(self, iteration_count, _domain, _value_function):
       self.return_idx += 1
       return self.return_value[self.return_idx-1]
 
     def generate_start_message(self):
       return ""
-
-    def generate_progress_message(self, iteration_count):
-      return "%s:%s" % ("progress", iteration_count)
 
     def generate_finish_message(self, iteration_count):
       return "%s:%s" % ("finish", iteration_count)
