@@ -45,13 +45,13 @@ class BasePerformanceWatcherTest(BaseUnitTest):
   def test_timing_of_performance_test(self):
     watcher = self.TestCompleteImplementation()
     watcher.before_gpi_start("dummy", "dummy")
-    watcher.after_update(0, "dummy", "dummy")
-    self.eq('', self.capture.getvalue())
     watcher.after_update(1, "dummy", "dummy")
-    self.eq('[Test] test:1\n', self.capture.getvalue())
+    self.eq('', self.capture.getvalue())
     watcher.after_update(2, "dummy", "dummy")
     self.eq('[Test] test:1\n', self.capture.getvalue())
     watcher.after_update(3, "dummy", "dummy")
+    self.eq('[Test] test:1\n', self.capture.getvalue())
+    watcher.after_update(4, "dummy", "dummy")
     self.eq('[Test] test:1\n[Test] test:4\n', self.capture.getvalue())
     self.eq([1, 4], watcher.performance_log)
 
