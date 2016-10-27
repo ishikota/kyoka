@@ -3,8 +3,12 @@ from kyoka.algorithm.experience_replay.experience_replay import ExperienceReplay
 from kyoka.policy.greedy_policy import GreedyPolicy
 from kyoka.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
 
+import os
+import pickle
+
 class DeepQLearning(BaseTDMethod):
 
+  SAVE_FILE_NAME = "dqn_algorithm_state.pickle"
   ACTION_ON_TERMINAL_FLG = "action_on_terminal"
 
   def __init__(self, gamma=0.99, N=1000000, C=10000, minibatch_size=32, replay_start_size=50000):
@@ -20,6 +24,22 @@ class DeepQLearning(BaseTDMethod):
     super(DeepQLearning, self).setUp(domain, policy, value_function)
     self.__initialize_replay_memory(domain, value_function, self.replay_memory, self.replay_start_size)
     self.greedy_policy = GreedyPolicy()
+
+  def save_algorithm_state(self, save_dir_path):
+    state = (
+            self.gamma, self.replay_memory.dump(), self.C, self.minibatch_size,
+            self.replay_start_size, self.reset_step_counter
+    )
+    self.__pickle_data(self.__gen_save_file_path(save_dir_path), state)
+
+  def load_algorithm_state(self, load_dir_path):
+    state = self.__unpickle_data(self.__gen_save_file_path(load_dir_path))
+    self.gamma, replay_memory_serial, self.C, self.minibatch_size,\
+            self.replay_start_size, self.reset_step_counter = state
+    self.greedy_policy = GreedyPolicy()
+    new_replay_memory = ExperienceReplay(max_size=1)
+    new_replay_memory.load(replay_memory_serial)
+    self.replay_memory = new_replay_memory
 
   def update_action_value_function(self, domain, policy, value_function):
     phi = lambda s: value_function.preprocess_state(s)
@@ -81,4 +101,15 @@ class DeepQLearning(BaseTDMethod):
       return 0
     else:
       return value_function.calculate_value(next_state, next_action)
+
+  def __gen_save_file_path(self, base_dir_path):
+    return os.path.join(base_dir_path, self.SAVE_FILE_NAME)
+
+  def __pickle_data(self, file_path, data):
+    with open(file_path, "wb") as f:
+      pickle.dump(data, f)
+
+  def __unpickle_data(self, file_path):
+    with open(file_path, "rb") as f:
+      return pickle.load(f)
 

@@ -2,9 +2,12 @@ from tests.base_unittest import BaseUnitTest
 from kyoka.algorithm.td_learning.deep_q_learning import DeepQLearning
 from kyoka.value_function.base_deep_q_learning_action_value_function import BaseDeepQLearningActionValueFunction
 from kyoka.policy.base_policy import BasePolicy
+from kyoka.policy.greedy_policy import GreedyPolicy
 
 from mock import Mock
 from mock import patch
+
+import os
 
 class DeepQLearningTest(BaseUnitTest):
 
@@ -16,6 +19,14 @@ class DeepQLearningTest(BaseUnitTest):
     self.value_func = self.TestValueFunctionImpl()
     self.policy = self.NegativePolicyImple()
     self.algo.setUp(self.domain, self.policy, self.value_func)
+
+  def tearDown(self):
+    dir_path = self.__generate_tmp_dir_path()
+    file_path = os.path.join(dir_path, "dqn_algorithm_state.pickle")
+    if os.path.exists(dir_path):
+      if os.path.exists(file_path):
+        os.remove(file_path)
+      os.rmdir(dir_path)
 
   def test_update_value_function_learning_minibatch_delivery(self):
     with patch('random.sample', side_effect=lambda lst, n: lst[len(lst)-n:]):
@@ -57,6 +68,45 @@ class DeepQLearningTest(BaseUnitTest):
     algo.setUp(self.domain, self.policy, value_func)
     self.eq(2, len(algo.replay_memory.queue))
 
+  def test_save_and_load_algorithm_state(self):
+    dir_path = self.__generate_tmp_dir_path()
+    file_path = os.path.join(dir_path, "dqn_algorithm_state.pickle")
+    os.mkdir(dir_path)
+
+    self.algo.save_algorithm_state(dir_path)
+    self.true(os.path.exists(file_path))
+
+    new_algo = DeepQLearning(replay_start_size=100)
+    domain = self.__setup_stub_domain()
+    # Overrider terminal judge logic to avoid infinite episode by random policy
+    domain.is_terminal_state.side_effect = lambda state: state == 4 or state >= 100
+    value_func = self.TestValueFunctionImpl(strict_mode=False)
+    policy = self.NegativePolicyImple()
+    new_algo.setUp(domain, policy, value_func)
+    new_algo.load_algorithm_state(dir_path)
+
+    # Validate algorithm's state
+    self.eq(self.algo.gamma, new_algo.gamma)
+    self.eq(self.algo.C, new_algo.C)
+    self.eq(self.algo.minibatch_size, new_algo.minibatch_size)
+    self.eq(self.algo.replay_start_size, new_algo.replay_start_size)
+    self.eq(self.algo.reset_step_counter, new_algo.reset_step_counter)
+    self.eq(domain, new_algo.domain)
+    self.eq(policy, new_algo.policy)
+    self.eq(value_func, new_algo.value_function)
+    self.eq(self.algo.replay_memory.max_size, new_algo.replay_memory.max_size)
+    self.eq(self.algo.replay_memory.queue, new_algo.replay_memory.queue)
+    self.true(isinstance(new_algo.greedy_policy, GreedyPolicy))
+
+    # Validate that loaded algorithm works like original one
+    with patch('random.sample', side_effect=lambda lst, n: lst[len(lst)-n:]):
+      new_algo.update_value_function(self.domain, self.policy, self.value_func)
+    replay_memory_expected = [
+        (5.0, 7, 144, (4, True)),
+        (0.5, 1, 1, (1.5, False)),
+        (1.5, 3, 16, (4.5, True))
+    ]
+    self.eq(replay_memory_expected, new_algo.replay_memory.queue)
 
   def __setup_stub_domain(self):
     mock_domain = Mock()
@@ -66,6 +116,9 @@ class DeepQLearningTest(BaseUnitTest):
     mock_domain.generate_possible_actions.side_effect = lambda state: [] if state == 4 else [state + 1, state + 2]
     mock_domain.calculate_reward.side_effect = lambda state: state**2
     return mock_domain
+
+  def __generate_tmp_dir_path(self):
+    return os.path.join(os.path.dirname(__file__), "tmp")
 
   class TestValueFunctionImpl(BaseDeepQLearningActionValueFunction):
 
