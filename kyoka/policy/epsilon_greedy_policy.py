@@ -14,6 +14,14 @@ class EpsilonGreedyPolicy(BasePolicy):
     selected_action_idx = self.__roulette(probs)
     return actions[selected_action_idx]
 
+  def set_eps_annealing(self, initial_eps, final_eps, anneal_duration):
+    self.eps = initial_eps
+    self.min_eps = final_eps
+    self.anneal_step = (initial_eps - final_eps) / anneal_duration
+
+  def anneal_eps(self):
+    self.eps = max(self.min_eps, self.eps - self.anneal_step)
+
   def __choose_best_action(self, domain, value_func, state):
     actions = domain.generate_possible_actions(state)
     pack = lambda state, action: self.pack_arguments_for_value_function(value_func, state, action)
