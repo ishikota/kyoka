@@ -7,6 +7,10 @@ import numpy as np
 
 class TickTackToeDQNValueFunction(BaseDeepQLearningActionValueFunction):
 
+  Q_NETWORK_SAVE_FILE_NAME = "ticktacktoe_q_network_weights.h5"
+  Q_HAT_NETWORK_SAVE_FILE_NAME = "ticktacktoe_q_hat_network_weights.h5"
+  TMP_FILE_NAME = "ticktacktoe_dqn_deepcopy_tmp.h5"
+
   def __init__(self):
     BaseDeepQLearningActionValueFunction.__init__(self)
     self.domain = TickTackToeDomain()
@@ -17,10 +21,11 @@ class TickTackToeDQNValueFunction(BaseDeepQLearningActionValueFunction):
     return model
 
   def deepcopy_network(self, q_network):
-    q_network.save_weights(self.__gen_tmp_weight_file_path())
+    tmp_file_path = self.__gen_tmp_weight_file_path()
+    q_network.save_weights(tmp_file_path, overwrite=True)
     target_network = self.__gen_model()
-    target_network.load_weights(self.__gen_tmp_weight_file_path())
-    os.remove(self.__gen_tmp_weight_file_path())
+    target_network.load_weights(tmp_file_path)
+    os.remove(tmp_file_path)
     return target_network
 
   def preprocess_state(self, state):
@@ -37,11 +42,16 @@ class TickTackToeDQNValueFunction(BaseDeepQLearningActionValueFunction):
     y = np.array([y for _, y in processed_minibatch])
     history = self.Q.fit(X, y, batch_size=1, nb_epoch=1, shuffle=False)
 
-  def save_model_weights(self, file_path):
-    self.Q.save_weights(file_path)
+  def save_networks(self, Q_network, Q_hat_network, save_dir_path):
+    Q_network.save_weights(os.path.join(save_dir_path, self.Q_NETWORK_SAVE_FILE_NAME), overwrite=True)
+    Q_hat_network.save_weights(os.path.join(save_dir_path, self.Q_HAT_NETWORK_SAVE_FILE_NAME), overwrite=True)
 
-  def load_model_weights(self, file_path):
-    self.Q.load_weights(file_path)
+  def load_networks(self, load_dir_path):
+    q_network = self.__gen_model()
+    q_hat_network = self.__gen_model()
+    q_network.load_weights(os.path.join(load_dir_path, self.Q_NETWORK_SAVE_FILE_NAME))
+    q_hat_network.load_weights(os.path.join(load_dir_path, self.Q_HAT_NETWORK_SAVE_FILE_NAME))
+    return q_network, q_hat_network
 
 
   def __gen_model(self):
@@ -51,13 +61,13 @@ class TickTackToeDQNValueFunction(BaseDeepQLearningActionValueFunction):
     model.add(Dense(1))
     return model
 
-  def __gen_tmp_weight_file_path(self):
-    return os.path.join(os.path.dirname(__file__),\
-            "ticktacktoe_dqn_value_function_test_tmp_weight.h5")
 
   def __transform_state_action_into_input(self, state, action):
     next_state = self.domain.transit_state(state, action)
     flg_to_ary = lambda flg: reduce(lambda acc, e: acc + [1 if (flg>>e)&1==1 else 0], range(9), [])
     multi_dim_ary = [flg_to_ary(player_board) for player_board in next_state]
     return multi_dim_ary[0] + multi_dim_ary[1]
+
+  def __gen_tmp_weight_file_path(self):
+    return os.path.join(os.path.dirname(__file__), self.TMP_FILE_NAME)
 

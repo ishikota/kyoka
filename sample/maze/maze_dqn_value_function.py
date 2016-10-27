@@ -6,6 +6,10 @@ import numpy as np
 
 class MazeDQNValueFunction(BaseDeepQLearningActionValueFunction):
 
+  Q_NETWORK_SAVE_FILE_NAME = "maze_q_network_weights.h5"
+  Q_HAT_NETWORK_SAVE_FILE_NAME = "maze_q_hat_network_weights.h5"
+  TMP_FILE_NAME = "maze_dqn_deepcopy_tmp.h5"
+
   def __init__(self, domain):
     BaseDeepQLearningActionValueFunction.__init__(self)
     self.domain = domain
@@ -17,10 +21,11 @@ class MazeDQNValueFunction(BaseDeepQLearningActionValueFunction):
     return model
 
   def deepcopy_network(self, q_network):
-    q_network.save_weights(self.__gen_tmp_weight_file_path())
+    tmp_file_path = self.__gen_tmp_weight_file_path()
+    q_network.save_weights(tmp_file_path, overwrite=True)
     target_network = self.__gen_model()
-    target_network.load_weights(self.__gen_tmp_weight_file_path())
-    os.remove(self.__gen_tmp_weight_file_path())
+    target_network.load_weights(tmp_file_path)
+    os.remove(tmp_file_path)
     return target_network
 
   def preprocess_state(self, state):
@@ -37,11 +42,16 @@ class MazeDQNValueFunction(BaseDeepQLearningActionValueFunction):
     y = np.array([y for _, y in processed_minibatch])
     history = self.Q.fit(X, y, batch_size=1, nb_epoch=1, shuffle=False)
 
-  def save_model_weights(self, file_path):
-    self.Q.save_weights(file_path)
+  def save_networks(self, Q_network, Q_hat_network, save_dir_path):
+    Q_network.save_weights(os.path.join(save_dir_path, self.Q_NETWORK_SAVE_FILE_NAME), overwrite=True)
+    Q_hat_network.save_weights(os.path.join(save_dir_path, self.Q_HAT_NETWORK_SAVE_FILE_NAME), overwrite=True)
 
-  def load_model_weights(self, file_path):
-    self.Q.load_weights(file_path)
+  def load_networks(self, load_dir_path):
+    q_network = self.__gen_model()
+    q_hat_network = self.__gen_model()
+    q_network.load_weights(os.path.join(load_dir_path, self.Q_NETWORK_SAVE_FILE_NAME))
+    q_hat_network.load_weights(os.path.join(load_dir_path, self.Q_HAT_NETWORK_SAVE_FILE_NAME))
+    return q_network, q_hat_network
 
 
   def __gen_model(self):
@@ -52,13 +62,13 @@ class MazeDQNValueFunction(BaseDeepQLearningActionValueFunction):
     model.add(Dense(1))
     return model
 
-  def __gen_tmp_weight_file_path(self):
-    return os.path.join(os.path.dirname(__file__), "maze_dqn_value_function_test_tmp_weight.h5")
-
   def __transform_state_action_into_input(self, state, action):
     flatten = lambda l: [item for sublist in l for item in sublist]
     next_state = self.domain.transit_state(state, action)
     onehot = [[1 if next_state == (row, col) else 0 for col in range(self.maze_shape[1])]\
         for row in range(self.maze_shape[0])]
     return flatten(onehot)
+
+  def __gen_tmp_weight_file_path(self):
+    return os.path.join(os.path.dirname(__file__), self.TMP_FILE_NAME)
 
