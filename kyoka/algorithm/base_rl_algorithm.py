@@ -26,7 +26,7 @@ class BaseRLAlgorithm(object):
     err_msg = self.__build_err_msg("update_value_function")
     raise NotImplementedError(err_msg)
 
-  def run_gpi(self, nb_iteration, callbacks=[], verbose=1):
+  def run_gpi(self, nb_iteration, callbacks=None, verbose=1):
     if not all([hasattr(self, attr) for attr in ["domain", "value_function", "policy"]]):
       raise Exception('You need to call "setUp" method before calling "run_gpi" method.')
     callbacks = self.__wrap_item_if_single(callbacks)
@@ -58,9 +58,10 @@ class BaseRLAlgorithm(object):
       state = next_state
     return episode
 
-
   def __wrap_item_if_single(self, item):
-    return [item] if not isinstance(item, list) else item
+    if item is None: item = []
+    if not isinstance(item, list): item = [item]
+    return item
 
   def __build_err_msg(self, msg):
     return "Accessed [ {0} ] method of BaseRLAlgorithm which should be overridden".format(msg)
