@@ -2,10 +2,21 @@ from tests.base_unittest import BaseUnitTest
 from kyoka.value_function.base_deep_q_learning_action_value_function import BaseDeepQLearningActionValueFunction
 from nose.tools import raises
 
+import pickle
+import os
+
 class BaseDeepQLearningActionValueFunctionTest(BaseUnitTest):
 
   def setUp(self):
     self.func = BaseDeepQLearningActionValueFunction()
+
+  def tearDown(self):
+    dir_path = self.__generate_tmp_dir_path()
+    file_path = os.path.join(dir_path, "dqn_value_function_data.pickle")
+    if os.path.exists(dir_path):
+      if os.path.exists(file_path):
+        os.remove(file_path)
+      os.rmdir(dir_path)
 
   def test_initialize_network(self):
     with self.assertRaises(NotImplementedError) as e:
@@ -32,15 +43,15 @@ class BaseDeepQLearningActionValueFunctionTest(BaseUnitTest):
       self.func.train_on_minibatch("dummy", "dummy")
     self.include("train_on_minibatch", e.exception.message)
 
-  def test_save_model_weights(self):
+  def test_save_networks(self):
     with self.assertRaises(NotImplementedError) as e:
-      self.func.save_model_weights("dummy")
-    self.include("save_model_weights", e.exception.message)
+      self.func.save_networks("dummy", "dummy", "dummy")
+    self.include("save_networks", e.exception.message)
 
-  def test_load_model_weights(self):
+  def test_load_networks(self):
     with self.assertRaises(NotImplementedError) as e:
-      self.func.load_model_weights("dummy")
-    self.include("load_model_weights", e.exception.message)
+      self.func.load_networks("dummy")
+    self.include("load_networks", e.exception.message)
 
   def test_update_function(self):
     with self.assertRaises(AttributeError) as e:
@@ -76,6 +87,21 @@ class BaseDeepQLearningActionValueFunctionTest(BaseUnitTest):
     func.reset_target_network()
     self.eq(3, func.Q_hat)
 
+  def test_save_and_load_networks(self):
+    func = self.TestImple()
+    func.setUp()
+    func.Q = 2
+    dir_path = self.__generate_tmp_dir_path()
+    os.mkdir(dir_path)
+    func.save(dir_path)
+    new_func = self.TestImple()
+    new_func.setUp()
+    new_func.load(dir_path)
+    self.eq(func.Q, new_func.Q)
+    self.eq(func.Q_hat, new_func.Q_hat)
+
+  def __generate_tmp_dir_path(self):
+    return os.path.join(os.path.dirname(__file__), "tmp")
 
   class TestImple(BaseDeepQLearningActionValueFunction):
 
@@ -87,4 +113,16 @@ class BaseDeepQLearningActionValueFunctionTest(BaseUnitTest):
 
     def predict_action_value(self, network, state, action):
       return network * state * action
+
+    def save_networks(self, Q_network, Q_hat_network, save_dir_path):
+      with open(self.generate_tmp_file_path(), "wb") as f:
+        pickle.dump((Q_network, Q_hat_network), f)
+
+    def load_networks(self, load_dir_path):
+      with open(self.generate_tmp_file_path(), "rb") as f:
+        Q_network, Q_hat_network = pickle.load(f)
+      return Q_network, Q_hat_network
+
+    def generate_tmp_file_path(self):
+      return os.path.join(os.path.dirname(__file__), "dqn_value_function_data.pickle")
 

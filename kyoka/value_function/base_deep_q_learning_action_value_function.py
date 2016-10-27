@@ -22,12 +22,12 @@ class BaseDeepQLearningActionValueFunction(BaseActionValueFunction):
     err_msg = self.__build_not_implemented_message("train_on_minibatch")
     raise NotImplementedError(err_msg)
 
-  def save_model_weights(self, file_path):
-    err_msg = self.__build_not_implemented_message("save_model_weights")
+  def save_networks(self, Q_network, Q_hat_network, save_dir_path):
+    err_msg = self.__build_not_implemented_message("save_networks")
     raise NotImplementedError(err_msg)
 
-  def load_model_weights(self, file_path):
-    err_msg = self.__build_not_implemented_message("load_model_weights")
+  def load_networks(self, load_dir_path):
+    err_msg = self.__build_not_implemented_message("load_networks")
     raise NotImplementedError(err_msg)
 
   def update_function(self, state, action, new_value):
@@ -52,11 +52,11 @@ class BaseDeepQLearningActionValueFunction(BaseActionValueFunction):
   def reset_target_network(self):
     self.Q_hat = self.deepcopy_network(self.Q)
 
-  def provide_data_to_store(self):
-    return None
+  def save(self, save_dir_path):
+    self.save_networks(self.Q, self.Q_hat, save_dir_path)
 
-  def receive_data_to_restore(self, restored_data):
-    pass
+  def load(self, load_dir_path):
+    self.Q, self.Q_hat = self.load_networks(load_dir_path)
 
   def __build_not_implemented_message(self, methodname):
     base_msg = "[ {0} ] class does not implement [ {1} ] method"
