@@ -14,8 +14,8 @@ class DeepQLearningTest(BaseUnitTest):
     self.algo.replay_memory.store_transition(5.0, 7, 144, (4, True))
     self.domain = self.__setup_stub_domain()
     self.value_func = self.TestValueFunctionImpl()
-    self.value_func.setUp()
-    self.policy = self.NegativePolicyImple(self.domain, self.value_func)
+    self.policy = self.NegativePolicyImple()
+    self.algo.setUp(self.domain, self.policy, self.value_func)
 
   def test_update_value_function_learning_minibatch_delivery(self):
     with patch('random.sample', side_effect=lambda lst, n: lst[len(lst)-n:]):
@@ -51,12 +51,11 @@ class DeepQLearningTest(BaseUnitTest):
   def test_initialize_replay_memory(self):
     algo = DeepQLearning(gamma=0.1, N=3, C=3, minibatch_size=2, replay_start_size=2)
     value_func = self.TestValueFunctionImpl(strict_mode=False)
-    value_func.setUp()
     # Overrider terminal judge logic to avoid infinite episode by random policy
     self.domain.is_terminal_state.side_effect = lambda state: state == 4 or state >= 100
     self.eq(0, len(algo.replay_memory.queue))
-    algo.update_value_function(self.domain, self.policy, value_func)
-    self.eq(3, len(algo.replay_memory.queue))
+    algo.setUp(self.domain, self.policy, value_func)
+    self.eq(2, len(algo.replay_memory.queue))
 
 
   def __setup_stub_domain(self):
@@ -127,9 +126,9 @@ class DeepQLearningTest(BaseUnitTest):
 
   class NegativePolicyImple(BasePolicy):
 
-    def choose_action(self, state):
-      actions = self.domain.generate_possible_actions(state)
-      calc_Q_value = lambda state, action: self.value_function.calculate_value(state, action)
+    def choose_action(self, domain, value_function, state):
+      actions = domain.generate_possible_actions(state)
+      calc_Q_value = lambda state, action: value_function.calculate_value(state, action)
       Q_value_for_actions = [calc_Q_value(state, action) for action in actions]
       min_Q_value = min(Q_value_for_actions)
       Q_act_pair = zip(Q_value_for_actions, actions)
