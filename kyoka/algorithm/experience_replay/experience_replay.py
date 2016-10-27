@@ -14,3 +14,9 @@ class ExperienceReplay(object):
   def sample_minibatch(self, minibatch_size):
     return random.sample(self.queue, minibatch_size)
 
+  def dump(self):
+    return (self.max_size, self.queue)
+
+  def load(self, serial):
+    self.max_size, self.queue = serial
+
