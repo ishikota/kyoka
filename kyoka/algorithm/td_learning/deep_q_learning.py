@@ -42,17 +42,19 @@ class DeepQLearning(BaseTDMethod):
     self.replay_memory = new_replay_memory
 
   def update_action_value_function(self, domain, policy, value_function):
-    phi = lambda s: value_function.preprocess_state(s)
+    phi = lambda s: value_function.preprocess_state_sequence(s)
     value_function.use_target_network(False)
     state = domain.generate_initial_state()
+    sequence = [state]
 
-    while not domain.is_terminal_state(state):
-      action = policy.choose_action(domain, value_function, state)
-      next_state = domain.transit_state(state, action)
+    while not domain.is_terminal_state(sequence[-1]):
+      action = policy.choose_action(domain, value_function, phi(sequence))
+      next_state = domain.transit_state(sequence[-1], action)
       reward = domain.calculate_reward(next_state)
-      next_state_info = (phi(next_state), domain.is_terminal_state(next_state))
+      sequence.append(next_state)
+      next_state_info = (phi(sequence), domain.is_terminal_state(next_state))
 
-      self.replay_memory.store_transition(phi(state), action, reward, next_state_info)
+      self.replay_memory.store_transition(phi(sequence[:-1]), action, reward, next_state_info)
       experience_minibatch = self.replay_memory.sample_minibatch(self.minibatch_size)
       learning_minibatch= self.__gen_learning_minibatch(self.domain, self.greedy_policy, value_function, experience_minibatch)
       value_function.train_on_minibatch(value_function.Q, learning_minibatch)
@@ -63,16 +65,16 @@ class DeepQLearning(BaseTDMethod):
       else:
         self.reset_step_counter += 1
 
-      state = next_state
-
 
   def __initialize_replay_memory(self, domain, value_function, replay_memory, start_size):
-    phi = lambda s: value_function.preprocess_state(s)
+    phi = lambda s: value_function.preprocess_state_sequence(s)
     random_policy = EpsilonGreedyPolicy(eps=1.0)
     while len(replay_memory.queue) < start_size:
-      for state, action, next_state, reward in self.generate_episode(domain, value_function, random_policy):
-        next_state_info = (phi(next_state), domain.is_terminal_state(next_state))
-        replay_memory.store_transition(phi(state), action, reward, next_state_info)
+      sequence = [domain.generate_initial_state()]
+      for _, action, next_state, reward in self.generate_episode(domain, value_function, random_policy):
+        sequence.append(next_state)
+        next_state_info = (phi(sequence), domain.is_terminal_state(next_state))
+        replay_memory.store_transition(phi(sequence[:-1]), action, reward, next_state_info)
         if len(replay_memory.queue) >= start_size: return
 
 

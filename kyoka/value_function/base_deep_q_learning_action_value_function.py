@@ -10,8 +10,8 @@ class BaseDeepQLearningActionValueFunction(BaseActionValueFunction):
     err_msg = self.__build_not_implemented_message("deepcopy_network")
     raise NotImplementedError(err_msg)
 
-  def preprocess_state(self, state):
-    err_msg = self.__build_not_implemented_message("preprocess_state")
+  def preprocess_state_sequence(self, raw_state_sequence):
+    err_msg = self.__build_not_implemented_message("preprocess_state_sequence")
     raise NotImplementedError(err_msg)
 
   def predict_action_value(self, network, processed_state, action):
