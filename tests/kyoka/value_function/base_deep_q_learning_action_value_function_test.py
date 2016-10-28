@@ -28,10 +28,10 @@ class BaseDeepQLearningActionValueFunctionTest(BaseUnitTest):
       self.func.deepcopy_network("dummy")
     self.include("deepcopy_network", e.exception.message)
 
-  def test_preprocess_state(self):
+  def test_preprocess_state_sequence(self):
     with self.assertRaises(NotImplementedError) as e:
-      self.func.preprocess_state("dummy")
-    self.include("preprocess_state", e.exception.message)
+      self.func.preprocess_state_sequence("dummy")
+    self.include("preprocess_state_sequence", e.exception.message)
 
   def test_predict_action_value(self):
     with self.assertRaises(NotImplementedError) as e:

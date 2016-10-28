@@ -14,7 +14,7 @@ class DeepQLearningTest(BaseUnitTest):
   def setUp(self):
     self.algo = DeepQLearning(gamma=0.1, N=3, C=3, minibatch_size=2, replay_start_size=2)
     self.algo.replay_memory.store_transition(2.5, 3, 25, (5, False))
-    self.algo.replay_memory.store_transition(5.0, 7, 144, (4, True))
+    self.algo.replay_memory.store_transition(5.0, 7, 144, (5.5, True))
     self.domain = self.__setup_stub_domain()
     self.value_func = self.TestValueFunctionImpl()
     self.policy = self.NegativePolicyImple()
@@ -33,8 +33,8 @@ class DeepQLearningTest(BaseUnitTest):
       self.algo.update_value_function(self.domain, self.policy, self.value_func)
 
     learning_minibatch_expected = [
-        [(5.0, 7, 144), (0.5, 1, 1.6)],
-        [(0.5, 1, 1.6), (1.5, 3, 16)]
+        [(5.0, 7, 144), (0.5, 1.5, 2.85)],
+        [(0.5, 1.5, 2.85), (2, 4, 30.25)]
     ]
     actual = [arg[0][0] for arg in self.value_func.Q.train_on_minibatch.call_args_list]
     self.eq(learning_minibatch_expected, actual)
@@ -44,9 +44,9 @@ class DeepQLearningTest(BaseUnitTest):
     with patch('random.sample', side_effect=lambda lst, n: lst[len(lst)-n:]):
       self.algo.update_value_function(self.domain, self.policy, self.value_func)
     replay_memory_expected = [
-        (5.0, 7, 144, (4, True)),
-        (0.5, 1, 1, (1.5, False)),
-        (1.5, 3, 16, (4.5, True))
+        (5.0, 7, 144, (5.5, True)),
+        (0.5, 1.5, 2.25, (2, False)),
+        (2, 4, 30.25, (6.0, True))
     ]
     self.eq(replay_memory_expected, self.algo.replay_memory.queue)
 
@@ -102,18 +102,18 @@ class DeepQLearningTest(BaseUnitTest):
     with patch('random.sample', side_effect=lambda lst, n: lst[len(lst)-n:]):
       new_algo.update_value_function(self.domain, self.policy, self.value_func)
     replay_memory_expected = [
-        (5.0, 7, 144, (4, True)),
-        (0.5, 1, 1, (1.5, False)),
-        (1.5, 3, 16, (4.5, True))
+        (5.0, 7, 144, (5.5, True)),
+        (0.5, 1.5, 2.25, (2, False)),
+        (2, 4, 30.25, (6.0, True))
     ]
     self.eq(replay_memory_expected, new_algo.replay_memory.queue)
 
   def __setup_stub_domain(self):
     mock_domain = Mock()
     mock_domain.generate_initial_state.return_value = 0
-    mock_domain.is_terminal_state.side_effect = lambda state: state == 4
+    mock_domain.is_terminal_state.side_effect = lambda state: state == 5.5
     mock_domain.transit_state.side_effect = lambda state, action: state + action
-    mock_domain.generate_possible_actions.side_effect = lambda state: [] if state == 4 else [state + 1, state + 2]
+    mock_domain.generate_possible_actions.side_effect = lambda state: [] if state == 5.5 else [state + 1, state + 2]
     mock_domain.calculate_reward.side_effect = lambda state: state**2
     return mock_domain
 
@@ -138,8 +138,8 @@ class DeepQLearningTest(BaseUnitTest):
       self.deepcopy_counter += 1
       return mock_q_hat_network
 
-    def preprocess_state(self, state):
-      return state + 0.5
+    def preprocess_state_sequence(self, raw_state_sequence):
+      return raw_state_sequence[-1] + 0.5
 
     def predict_action_value(self, network, processed_state, action):
       return network.predict(processed_state, action)
@@ -148,13 +148,13 @@ class DeepQLearningTest(BaseUnitTest):
       network.train_on_minibatch(learning_minibatch)
 
     def q_predict_scenario(self, state, action):
-      if state == 0 and action == 1:
+      if state == 0.5 and action == 1.5:
         return 1
-      elif state == 0 and action == 2:
+      elif state == 0.5 and action == 2.5:
         return 2
-      elif state == 1 and action == 2:
+      elif state == 2 and action == 3:
         return 4
-      elif state == 1 and action == 3:
+      elif state == 2 and action == 4:
         return 3
       else:
         if self.strict_mode:
@@ -163,14 +163,10 @@ class DeepQLearningTest(BaseUnitTest):
           return 1
 
     def q_hat_predict_scenario(self, state, action):
-      if state == 1.5 and action == 2.5:
+      if state == 2 and action == 3:
         return 5
-      elif state == 1.5 and action == 3.5:
+      elif state == 2 and action == 4:
         return 6
-      elif state == 4.5 and action == 5.5:
-        return 8
-      elif state == 4.5 and action == 6.5:
-        return 7
       else:
         if self.strict_mode:
           raise AssertionError("q_hat_network received unexpected state-action pair (state=%s, action=%s)" % (state, action))
