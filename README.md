@@ -9,8 +9,11 @@
 - QLearning
 - SarsaLambda
 - QLambda
+- deep Q-network (DQN)
 
-Algorithms are implemented based on the book [Sutton & Barto Book: Reinforcement Learning: An Introduction](https://webdocs.cs.ualberta.ca/~sutton/book/ebook/the-book.html)
+**Reference**
+- [Sutton & Barto Book: Reinforcement Learning: An Introduction](https://webdocs.cs.ualberta.ca/~sutton/book/ebook/the-book.html)
+- [Human-level control through deep reinforcement learning](http://www.nature.com/nature/journal/v518/n7540/abs/nature14236.html)
 
 # Getting Started
 ## Motivation
@@ -21,10 +24,10 @@ This library provides two template classes to make your task in RL format.
 - `BaseDomain` class which represents our learning task
 - `ValueFunction` class which RL algorithm uses to save trial-and-error result
 
-So let's see how to use these template classes through simple example.
+So let's see how to use these template classes through simple *maze* example.
 
-## Example. Find best policy to escape from the maze
-Here we will find the best policy to escape from the below maze by RL algorithm.
+## Example. Find the best policy to escape from the maze
+Here we will find the best policy to escape from the below maze by using RL algorithm.
 ```
 S: start, G: goal, X: wall
 
@@ -102,7 +105,7 @@ Ok! next is `ValueFunction`!!
 - `update_function(state, action, new_value)`
   - update value of passed state and action pair by passed value.
 
-The state space of this example is very small (state space = |state| x |action| = 6 x 9 x 4 = 216).  
+The state space of this example is very small (state space = |state| x |action| = (6 x 9) x 4 = 216).  
 So we prepare the table (3-dimentional array) and save value on it.
 
 ```python
@@ -126,33 +129,28 @@ class MazeActionValueFunction(BaseActionValueFunction):
     self.table[row][col][action] = new_value
 ```
 
-#### hint: Deep Reinforcement Learning
-If state space is too learge, you can use neural net as value function like [DQN](https://arxiv.org/pdf/1312.5602.pdf).  
-
-If you are interested in it, you can checkout [`BaseKerasValueFunction` ](https://github.com/ishikota/kyoka/blob/master/kyoka/value_function/base_keras_action_value_function.py)  
-(`BaseKerasValueFunction` internally  uses [keras](https://github.com/fchollet/keras) library to approximate value function by neuralnet. )
-
-The sample implementation of `BaseKerasValueFunction` for maze domain is [here (MazeKerasValueFunction)](https://github.com/ishikota/kyoka/blob/master/sample/maze/maze_keras_value_function.py).
-
 ### Step3. Running RL algorithm and see its result
-OK, here we apply `QLearning` on our *maze*  RL task.
+OK, let's try `QLearning` for our *maze*  task.
 
 ```python
 from kyoka.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
 from kyoka.algorithm.td_learning.q_learning import QLearning
-from kyoka.finish_rule.watch_iteration_count import WatchIterationCount
 
-rl_algo = QLearning(alpha=0.1, gamma=0.7) # You can replace RL algorithm like "rl_algo = Sarsa(alpha=0.1, gamma=0.7)"
 domain = MazeDomain()
+policy = EpsilonGreedyPolicy(eps=0.1)
 value_function = MazeActionValueFunction()
-value_function.setUp()
-policy = EpsilonGreedyPolicy(domain, value_function, eps=0.1)
-finish_rule = WatchIterationCount(50)  # finish learning after 50-th iteration
-rl_algo.GPI(domain, policy, value_function, finish_rule)
+
+# You can easily replace algorithm like "rl_algo = Sarsa(alpha=0.1, gamma=0.7)"
+rl_algo = QLearning(alpha=0.1, gamma=0.7)
+rl_algo.setUp(domain, policy, value_function)
+rl_algo.run_gpi(nb_iteration=50)
 ```
 
-That's all !! Let's visualize the value function which QLearning learned.
+That's all !! Let's visualize the value function which QLearning learned.  
+(If you interested in `MazeHelper` utility class, Please checkout [complete code](https://github.com/ishikota/kyoka/blob/master/sample/maze/readme_sample.py).)
 ```
+>>> print MazeHelper.visualize_policy(domain, value_function)
+
       -------XG
       --X-v-vX^
  S -> v-X-vvvX^
@@ -161,18 +159,16 @@ That's all !! Let's visualize the value function which QLearning learned.
       ->^<^----
 ```
 
-Looks good!! QLearning found the policy which leads us to goal in 14 steps. (14 step is minimum step to the goal !!)
-
-You can access complete code of this tutorial from [here](https://github.com/ishikota/kyoka/blob/master/sample/maze/readme_sample.py).
+Great!! QLearning found the policy which leads us to goal in 14 steps. (14 step is minimum step to the goal !!)
 
 ## Sample code
-In sample directory, we prepared more practical sample code as jupyter notebook and script.
+In sample directory, we prepared more practical sample code as jupyter notebook and script.  
 You can also checkout another RL task example *tick-tack-toe* .
 - [sample: Learning how to escape from maze by RL](https://github.com/ishikota/kyoka/tree/master/sample/maze)
 - [sample: Learning tick-tack-toe by RL](https://github.com/ishikota/kyoka/tree/master/sample/ticktacktoe)
 
 # Installation
-Please install *kyoka* using pip like this
+You can use pip like this.
 ```bash
 pip install kyoka
 ```
