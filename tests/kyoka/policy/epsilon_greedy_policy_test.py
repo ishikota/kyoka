@@ -16,7 +16,9 @@ class EpsilonGreedyPolicyTest(BaseUnitTest):
 
   def test_epsilon_annealing(self):
     policy = EpsilonGreedyPolicy(eps=0.5)
+    self.false(policy.do_annealing)
     policy.set_eps_annealing(initial_eps=1.0, final_eps=0.1, anneal_duration=9)
+    self.true(policy.do_annealing)
     expected_eps = [(i+1)*0.1 for i in range(9)][::-1] + [0.1, 0.1]
     for eps in expected_eps:
       policy.anneal_eps()

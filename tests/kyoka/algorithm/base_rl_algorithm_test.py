@@ -1,6 +1,7 @@
 from tests.base_unittest import BaseUnitTest
 from kyoka.algorithm.base_rl_algorithm import BaseRLAlgorithm
 from kyoka.policy.greedy_policy import GreedyPolicy
+from kyoka.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
 from kyoka.value_function.base_action_value_function import BaseActionValueFunction
 from kyoka.callback.finish_rule.base_finish_rule import BaseFinishRule
 
@@ -123,6 +124,21 @@ class BaseRLAlgorithmTest(BaseUnitTest):
     algo.setUp(domain, policy, value_func)
     algo.run_gpi(nb_iteration=2)
     self.eq(1, self.capture.getvalue().count("[Progress] Completed"))
+
+  def test_default_annealing_message(self):
+    algo = self.TestImplementation()
+    domain = self.__setup_stub_domain()
+    policy = EpsilonGreedyPolicy()
+    value_func = self.__setup_stub_value_function()
+
+    algo.setUp(domain, policy, value_func)
+    algo.run_gpi(nb_iteration=2)
+    self.not_include("[EpsilonGreedyAnnealing]", self.capture.getvalue())
+
+    policy.set_eps_annealing(1.0, 0.1, 100)
+    algo.setUp(domain, policy, value_func)
+    algo.run_gpi(nb_iteration=2)
+    self.include("[EpsilonGreedyAnnealing]", self.capture.getvalue())
 
   def test_set_callback(self):
     algo = self.TestImplementation()

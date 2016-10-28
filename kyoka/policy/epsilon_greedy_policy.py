@@ -6,6 +6,7 @@ class EpsilonGreedyPolicy(BasePolicy):
   def __init__(self, eps=0.05, rand=None):
     self.eps = eps
     self.rand = rand if rand else random
+    self.do_annealing = False
 
   def choose_action(self, domain, value_function, state):
     actions = domain.generate_possible_actions(state)
@@ -15,6 +16,7 @@ class EpsilonGreedyPolicy(BasePolicy):
     return actions[selected_action_idx]
 
   def set_eps_annealing(self, initial_eps, final_eps, anneal_duration):
+    self.do_annealing = True
     self.eps = initial_eps
     self.min_eps = final_eps
     self.anneal_step = (initial_eps - final_eps) / anneal_duration

@@ -1,3 +1,5 @@
+from kyoka.policy.epsilon_greedy_policy import EpsilonGreedyPolicy
+from kyoka.callback.epsilon_annealer import EpsilonAnnealer
 from kyoka.callback.finish_rule.watch_iteration_count import WatchIterationCount
 
 class BaseRLAlgorithm(object):
@@ -63,6 +65,8 @@ class BaseRLAlgorithm(object):
   def __setup_callbacks(self, default_finish_rule, user_callbacks):
     user_callbacks = self.__wrap_item_if_single(user_callbacks)
     default_callbacks = [default_finish_rule]
+    if isinstance(self.policy, EpsilonGreedyPolicy) and self.policy.do_annealing:
+      default_callbacks.append(EpsilonAnnealer(self.policy))
     return default_callbacks + user_callbacks
 
   def __wrap_item_if_single(self, item):
