@@ -27,11 +27,9 @@ class BaseRLAlgorithm(object):
     raise NotImplementedError(err_msg)
 
   def run_gpi(self, nb_iteration, callbacks=None, verbose=1):
-    if not all([hasattr(self, attr) for attr in ["domain", "value_function", "policy"]]):
-      raise Exception('You need to call "setUp" method before calling "run_gpi" method.')
-    callbacks = self.__wrap_item_if_single(callbacks)
+    self.__check_setup_call()
     default_finish_rule = WatchIterationCount(nb_iteration, verbose)
-    callbacks.insert(0, default_finish_rule)
+    callbacks = self.__setup_callbacks(default_finish_rule, callbacks)
     [callback.before_gpi_start(self.domain, self.value_function) for callback in callbacks]
 
     iteration_counter = 1
@@ -57,6 +55,15 @@ class BaseRLAlgorithm(object):
       episode.append((state, action, next_state, reward))
       state = next_state
     return episode
+
+  def __check_setup_call(self):
+    if not all([hasattr(self, attr) for attr in ["domain", "value_function", "policy"]]):
+      raise Exception('You need to call "setUp" method before calling "run_gpi" method.')
+
+  def __setup_callbacks(self, default_finish_rule, user_callbacks):
+    user_callbacks = self.__wrap_item_if_single(user_callbacks)
+    default_callbacks = [default_finish_rule]
+    return default_callbacks + user_callbacks
 
   def __wrap_item_if_single(self, item):
     if item is None: item = []
