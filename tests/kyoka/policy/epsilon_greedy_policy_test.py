@@ -14,6 +14,16 @@ class EpsilonGreedyPolicyTest(BaseUnitTest):
     self.eq(3, self.__choose_action_with_rand_value(0.2 + (1-0.3)))
     self.eq(3, self.__choose_action_with_rand_value(1-eps))
 
+  def test_epsilon_annealing(self):
+    policy = EpsilonGreedyPolicy(eps=0.5)
+    self.false(policy.do_annealing)
+    policy.set_eps_annealing(initial_eps=1.0, final_eps=0.1, anneal_duration=9)
+    self.true(policy.do_annealing)
+    expected_eps = [(i+1)*0.1 for i in range(9)][::-1] + [0.1, 0.1]
+    for eps in expected_eps:
+      policy.anneal_eps()
+      self.almosteq(eps, policy.eps, 0.000001)
+
   def xtest_sampling_action(self):
     domain = self.__setup_domain_stub([1,2,3])
     value_func = self.__setup_value_function_stub([100, 150, 50]*100000)
