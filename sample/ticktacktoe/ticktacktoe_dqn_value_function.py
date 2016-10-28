@@ -28,8 +28,8 @@ class TickTackToeDQNValueFunction(BaseDeepQLearningActionValueFunction):
     os.remove(tmp_file_path)
     return target_network
 
-  def preprocess_state(self, state):
-    return state
+  def preprocess_state_sequence(self, raw_state_sequence):
+    return raw_state_sequence[-1]
 
   def predict_action_value(self, q_network, processed_state, action):
     X = self.__transform_state_action_into_input(processed_state, action)
