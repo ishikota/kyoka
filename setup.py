@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = "kyoka",
-    version = "0.0.2",
+    version = "0.1.0",
     author = "ishikota",
     author_email = "ishikota086@gmail.com",
     description = ("Simple Reinforcement Learning Library"),
@@ -11,7 +11,7 @@ setup(
     url = "https://github.com/ishikota/kyoka",
     packages=find_packages(),
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "License :: OSI Approved :: MIT License",
     ],
