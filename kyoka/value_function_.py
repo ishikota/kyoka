@@ -60,7 +60,7 @@ class BaseTabularActionValueFunction(BaseActionValueFunction):
 
     def _gen_table_data_file_name(self):
         prefix = self.define_save_file_prefix()
-        if len(prefix) != 1: prefix += "_"
+        if len(prefix) != 0: prefix += "_"
         return prefix + self.BASE_SAVE_FILE_NAME
 
 
