@@ -1,4 +1,5 @@
 from tests.base_unittest import BaseUnitTest
+from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir
 from kyoka.algorithm_.montecarlo import MonteCarlo, MontCarloTabularActionValueFunction
 from kyoka.value_function_ import BaseTabularActionValueFunction
 from kyoka.policy_ import GreedyPolicy
@@ -14,7 +15,7 @@ class MonteCarloTest(BaseUnitTest):
         self.algo = MonteCarlo()
 
     def tearDown(self):
-        teardown_tmp_dir(["montecarlo_update_counter.pickle", "montecarlo_table_action_value_function_data.pickle"])
+        cleanup_trash()
 
     @raises(TypeError)
     def test_value_function_validation(self):
@@ -39,13 +40,13 @@ class MonteCarloTest(BaseUnitTest):
         policy = GreedyPolicy()
         self.algo.setup(task, policy, value_func)
         self.algo.run_gpi_for_an_episode(task, policy, value_func)
-        setup_tmp_dir()
-        self.algo.save(generate_tmp_dir_path())
+        setup_tmp_dir(__file__)
+        self.algo.save(generate_tmp_dir_path(__file__))
 
         task.calculate_reward.side_effect = lambda state: state
         new_algo = MonteCarlo()
         new_algo.setup(task, policy, value_func)
-        new_algo.load(generate_tmp_dir_path())
+        new_algo.load(generate_tmp_dir_path(__file__))
         new_algo.run_gpi_for_an_episode(task, policy, value_func)
 
         expected = [(0, 1, 35, 2), (1, 2, 34, 2), (3, 4, 28, 2), (0, 0, 0, 0)]
@@ -61,7 +62,7 @@ class MontCarloTabularActionValueFunctionTest(BaseUnitTest):
         self.func = MonteCarloTabularActionValueFunctionImpl()
 
     def tearDown(self):
-        teardown_tmp_dir(["montecarlo_update_counter.pickle", "montecarlo_table_action_value_function_data.pickle"])
+        cleanup_trash()
 
     def test_setup(self):
         self.func.setup()
@@ -70,10 +71,10 @@ class MontCarloTabularActionValueFunctionTest(BaseUnitTest):
     def test_save_and_load(self):
         self.func.setup()
         self.func.update_counter[0][0] = 1
-        setup_tmp_dir()
-        self.func.save(generate_tmp_dir_path())
+        setup_tmp_dir(__file__)
+        self.func.save(generate_tmp_dir_path(__file__))
         new_func = MonteCarloTabularActionValueFunctionImpl()
-        new_func.load(generate_tmp_dir_path())
+        new_func.load(generate_tmp_dir_path(__file__))
         self.eq(1, new_func.update_counter[0][0])
 
     def test_backup(self):
@@ -108,17 +109,7 @@ def setup_stub_task():
     mock_task.calculate_reward.side_effect = lambda state: state**2
     return mock_task
 
-def generate_tmp_dir_path():
-    return os.path.join(os.path.dirname(__file__), "tmp")
-
-def setup_tmp_dir():
-    os.mkdir(generate_tmp_dir_path())
-
-def teardown_tmp_dir(file_names):
-    dir_path = generate_tmp_dir_path()
-    if os.path.exists(dir_path):
-        for file_name in file_names:
-            file_path = os.path.join(dir_path, file_name)
-            if os.path.exists(file_path): os.remove(file_path)
-        os.rmdir(dir_path)
+def cleanup_trash():
+    filenames = ["montecarlo_update_counter.pickle", "montecarlo_table_action_value_function_data.pickle"]
+    teardown_tmp_dir(__file__, filenames)
 

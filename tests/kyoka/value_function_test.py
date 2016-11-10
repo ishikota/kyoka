@@ -1,5 +1,6 @@
 import os
 from tests.base_unittest import BaseUnitTest
+from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir
 from kyoka.value_function_ import BaseTabularActionValueFunction, BaseApproxActionValueFunction
 from nose.tools import raises
 
@@ -11,7 +12,7 @@ class BaseTabularActionValueFunctionTest(BaseUnitTest):
 
     def tearDown(self):
         tmp_file_name = "hoge_table_action_value_function_data.pickle"
-        teardown_tmp_dir(tmp_file_name)
+        teardown_tmp_dir(__file__, [tmp_file_name])
 
     @raises(NotImplementedError)
     def test_backup(self):
@@ -41,8 +42,8 @@ class BaseTabularActionValueFunctionTest(BaseUnitTest):
         self.eq(1, self.func.predict_value(state, action))
 
     def test_store_and_restore_table(self):
-        setup_tmp_dir()
-        dir_path = generate_tmp_dir_path()
+        setup_tmp_dir(__file__)
+        dir_path = generate_tmp_dir_path(__file__)
         file_path = os.path.join(dir_path, "hoge_table_action_value_function_data.pickle")
         state, action = 0, 1
         self.func.insert_value_into_table(self.func.table, state, action, 1)
@@ -105,17 +106,4 @@ class BaseApproxActionValueFunctionTest(BaseUnitTest):
 
         def approx_backup(self, features, backup_target, alpha):
             self.memo = "backup:%s" % features
-
-def generate_tmp_dir_path():
-    return os.path.join(os.path.dirname(__file__), "tmp")
-
-def setup_tmp_dir():
-    os.mkdir(generate_tmp_dir_path())
-
-def teardown_tmp_dir(filename):
-    dir_path = generate_tmp_dir_path()
-    file_path = os.path.join(dir_path, filename)
-    if os.path.exists(dir_path):
-        if os.path.exists(file_path): os.remove(file_path)
-        os.rmdir(dir_path)
 
