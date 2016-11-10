@@ -3,7 +3,7 @@ from kyoka.policy_ import EpsilonGreedyPolicy
 from kyoka.callback_ import EpsilonAnnealer
 from kyoka.callback_ import WatchIterationCount
 
-def generate_episode(task, value_function, policy):
+def generate_episode(task, policy, value_function):
     state = task.generate_initial_state()
     episode = []
     while not task.is_terminal_state(state):

@@ -54,7 +54,7 @@ class BaseRLAlgorithmTest(BaseUnitTest):
         task = self.__setup_stub_task()
         policy = GreedyPolicy()
         value_func = self.__setup_stub_value_function()
-        episode = generate_episode(task, value_func, policy)
+        episode = generate_episode(task, policy, value_func)
         self.eq(3, len(episode))
         self.eq((0, 1, 1, 1), episode[0])
         self.eq((1, 2, 3, 9), episode[1])
