@@ -21,6 +21,9 @@ class DeepQLearningTest(BaseUnitTest):
         self.value_func = self.DeepQLearningApproxActionValueFunctionImpl()
         self.algo.setup(self.task, self.policy, self.value_func)
 
+    def tearDown(self):
+        cleanup_trash()
+
     def test_initialize_replay_memory(self):
         algo = DeepQLearning(gamma=0.1, N=3, C=3, minibatch_size=2, replay_start_size=2)
         task = setup_stub_task()
