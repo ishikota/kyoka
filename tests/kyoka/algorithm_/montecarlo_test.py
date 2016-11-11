@@ -1,7 +1,8 @@
 from tests.base_unittest import BaseUnitTest
 from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir
-from kyoka.algorithm_.montecarlo import MonteCarlo, MontCarloTabularActionValueFunction, BaseMonteCarloApproxActionValueFunction
-from kyoka.value_function_ import BaseTabularActionValueFunction
+from kyoka.algorithm_.montecarlo import MonteCarlo, MonteCarloTabularActionValueFunction,\
+        BaseMonteCarloApproxActionValueFunction, validate_value_function
+from kyoka.value_function_ import BaseActionValueFunction
 from kyoka.policy_ import GreedyPolicy
 
 from mock import Mock
@@ -17,9 +18,11 @@ class MonteCarloTest(BaseUnitTest):
     def tearDown(self):
         cleanup_trash()
 
-    @raises(TypeError)
     def test_value_function_validation(self):
-        self.algo.setup("dummy", "dummy", BaseTabularActionValueFunction())
+        validate_value_function(MonteCarloTabularActionValueFunction())
+        validate_value_function(BaseMonteCarloApproxActionValueFunction())
+        with self.assertRaises(TypeError):
+            self.algo.setup(BaseActionValueFunction())
 
 
     def test_run_gpi_for_an_episode(self):
@@ -56,7 +59,7 @@ class MonteCarloTest(BaseUnitTest):
             self.eq(update_count, value_func.fetch_value_from_table(update_counter, state, action))
 
 
-class MontCarloTabularActionValueFunctionTest(BaseUnitTest):
+class MonteCarloTabularActionValueFunctionTest(BaseUnitTest):
 
     def setUp(self):
         self.func = MonteCarloTabularActionValueFunctionImpl()
@@ -105,7 +108,7 @@ class MonteCarloApproxActionValueFunctionTest(BaseUnitTest):
         self.func.approx_backup("dummy", "dummy", "dummy")
 
 
-class MonteCarloTabularActionValueFunctionImpl(MontCarloTabularActionValueFunction):
+class MonteCarloTabularActionValueFunctionImpl(MonteCarloTabularActionValueFunction):
 
     def generate_initial_table(self):
         return [[0 for i in range(50)] for i in range(4)]

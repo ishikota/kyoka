@@ -5,9 +5,19 @@ from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir, 
 from mock import Mock
 from nose.tools import raises
 
-from kyoka.algorithm_.sarsa import Sarsa, SarsaTabularActionValueFunction, BaseSarsaApproxActionValueFunction
+from kyoka.value_function_ import BaseActionValueFunction
+from kyoka.algorithm_.sarsa import Sarsa, SarsaTabularActionValueFunction,\
+        BaseSarsaApproxActionValueFunction, validate_value_function
 
 class SarsaTest(BaseUnitTest):
+
+    def test_value_function_validation(self):
+        algo = Sarsa()
+        validate_value_function(SarsaTabularActionValueFunction())
+        validate_value_function(BaseSarsaApproxActionValueFunction())
+        with self.assertRaises(TypeError) as e:
+            algo.setup("dummy", "dummy", BaseActionValueFunction())
+        self.include("Sarsa", e.exception.message)
 
     def test_run_gpi_for_an_episode(self):
         algo = Sarsa(alpha=0.5, gamma=0.1)

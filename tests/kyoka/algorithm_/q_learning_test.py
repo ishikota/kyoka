@@ -3,9 +3,18 @@ from tests.utils import NegativePolicy
 from mock import Mock
 from nose.tools import raises
 
-from kyoka.algorithm_.q_learning import QLearning, QLearningTabularActionValueFunction, BaseQLearningApproxActionValueFunction
+from kyoka.value_function_ import BaseActionValueFunction
+from kyoka.algorithm_.q_learning import QLearning, QLearningTabularActionValueFunction,\
+        BaseQLearningApproxActionValueFunction, validate_value_function
 
 class QLearningTest(BaseUnitTest):
+
+    def test_value_function_validation(self):
+        algo = QLearning()
+        validate_value_function(QLearningTabularActionValueFunction())
+        validate_value_function(BaseQLearningApproxActionValueFunction())
+        with self.assertRaises(TypeError):
+            algo.setup("dummy", "dummy", BaseActionValueFunction())
 
     def test_run_gpi_for_an_episode(self):
         algo = QLearning(alpha=0.5, gamma=0.1)

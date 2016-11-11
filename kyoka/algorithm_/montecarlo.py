@@ -1,6 +1,6 @@
 import os
 
-from kyoka.utils import pickle_data, unpickle_data
+from kyoka.utils import pickle_data, unpickle_data, value_function_check
 from kyoka.value_function_ import BaseTabularActionValueFunction, BaseApproxActionValueFunction
 from kyoka.algorithm_.rl_algorithm import BaseRLAlgorithm, generate_episode
 
@@ -22,23 +22,23 @@ class MonteCarlo(BaseRLAlgorithm):
         following_reward = [reward for _, _, _, reward in following_turn_info]
         return sum(following_reward)
 
-class MontCarloTabularActionValueFunction(BaseTabularActionValueFunction):
+class MonteCarloTabularActionValueFunction(BaseTabularActionValueFunction):
 
     SAVE_FILE_NAME = "montecarlo_update_counter.pickle"
 
     def setup(self):
-        super(MontCarloTabularActionValueFunction, self).setup()
+        super(MonteCarloTabularActionValueFunction, self).setup()
         self.update_counter = self.generate_initial_table()
 
     def define_save_file_prefix(self):
         return "montecarlo"
 
     def save(self, save_dir_path):
-        super(MontCarloTabularActionValueFunction, self).save(save_dir_path)
+        super(MonteCarloTabularActionValueFunction, self).save(save_dir_path)
         pickle_data(self._gen_update_counter_file_path(save_dir_path), self.update_counter)
 
     def load(self, load_dir_path):
-        super(MontCarloTabularActionValueFunction, self).load(load_dir_path)
+        super(MonteCarloTabularActionValueFunction, self).load(load_dir_path)
         if not os.path.exists(self._gen_update_counter_file_path(load_dir_path)):
             raise IOError('The saved data of "MonteCarlo" algorithm is not found in [ %s ]'% load_dir_path)
         self.update_counter = unpickle_data(self._gen_update_counter_file_path(load_dir_path))
@@ -60,8 +60,7 @@ class BaseMonteCarloApproxActionValueFunction(BaseApproxActionValueFunction):
     pass
 
 def validate_value_function(value_function):
-    if not isinstance(value_function, MontCarloTabularActionValueFunction):
-        err_msg = 'MonteCarlo method requires you to use "table" type function.\
-            (child class of [BaseTableStateValueFunction or BaseTableActionValueFunction])'
-        raise TypeError(err_msg)
+    value_function_check("MonteCarlo",\
+            [MonteCarloTabularActionValueFunction, BaseMonteCarloApproxActionValueFunction],\
+            value_function)
 

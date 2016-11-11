@@ -1,5 +1,6 @@
 import os
 
+from kyoka.utils import value_function_check
 from kyoka.policy_ import GreedyPolicy
 from kyoka.value_function_ import BaseTabularActionValueFunction, BaseApproxActionValueFunction
 from kyoka.algorithm_.rl_algorithm import BaseRLAlgorithm
@@ -11,6 +12,7 @@ class QLearning(BaseRLAlgorithm):
         self.gamma = gamma
 
     def setup(self, task, policy, value_function):
+        validate_value_function(value_function)
         super(QLearning, self).setup(task, policy, value_function)
         self.greedy_policy = GreedyPolicy()
 
@@ -53,4 +55,9 @@ def predict_value(value_function, next_state, next_action):
         return 0
     else:
         return value_function.predict_value(next_state, next_action)
+
+def validate_value_function(value_function):
+    value_function_check("QLearning",\
+            [QLearningTabularActionValueFunction, BaseQLearningApproxActionValueFunction],\
+            value_function)
 

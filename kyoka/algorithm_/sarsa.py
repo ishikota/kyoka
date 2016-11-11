@@ -1,5 +1,5 @@
 import os
-from kyoka.utils import pickle_data, unpickle_data
+from kyoka.utils import value_function_check
 from kyoka.value_function_ import BaseTabularActionValueFunction, BaseApproxActionValueFunction
 from kyoka.algorithm_.rl_algorithm import BaseRLAlgorithm, generate_episode
 
@@ -8,6 +8,10 @@ class Sarsa(BaseRLAlgorithm):
     def __init__(self, alpha=0.1, gamma=0.9):
         self.alpha = alpha
         self.gamma = gamma
+
+    def setup(self, task, policy, value_function):
+        validate_value_function(value_function)
+        super(Sarsa, self).setup(task, policy, value_function)
 
     def run_gpi_for_an_episode(self, task, policy, value_function):
         state = task.generate_initial_state()
@@ -47,4 +51,9 @@ def predict_value(value_function, next_state, next_action):
         return 0
     else:
         return value_function.predict_value(next_state, next_action)
+
+def validate_value_function(value_function):
+    value_function_check("Sarsa",\
+            [SarsaTabularActionValueFunction, BaseSarsaApproxActionValueFunction],\
+            value_function)
 
