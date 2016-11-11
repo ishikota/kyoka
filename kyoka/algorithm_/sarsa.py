@@ -1,6 +1,6 @@
 import os
 from kyoka.utils import pickle_data, unpickle_data
-from kyoka.value_function_ import BaseTabularActionValueFunction
+from kyoka.value_function_ import BaseTabularActionValueFunction, BaseApproxActionValueFunction
 from kyoka.algorithm_.rl_algorithm import BaseRLAlgorithm, generate_episode
 
 class Sarsa(BaseRLAlgorithm):
@@ -31,6 +31,8 @@ class SarsaTabularActionValueFunction(BaseTabularActionValueFunction):
         new_Q_value = Q_value + alpha * (backup_target - Q_value)
         self.insert_value_into_table(self.table, state, action, new_Q_value)
 
+class BaseSarsaApproxActionValueFunction(BaseApproxActionValueFunction):
+    pass
 
 ACTION_ON_TERMINAL_FLG = "action_on_terminal"
 

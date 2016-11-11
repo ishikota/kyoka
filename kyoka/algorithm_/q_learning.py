@@ -1,7 +1,7 @@
 import os
 
 from kyoka.policy_ import GreedyPolicy
-from kyoka.value_function_ import BaseTabularActionValueFunction
+from kyoka.value_function_ import BaseTabularActionValueFunction, BaseApproxActionValueFunction
 from kyoka.algorithm_.rl_algorithm import BaseRLAlgorithm
 
 class QLearning(BaseRLAlgorithm):
@@ -37,6 +37,8 @@ class QLearningTabularActionValueFunction(BaseTabularActionValueFunction):
         new_Q_value = Q_value + alpha * (backup_target - Q_value)
         self.insert_value_into_table(self.table, state, action, new_Q_value)
 
+class BaseQLearningApproxActionValueFunction(BaseApproxActionValueFunction):
+    pass
 
 ACTION_ON_TERMINAL_FLG = "action_on_terminal"
 

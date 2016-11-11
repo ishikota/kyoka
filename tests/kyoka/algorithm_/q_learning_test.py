@@ -1,8 +1,9 @@
 from tests.base_unittest import BaseUnitTest
 from tests.utils import NegativePolicy
 from mock import Mock
+from nose.tools import raises
 
-from kyoka.algorithm_.q_learning import QLearning, QLearningTabularActionValueFunction
+from kyoka.algorithm_.q_learning import QLearning, QLearningTabularActionValueFunction, BaseQLearningApproxActionValueFunction
 
 class QLearningTest(BaseUnitTest):
 
@@ -33,6 +34,24 @@ class QLearningTabularActionValueFunctionTest(BaseUnitTest):
         self.eq(1, func.predict_value(0, 0))
         func.backup(state=0, action=0, backup_target=2, alpha=0.5)
         self.eq(1.5, func.predict_value(0, 0))
+
+class QLearningApproxActionValueFunctionTest(BaseUnitTest):
+
+    def setUp(self):
+        self.func = BaseQLearningApproxActionValueFunction()
+
+    @raises(NotImplementedError)
+    def test_error_msg_when_not_implement_construct_features(self):
+        self.func.construct_features("dummy", "dummy")
+
+    @raises(NotImplementedError)
+    def test_error_msg_when_not_implement_approx_predict_value(self):
+        self.func.approx_predict_value("dummy")
+
+    @raises(NotImplementedError)
+    def test_error_msg_when_not_implement_approx_backup(self):
+        self.func.approx_backup("dummy", "dummy", "dummy")
+
 
 class QLearningTabularActionValueFunctionImpl(QLearningTabularActionValueFunction):
 

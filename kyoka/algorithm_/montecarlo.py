@@ -1,7 +1,7 @@
 import os
 
 from kyoka.utils import pickle_data, unpickle_data
-from kyoka.value_function_ import BaseTabularActionValueFunction
+from kyoka.value_function_ import BaseTabularActionValueFunction, BaseApproxActionValueFunction
 from kyoka.algorithm_.rl_algorithm import BaseRLAlgorithm, generate_episode
 
 class MonteCarlo(BaseRLAlgorithm):
@@ -55,6 +55,9 @@ class MontCarloTabularActionValueFunction(BaseTabularActionValueFunction):
 
     def _gen_update_counter_file_path(self, dir_path):
         return os.path.join(dir_path, self.SAVE_FILE_NAME)
+
+class BaseMonteCarloApproxActionValueFunction(BaseApproxActionValueFunction):
+    pass
 
 def validate_value_function(value_function):
     if not isinstance(value_function, MontCarloTabularActionValueFunction):

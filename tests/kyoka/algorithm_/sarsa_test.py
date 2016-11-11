@@ -3,8 +3,9 @@ import os
 from tests.base_unittest import BaseUnitTest
 from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir, NegativePolicy
 from mock import Mock
+from nose.tools import raises
 
-from kyoka.algorithm_.sarsa import Sarsa, SarsaTabularActionValueFunction
+from kyoka.algorithm_.sarsa import Sarsa, SarsaTabularActionValueFunction, BaseSarsaApproxActionValueFunction
 
 class SarsaTest(BaseUnitTest):
 
@@ -36,6 +37,23 @@ class SarsaTabularActionValueFunctionTest(BaseUnitTest):
         self.eq(1, func.predict_value(0, 0))
         func.backup(state=0, action=0, backup_target=2, alpha=0.5)
         self.eq(1.5, func.predict_value(0, 0))
+
+class SarsaApproxActionValueFunctionTest(BaseUnitTest):
+
+    def setUp(self):
+        self.func = BaseSarsaApproxActionValueFunction()
+
+    @raises(NotImplementedError)
+    def test_error_msg_when_not_implement_construct_features(self):
+        self.func.construct_features("dummy", "dummy")
+
+    @raises(NotImplementedError)
+    def test_error_msg_when_not_implement_approx_predict_value(self):
+        self.func.approx_predict_value("dummy")
+
+    @raises(NotImplementedError)
+    def test_error_msg_when_not_implement_approx_backup(self):
+        self.func.approx_backup("dummy", "dummy", "dummy")
 
 
 class SarsaTabularActionValueFunctionImpl(SarsaTabularActionValueFunction):

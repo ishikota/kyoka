@@ -1,6 +1,6 @@
 from tests.base_unittest import BaseUnitTest
 from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir
-from kyoka.algorithm_.montecarlo import MonteCarlo, MontCarloTabularActionValueFunction
+from kyoka.algorithm_.montecarlo import MonteCarlo, MontCarloTabularActionValueFunction, BaseMonteCarloApproxActionValueFunction
 from kyoka.value_function_ import BaseTabularActionValueFunction
 from kyoka.policy_ import GreedyPolicy
 
@@ -87,6 +87,22 @@ class MontCarloTabularActionValueFunctionTest(BaseUnitTest):
         self.eq(2, self.func.update_counter[0][1])
         self.eq(1, self.func.update_counter[1][0])
 
+class MonteCarloApproxActionValueFunctionTest(BaseUnitTest):
+
+    def setUp(self):
+        self.func = BaseMonteCarloApproxActionValueFunction()
+
+    @raises(NotImplementedError)
+    def test_error_msg_when_not_implement_construct_features(self):
+        self.func.construct_features("dummy", "dummy")
+
+    @raises(NotImplementedError)
+    def test_error_msg_when_not_implement_approx_predict_value(self):
+        self.func.approx_predict_value("dummy")
+
+    @raises(NotImplementedError)
+    def test_error_msg_when_not_implement_approx_backup(self):
+        self.func.approx_backup("dummy", "dummy", "dummy")
 
 
 class MonteCarloTabularActionValueFunctionImpl(MontCarloTabularActionValueFunction):
