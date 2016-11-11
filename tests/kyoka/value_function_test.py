@@ -1,7 +1,7 @@
 import os
 from tests.base_unittest import BaseUnitTest
 from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir
-from kyoka.value_function_ import BaseTabularActionValueFunction, BaseApproxActionValueFunction
+from kyoka.value_function import BaseTabularActionValueFunction, BaseApproxActionValueFunction
 from nose.tools import raises
 
 class BaseTabularActionValueFunctionTest(BaseUnitTest):

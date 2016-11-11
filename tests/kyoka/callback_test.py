@@ -5,9 +5,9 @@ import StringIO
 from tests.base_unittest import BaseUnitTest
 from nose.tools import raises
 from mock import patch
-from kyoka.callback_ import BaseCallback, BasePerformanceWatcher, EpsilonAnnealer,\
+from kyoka.callback import BaseCallback, BasePerformanceWatcher, EpsilonAnnealer,\
         BaseFinishRule, ManualInterruption, WatchIterationCount
-from kyoka.policy_ import EpsilonGreedyPolicy
+from kyoka.policy import EpsilonGreedyPolicy
 
 def capture_log(instance):
     instance.capture = StringIO.StringIO()

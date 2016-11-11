@@ -1,5 +1,5 @@
 from tests.base_unittest import BaseUnitTest
-from kyoka.policy_ import BasePolicy, GreedyPolicy, EpsilonGreedyPolicy
+from kyoka.policy import BasePolicy, GreedyPolicy, EpsilonGreedyPolicy
 from nose.tools import raises
 from mock import Mock
 
