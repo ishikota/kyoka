@@ -17,44 +17,50 @@ class MCTSTest(BaseUnitTest):
 
     def test_choose_action(self):
         self.mcts.set_playout_policy(self.mcts._mock_playout)
+        self.mcts.set_finish_rule(WatchIterationCount(1))
+        action = self.mcts.choose_action("dummy", "dummy", "A")
+        self.eq(1, action)
+
+    def test_planning(self):
+        self.mcts.set_playout_policy(self.mcts._mock_playout)
 
         def edge_check(edge, value, visit_count):
             self.almosteq(value, edge.value, 0.01)
             self.eq(visit_count, edge.visit_count)
 
-        action = self.mcts.choose_action("A", WatchIterationCount(1, verbose=0))
+        action = self.mcts.planning("A", WatchIterationCount(1, verbose=0))
         nodeA = self.mcts.last_calculated_tree
         self.eq(1, action)
         edge_check(nodeA.child_edges[0], 2, 1)
 
-        action = self.mcts.choose_action("A", WatchIterationCount(2, verbose=0))
+        action = self.mcts.planning("A", WatchIterationCount(2, verbose=0))
         nodeA = self.mcts.last_calculated_tree
         self.eq(1, action)
         edge_check(nodeA.child_edges[1], 1, 1)
 
-        action = self.mcts.choose_action("A", WatchIterationCount(3, verbose=0))
+        action = self.mcts.planning("A", WatchIterationCount(3, verbose=0))
         nodeB = self.mcts.last_calculated_tree.child_edges[0].child_node
         self.eq(5, action)
         edge_check(nodeB.child_edges[0], 0.5, 1)
 
-        action = self.mcts.choose_action("A", WatchIterationCount(4, verbose=0))
+        action = self.mcts.planning("A", WatchIterationCount(4, verbose=0))
         nodeA = self.mcts.last_calculated_tree
         self.eq(1, action)
         edge_check(nodeA.child_edges[1], 1, 2)
 
-        action = self.mcts.choose_action("A", WatchIterationCount(5, verbose=0))
+        action = self.mcts.planning("A", WatchIterationCount(5, verbose=0))
         nodeA = self.mcts.last_calculated_tree
         nodeB = nodeA.child_edges[0].child_node
         self.eq(5, action)
         edge_check(nodeA.child_edges[0], 1.33, 3)
         edge_check(nodeB.child_edges[1], 1.5, 1)
 
-        action = self.mcts.choose_action("A", WatchIterationCount(6, verbose=0))
+        action = self.mcts.planning("A", WatchIterationCount(6, verbose=0))
         nodeA = self.mcts.last_calculated_tree
         self.eq(1, action)
         edge_check(nodeA.child_edges[1], 1, 3)
 
-        action = self.mcts.choose_action("A", WatchIterationCount(7, verbose=1))
+        action = self.mcts.planning("A", WatchIterationCount(7, verbose=1))
         nodeA = self.mcts.last_calculated_tree
         nodeB = nodeA.child_edges[0].child_node
         nodeD = nodeB.child_edges[1].child_node
@@ -63,29 +69,29 @@ class MCTSTest(BaseUnitTest):
         edge_check(nodeB.child_edges[1], 0.8, 2)
         edge_check(nodeA.child_edges[0], 1.025, 4)
 
-        action = self.mcts.choose_action("A", WatchIterationCount(8, verbose=0))
+        action = self.mcts.planning("A", WatchIterationCount(8, verbose=0))
         nodeA = self.mcts.last_calculated_tree
         self.eq(1, action)
         edge_check(nodeA.child_edges[1], 1, 4)
 
-        action = self.mcts.choose_action("A", WatchIterationCount(9, verbose=0))
+        action = self.mcts.planning("A", WatchIterationCount(9, verbose=0))
         nodeA = self.mcts.last_calculated_tree
         nodeB = nodeA.child_edges[0].child_node
         self.eq(5, action)
         edge_check(nodeB.child_edges[0], 0.5, 2)
         edge_check(nodeA.child_edges[0], 0.919, 5)
 
-        action = self.mcts.choose_action("A", WatchIterationCount(10, verbose=0))
+        action = self.mcts.planning("A", WatchIterationCount(10, verbose=0))
         nodeA = self.mcts.last_calculated_tree
         self.eq(5, action)
         edge_check(nodeA.child_edges[1], 1, 5)
 
-        action = self.mcts.choose_action("A", WatchIterationCount(11, verbose=0))
+        action = self.mcts.planning("A", WatchIterationCount(11, verbose=0))
         nodeA = self.mcts.last_calculated_tree
         self.eq(1, action)
         edge_check(nodeA.child_edges[1], 1, 6)
 
-        action = self.mcts.choose_action("A", WatchIterationCount(12, verbose=0))
+        action = self.mcts.planning("A", WatchIterationCount(12, verbose=0))
         nodeA = self.mcts.last_calculated_tree
         nodeB = nodeA.child_edges[0].child_node
         nodeD = nodeB.child_edges[1].child_node
@@ -94,7 +100,7 @@ class MCTSTest(BaseUnitTest):
         edge_check(nodeB.child_edges[1], 0.566, 3)
         edge_check(nodeA.child_edges[0], 0.78, 6)
 
-        action = self.mcts.choose_action("A", WatchIterationCount(13, verbose=0))
+        action = self.mcts.planning("A", WatchIterationCount(13, verbose=0))
         nodeA = self.mcts.last_calculated_tree
         self.eq(1, action)
         edge_check(nodeA.child_edges[1], 1, 7)

@@ -46,12 +46,13 @@ def show_board(state):
 
 task = TickTackToeTask(is_first_player=False)
 algo = MCTS(TickTackToeTask(is_first_player=True))
+algo.set_finish_rule(finish_rule)
 human = TickTackToeManualPolicy()
 state = TickTackToeTask().generate_initial_state()
 show_board(state)
 while not task.is_terminal_state(state):
     if next_is_first_player(state):
-        action = algo.choose_action(state, finish_rule)
+        action = algo.choose_action(None, None, state)
     else:
         action = human.choose_action(task, None, state)
     state = task.transit_state(state, action)

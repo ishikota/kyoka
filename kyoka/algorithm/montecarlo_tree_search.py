@@ -9,6 +9,7 @@ class BaseMCTS(object):
         self.task = task
         self.playout_policy = random_playout
         self.last_calculated_tree = None
+        self.finish_rule = None
 
     def generate_node_from_state(self, state):
         err_msg = build_not_implemented_msg(self, "generate_node_from_state")
@@ -17,7 +18,14 @@ class BaseMCTS(object):
     def set_playout_policy(self, policy):
         self.playout_policy = policy
 
-    def choose_action(self, state, finish_rule):
+    def set_finish_rule(self, finish_rule):
+        self.finish_rule = finish_rule
+
+    def choose_action(self, _task, _value_function, state):
+        assert self.finish_rule is not None
+        return self.planning(state, self.finish_rule)
+
+    def planning(self, state, finish_rule):
         assert not self.task.is_terminal_state(state)
         finish_rule.log(finish_rule.generate_start_message().replace("GPI", "MCTS"))
         iteration_count = 0
