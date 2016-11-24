@@ -1,7 +1,8 @@
 from mock import patch
 from tests.base_unittest import BaseUnitTest
 from kyoka.task import BaseTask
-from kyoka.algorithm.montecarlo_tree_search import BaseMCTS, BaseNode, BaseEdge, random_playout
+from kyoka.algorithm.montecarlo_tree_search import BaseMCTS, BaseNode, BaseEdge,\
+        UCTNode, UCTEdge, random_playout
 from kyoka.callback import WatchIterationCount
 
 class MCTSTest(BaseUnitTest):
@@ -270,6 +271,30 @@ class BaseEdgeTest(BaseUnitTest):
         self.eq(0, self.edge.visit_count)
         self.edge.visit()
         self.eq(1, self.edge.visit_count)
+
+class UCTEdgeNodeTest(BaseUnitTest):
+
+    def setUp(self):
+        self.nodeA = UCTNode(TestTask(), "A")
+        self.edge = self.nodeA.child_edges[0]
+
+    def test_update_value(self):
+        self.edge.visit()
+        self.edge.update_value(5)
+        self.eq(5, self.edge.value)
+        self.edge.visit()
+        self.edge.update_value(1)
+        self.eq(3, self.edge.value)
+
+    def test_calculate_value(self):
+        self.edge.visit()
+        self.edge.update_value(0)
+        self.almosteq(0, self.edge.calculate_value(), 0.0001)
+        self.nodeA.child_edges[1].visit()
+        self.almosteq(1.1774, self.edge.calculate_value(), 0.0001)
+        self.edge.visit()
+        self.edge.update_value(1)
+        self.almosteq(1.5481, self.edge.calculate_value(), 0.0001)
 
 class TestTask(BaseTask):
 
