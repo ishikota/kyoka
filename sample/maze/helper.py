@@ -31,7 +31,7 @@ def _find_best_actions_on_each_cell(task, value_function):
     return maze_with_answer
 
 def _find_single_best_action(task, value_function, row, col):
-    state = (row, col)
+    state = (0, (row, col))
     actions = task.generate_possible_actions(state)
     values = [value_function.predict_value(state, action) for action in actions]
     best_actions = [act for act, val in zip(actions, values) if val == max(values)]

@@ -17,7 +17,7 @@ class MazeTask(BaseTask):
         return (height, width)
 
     def generate_initial_state(self):
-        return self.__find_cell('S')
+        return self._find_cell('S')
 
     def is_terminal_state(self, state):
         row, col = state
@@ -55,10 +55,42 @@ class MazeTask(BaseTask):
             raise ValueError("Invalid maze passed. reason: start_count=%d, goal_count=%d")
 
     def generate_terminal_state(self):
-        return self.__find_cell('G')
+        return self._find_cell('G')
 
-    def __find_cell(self, target):
+    def _find_cell(self, target):
         for row in range(len(self.maze)):
             for col in range(len(self.maze[0])):
                 if self.maze[row][col] == target: return (row, col)
+
+class DiscountedMazeTask(MazeTask):
+
+    def generate_initial_state(self):
+        position = self._find_cell('S')
+        step_count = 0
+        return (step_count, position)
+
+    def is_terminal_state(self, state):
+        step_sum, (row, col) = state
+        return 'G' == self.maze[row][col]
+
+    def transit_state(self, state, action):
+        step_sum, (row, col) = state
+        height, width = self.get_maze_shape()
+        if action == self.UP:
+            row = max(0, row-1)
+        elif action == self.DOWN:
+            row = min(height-1, row+1)
+        elif action == self.RIGHT:
+            col= min(width-1, col+1)
+        elif action == self.LEFT:
+            col = max(0, col-1)
+        if 'X' != self.maze[row][col]:
+            return (step_sum+1, (row, col))
+        else:
+            step_sum, (row, col) = state
+            return (step_sum+1, (row, col))
+
+    def calculate_reward(self, state):
+        step_sum, (row, col) = state
+        return 0 if 'G' == self.maze[row][col] else -step_sum
 
