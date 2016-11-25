@@ -51,6 +51,12 @@ def play_with_agent(value_func):
         state = task.transit_state(state, action)
         show_board(state)
 
+def construct_features(task, state, action):
+    next_state = task.transit_state(state, action)
+    flg_to_ary = lambda flg: reduce(lambda acc, e: acc + [1 if (flg>>e)&1==1 else 0], range(9), [])
+    multi_dim_ary = [flg_to_ary(player_board) for player_board in next_state]
+    return multi_dim_ary[0] + multi_dim_ary[1]
+
 
 class TickTackToeManualPolicy(BasePolicy):
 

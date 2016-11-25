@@ -12,13 +12,21 @@ sys.path.append(root)
 sys.path.append(src_path)
 sys.path.append(sample_path)
 
+try:
+    import numpy as np
+    from keras.models import Sequential
+    from keras.layers.core import Dense
+except ImportError:
+    pass
+
 import math
 
 import sample.ticktacktoe.helper as Helper
 from sample.ticktacktoe.task import TickTackToeTask
 from sample.ticktacktoe.callback import TickTackToePerformanceWatcher
 
-from kyoka.algorithm.sarsa import Sarsa, SarsaTabularActionValueFunction
+from kyoka.algorithm.sarsa import Sarsa,\
+        SarsaTabularActionValueFunction, SarsaApproxActionValueFunction
 from kyoka.policy import EpsilonGreedyPolicy
 
 class TickTackToeTablularValueFunction(SarsaTabularActionValueFunction):
@@ -42,6 +50,30 @@ class TickTackToeTablularValueFunction(SarsaTabularActionValueFunction):
         table[first_player_board][second_player_board][move_position] = new_value
         return table
 
+class TickTackToeApproxActionValueFunction(SarsaApproxActionValueFunction):
+
+    def __init__(self, task):
+        super(TickTackToeApproxActionValueFunction, self).__init__()
+        self.task = task
+
+    def setup(self):
+        super(TickTackToeApproxActionValueFunction, self).setup()
+        self.model = self._build_linear_model()
+        self.model.compile(loss="mse",  optimizer="adam")
+
+    def _build_linear_model(self):
+        model = Sequential()
+        model.add(Dense(1, input_dim=18))
+        return model
+
+    def construct_features(self, state, action):
+        return Helper.construct_features(self.task, state, action)
+
+    def approx_predict_value(self, features):
+        return self.model.predict_on_batch(np.array([features]))[0][0]
+
+    def approx_backup(self, features, backup_target, alpha):
+        loss = self.model.train_on_batch(np.array([features]), np.array([backup_target]))
 
 TEST_LENGTH = 500000
 TEST_GAME_COUNT = 10
@@ -50,6 +82,7 @@ IS_FIRST_PLAYER = True
 
 task = TickTackToeTask(is_first_player=IS_FIRST_PLAYER)
 value_func = TickTackToeTablularValueFunction()
+#value_func = TickTackToeApproxActionValueFunction(task)
 policy = EpsilonGreedyPolicy()
 policy.set_eps_annealing(1.0, 0.1, TEST_LENGTH)
 
