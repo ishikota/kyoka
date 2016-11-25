@@ -78,7 +78,7 @@ class DeepQLearning(BaseRLAlgorithm):
     def _gen_replay_memory_save_path(self, dir_path):
         return os.path.join(dir_path, self.SAVE_FILE_NAME)
 
-class BaseDeepQLearningApproxActionValueFunction(BaseApproxActionValueFunction):
+class DeepQLearningApproxActionValueFunction(BaseApproxActionValueFunction):
 
     def initialize_network(self):
         err_msg = build_not_implemented_msg(self, "initialize_network")
@@ -170,6 +170,6 @@ def predict_value(value_function, next_state, next_action):
 
 def validate_value_function(value_function):
     value_function_check("DeepQLearning",\
-            [BaseDeepQLearningApproxActionValueFunction],\
+            [DeepQLearningApproxActionValueFunction],\
             value_function)
 
