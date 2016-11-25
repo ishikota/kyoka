@@ -23,8 +23,10 @@ class MonteCarlo(BaseRLAlgorithm):
     def _calculate_following_state_reward(self, current_turn, episode):
         following_turn_info = episode[current_turn:]
         following_reward = [reward for _, _, _, reward in following_turn_info]
-        discount = lambda step, reward: self.gamma**step * reward
-        return reduce(lambda acc, e: acc + discount(*e), enumerate(following_reward), 0)
+        return sum([self.__discount(step, reward) for step, reward in enumerate(following_reward)])
+
+    def __discount(self, step, reward):
+        return self.gamma ** step * reward
 
 class MonteCarloTabularActionValueFunction(BaseTabularActionValueFunction):
 
