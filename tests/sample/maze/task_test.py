@@ -2,7 +2,7 @@ import os
 
 from nose.tools import raises
 from tests.base_unittest import BaseUnitTest
-from sample.maze.task import MazeTask, DiscountedMazeTask
+from sample.maze.task import MazeTask
 
 class MazeTaskTest(BaseUnitTest):
 
@@ -78,52 +78,6 @@ class MazeTaskTest(BaseUnitTest):
     next_state = self.task.transit_state(state, action)
     self.eq(expected, next_state)
     return next_state
-
-class DiscountedMazeTaskTest(BaseUnitTest):
-
-  def setUp(self):
-    self.task = DiscountedMazeTask()
-    self.task.read_maze(get_sample_maze_path())
-
-  def test_generate_inital_state(self):
-    state = self.task.generate_initial_state()
-    self.eq((0, (0,1)), state)
-
-  def test_terminal_state_check_on_goal(self):
-    goal = (100, (1, 3))
-    self.true(self.task.is_terminal_state(goal))
-
-  def test_transit_state_from_initial_state(self):
-    transition_info = [
-        (self.task.UP, (1, (0, 1))),
-        (self.task.LEFT, (2, (0, 0))),
-        (self.task.LEFT, (3, (0, 0))),
-        (self.task.DOWN, (4, (1, 0))),
-        (self.task.RIGHT, (5, (1, 1))),
-        (self.task.RIGHT, (6, (1, 1))),
-        (self.task.DOWN, (7, (2, 1))),
-        (self.task.DOWN, (8, (2, 1))),
-        (self.task.RIGHT, (9, (2, 2))),
-        (self.task.RIGHT, (10, (2, 3))),
-        (self.task.RIGHT, (11, (2, 3))),
-        (self.task.UP, (12, (1, 3)))
-    ]
-    state = (0, (0,1))
-    for action, expected in transition_info:
-      state = self.__transit_and_check(state, action, expected)
-    self.true(self.task.is_terminal_state(state))
-
-  def __transit_and_check(self, state, action, expected):
-    next_state = self.task.transit_state(state, action)
-    self.eq(expected, next_state)
-    return next_state
-
-  def test_calculate_reward(self):
-    start, goal, empty, block = (1, (0, 1)), (9, (1, 3)), (3, (0, 0)), (7, (1, 2))
-    self.eq(0, self.task.calculate_reward(start))
-    self.eq(-9, self.task.calculate_reward(goal))
-    self.eq(0, self.task.calculate_reward(empty))
-    self.eq(0, self.task.calculate_reward(block))
 
 def get_sample_maze_path():
     return os.path.join(os.path.dirname(__file__), "sample_maze.txt")
