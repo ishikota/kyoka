@@ -58,7 +58,7 @@ class TickTackToeApproxActionValueFunction(DeepQLearningApproxActionValueFunctio
 
 TEST_LENGTH = 500000
 TEST_GAME_COUNT = 10
-TEST_INTERVAL = 1000
+TEST_INTERVAL = 50000
 IS_FIRST_PLAYER = True
 
 task = TickTackToeTask(is_first_player=IS_FIRST_PLAYER)
