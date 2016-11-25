@@ -47,14 +47,14 @@ task = MazeTask()
 task.read_maze(MAZE_FILE_PATH)
 value_func = MazeTabularActionValueFunction(task.get_maze_shape())
 policy = EpsilonGreedyPolicy(eps=0.1)
-#policy.set_eps_annealing(1.0, 0.1, 50)
+policy.set_eps_annealing(1.0, 0.1, 50)
 
 callbacks = [MazePerformanceWatcher()]
 transfomer = MazeTransformer()
 transfomer.set_transformation(50, TRANSFORMATION_FILE_PATH)
 callbacks.append(transfomer)
 
-algorithm = MonteCarlo()
+algorithm = MonteCarlo(gamma=0.1)
 algorithm.setup(task, policy, value_func)
 algorithm.run_gpi(TEST_LENGTH, callbacks=callbacks)
 

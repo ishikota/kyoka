@@ -50,7 +50,7 @@ TEST_LENGTH = 100
 policy = EpsilonGreedyPolicy(eps=0.1)
 policy.set_eps_annealing(1.0, 0.1, 50)
 callbacks = [MazePerformanceWatcher()]
-algorithm = MonteCarlo()
+algorithm = MonteCarlo(gamma=0.01)
 algorithm.setup(task, policy, value_func)
 algorithm.run_gpi(TEST_LENGTH, callbacks=callbacks)
 

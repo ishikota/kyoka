@@ -54,7 +54,7 @@ transfomer = MazeTransformer()
 transfomer.set_transformation(50, TRANSFORMATION_FILE_PATH)
 callbacks.append(transfomer)
 
-algorithm = MonteCarlo()
+algorithm = MonteCarlo(gamma=0.1)
 algorithm.setup(task, policy, value_func)
 algorithm.run_gpi(TEST_LENGTH, callbacks=callbacks)
 
