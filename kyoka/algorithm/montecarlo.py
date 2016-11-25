@@ -62,11 +62,11 @@ class MonteCarloTabularActionValueFunction(BaseTabularActionValueFunction):
     def _gen_update_counter_file_path(self, dir_path):
         return os.path.join(dir_path, self.SAVE_FILE_NAME)
 
-class BaseMonteCarloApproxActionValueFunction(BaseApproxActionValueFunction):
+class MonteCarloApproxActionValueFunction(BaseApproxActionValueFunction):
     pass
 
 def validate_value_function(value_function):
     value_function_check("MonteCarlo",\
-            [MonteCarloTabularActionValueFunction, BaseMonteCarloApproxActionValueFunction],\
+            [MonteCarloTabularActionValueFunction, MonteCarloApproxActionValueFunction],\
             value_function)
 

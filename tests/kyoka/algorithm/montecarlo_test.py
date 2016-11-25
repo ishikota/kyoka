@@ -1,7 +1,7 @@
 from tests.base_unittest import BaseUnitTest
 from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir
 from kyoka.algorithm.montecarlo import MonteCarlo, MonteCarloTabularActionValueFunction,\
-        BaseMonteCarloApproxActionValueFunction, validate_value_function
+        MonteCarloApproxActionValueFunction, validate_value_function
 from kyoka.value_function import BaseActionValueFunction
 from kyoka.policy import GreedyPolicy
 
@@ -20,7 +20,7 @@ class MonteCarloTest(BaseUnitTest):
 
     def test_value_function_validation(self):
         validate_value_function(MonteCarloTabularActionValueFunction())
-        validate_value_function(BaseMonteCarloApproxActionValueFunction())
+        validate_value_function(MonteCarloApproxActionValueFunction())
         with self.assertRaises(TypeError):
             self.algo.setup(BaseActionValueFunction())
 
@@ -107,7 +107,7 @@ class MonteCarloTabularActionValueFunctionTest(BaseUnitTest):
 class MonteCarloApproxActionValueFunctionTest(BaseUnitTest):
 
     def setUp(self):
-        self.func = BaseMonteCarloApproxActionValueFunction()
+        self.func = MonteCarloApproxActionValueFunction()
 
     @raises(NotImplementedError)
     def test_error_msg_when_not_implement_construct_features(self):
