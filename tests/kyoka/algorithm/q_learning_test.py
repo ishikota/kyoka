@@ -5,14 +5,14 @@ from nose.tools import raises
 
 from kyoka.value_function import BaseActionValueFunction
 from kyoka.algorithm.q_learning import QLearning, QLearningTabularActionValueFunction,\
-        BaseQLearningApproxActionValueFunction, validate_value_function
+        QLearningApproxActionValueFunction, validate_value_function
 
 class QLearningTest(BaseUnitTest):
 
     def test_value_function_validation(self):
         algo = QLearning()
         validate_value_function(QLearningTabularActionValueFunction())
-        validate_value_function(BaseQLearningApproxActionValueFunction())
+        validate_value_function(QLearningApproxActionValueFunction())
         with self.assertRaises(TypeError):
             algo.setup("dummy", "dummy", BaseActionValueFunction())
 
@@ -47,7 +47,7 @@ class QLearningTabularActionValueFunctionTest(BaseUnitTest):
 class QLearningApproxActionValueFunctionTest(BaseUnitTest):
 
     def setUp(self):
-        self.func = BaseQLearningApproxActionValueFunction()
+        self.func = QLearningApproxActionValueFunction()
 
     @raises(NotImplementedError)
     def test_error_msg_when_not_implement_construct_features(self):
