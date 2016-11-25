@@ -58,6 +58,20 @@ class MonteCarloTest(BaseUnitTest):
             self.eq(value, value_func.fetch_value_from_table(value_func.table, state, action))
             self.eq(update_count, value_func.fetch_value_from_table(update_counter, state, action))
 
+    def test_reward_discounting(self):
+        no_discount = MonteCarlo()
+        episode = [("s", "a", "ns", 4), ("s", "a", "ns", 2), ("s", "a", "ns", 1), ("s", "a", "ns", 8)]
+        self.eq(15, no_discount._calculate_following_state_reward(0, episode))
+        self.eq(11, no_discount._calculate_following_state_reward(1, episode))
+        self.eq(9, no_discount._calculate_following_state_reward(2, episode))
+        self.eq(8, no_discount._calculate_following_state_reward(3, episode))
+        discount = MonteCarlo(gamma=0.9)
+        self.eq(12.442, discount._calculate_following_state_reward(0, episode))
+        self.eq(9.38, discount._calculate_following_state_reward(1, episode))
+        self.eq(8.2, discount._calculate_following_state_reward(2, episode))
+        self.eq(8, discount._calculate_following_state_reward(3, episode))
+
+
 
 class MonteCarloTabularActionValueFunctionTest(BaseUnitTest):
 
