@@ -30,9 +30,9 @@ class MazeTransformer(BaseCallback):
     def set_transformation(self, timing, maze_path):
         self.transformation[timing] = maze_path
 
-    def before_update(self, iteration_count, domain, value_function):
+    def before_update(self, iteration_count, task, value_function):
         if iteration_count in self.transformation:
             maze_filepath = self.transformation[iteration_count]
-            domain.read_maze(maze_filepath)
+            task.read_maze(maze_filepath)
             logging.debug("Maze transformed into [ %s ]" % maze_filepath)
 

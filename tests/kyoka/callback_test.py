@@ -92,20 +92,20 @@ class BasePerformanceWatcherTest(BaseUnitTest):
             self.is_teardown_called = False
             self.test_count = 0
 
-        def setUp(self, domain, value_function):
+        def setUp(self, task, value_function):
             self.is_setup_called = True
 
-        def tearDown(self, domain, value_function):
+        def tearDown(self, task, value_function):
             self.is_teardown_called = True
 
         def define_performance_test_interval(self):
              return 2
 
-        def run_performance_test(self, _domain, _value_function):
+        def run_performance_test(self, _task, _value_function):
             self.test_count += 1
             return self.test_count**2
 
-        def define_log_message(self, iteration_count, domain, value_function, test_result):
+        def define_log_message(self, iteration_count, task, value_function, test_result):
             return "test:%s" % test_result
 
         def define_log_tag(self):
@@ -116,7 +116,7 @@ class BasePerformanceWatcherTest(BaseUnitTest):
         def define_performance_test_interval(self):
             return 2
 
-        def run_performance_test(self, _domain, _value_function):
+        def run_performance_test(self, _task, _value_function):
             return 3
 
 class EpsilonAnnealerTest(BaseUnitTest):
@@ -236,9 +236,9 @@ class BaseFinishRuleTest(BaseUnitTest):
 
     def test_log_finish_message(self):
         rule = self.TestImplementation()
-        self.false(rule.interrupt_gpi(1, "domain", "value_function"))
+        self.false(rule.interrupt_gpi(1, "task", "value_function"))
         self.eq('', self.capture.getvalue())
-        self.true(rule.interrupt_gpi(2, "domain", "value_function"))
+        self.true(rule.interrupt_gpi(2, "task", "value_function"))
         self.eq('[test_tag] finish:2\n', self.capture.getvalue())
 
     class TestImplementation(BaseFinishRule):
@@ -246,7 +246,7 @@ class BaseFinishRuleTest(BaseUnitTest):
         def define_log_tag(self):
             return "test_tag"
 
-        def check_condition(self, iteration_count, _domain, _value_function):
+        def check_condition(self, iteration_count, _task, _value_function):
             return iteration_count == 2
 
         def generate_start_message(self):
