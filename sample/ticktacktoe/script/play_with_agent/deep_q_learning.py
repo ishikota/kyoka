@@ -13,7 +13,7 @@ sys.path.append(src_path)
 sys.path.append(sample_path)
 
 import numpy as np
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers.core import Dense
 
 import math
@@ -52,6 +52,17 @@ class TickTackToeApproxActionValueFunction(DeepQLearningApproxActionValueFunctio
         X = np.array([x for x, _ in minibatch])
         y = np.array([y for _, y in minibatch])
         loss = q_network.train_on_batch(X, y)
+
+    def save_networks(self, q_network, q_hat_network, save_dir_path):
+        gen_fpath = lambda fname: os.path.join(save_dir_path, fname)
+        q_network.save(gen_fpath("q_network.h5"))
+        q_hat_network.save(gen_fpath("q_hat_network.h5"))
+
+    def load_networks(self, load_dir_path):
+        gen_fpath = lambda fname: os.path.join(load_dir_path, fname)
+        q_network = load_model(gen_fpath("q_network.h5"))
+        q_hat_network = load_model(gen_fpath("q_hat_network.h5"))
+        return q_network, q_hat_network
 
     def construct_features(self, state, action):
         return Helper.construct_features(self.task, state, action)
