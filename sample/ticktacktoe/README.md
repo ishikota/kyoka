@@ -58,7 +58,7 @@ You can checkout complete task implementation [here(task.py)](./task.py).
 We prepared sample code to learn strategy by RL algorithms.  
 You can checkout sample code under [script/play_with_agent](./script/play_with_agent) directory.  
 
-If you want to use `QLearning` to train agent, run `python sample/ticktacktoe/script/play_with_agent/q_learning.py`.  
+If you want to try `QLearning` to train agent, run `python sample/ticktacktoe/script/play_with_agent/q_learning.py`.  
 After training is finished, you will be asked to play tick-tack-toe with trained agent. type `y`!!  (agent is first player)
 
 ```
