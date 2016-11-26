@@ -82,6 +82,41 @@ class EpsilonAnnealer(BaseCallback):
             finish_msg = "Annealing has finished at %d iteration." % iteration_count
             self.log(finish_msg)
 
+class LearningRecorder(BaseCallback):
+
+    def __init__(self, algorithm, root_save_dir_path, save_interval):
+        self.algorithm = algorithm
+        self.root_save_dir_path = root_save_dir_path
+        self.save_interval = save_interval
+
+    def before_gpi_start(self, _domain, _value_function):
+        if not os.path.exists(self.root_save_dir_path):
+            err_msg = "Directory [ %s ] not found which you passed to LearningRecorder."
+            raise Exception(err_msg  % self.root_save_dir_path)
+        base_msg = 'Your algorithm will be saved after each %d iteration on directory [ %s ].'
+        self.log(base_msg % (self.save_interval, self.root_save_dir_path))
+
+    def after_update(self, iteration_count, _domain, _value_function):
+        if iteration_count % self.save_interval == 0:
+            dir_name = self.define_checkpoint_save_dir_name(iteration_count)
+            save_path = os.path.join(self.root_save_dir_path, dir_name)
+            os.mkdir(save_path)
+            self.algorithm.save(save_path)
+            base_msg = "Saved algorithm after %d iteration at [ %s ]."
+            self.log(base_msg % (iteration_count, save_path))
+
+    def after_gpi_finish(self, domain, value_function):
+        dir_name = self.define_finish_save_dir_name()
+        save_path = os.path.join(self.root_save_dir_path, dir_name)
+        os.mkdir(save_path)
+        self.algorithm.save(save_path)
+
+    def define_checkpoint_save_dir_name(self, iteration_count):
+        return "after_%d_iteration" % iteration_count
+
+    def define_finish_save_dir_name(self):
+        return "gpi_finished"
+
 class BaseFinishRule(BaseCallback):
 
     def check_condition(self, iteration_count, domain, value_function):

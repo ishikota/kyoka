@@ -11,6 +11,9 @@ def setup_tmp_dir(script_path):
 
 def teardown_tmp_dir(script_path, file_names):
     dir_path = generate_tmp_dir_path(script_path)
+    remove_leaf_dir(dir_path, file_names)
+
+def remove_leaf_dir(dir_path, file_names):
     if os.path.exists(dir_path):
         for file_name in file_names:
             file_path = os.path.join(dir_path, file_name)

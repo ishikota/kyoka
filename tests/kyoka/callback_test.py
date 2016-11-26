@@ -3,10 +3,11 @@ import sys
 import StringIO
 
 from tests.base_unittest import BaseUnitTest
+from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir, remove_leaf_dir
 from nose.tools import raises
-from mock import patch
+from mock import patch, Mock
 from kyoka.callback import BaseCallback, BasePerformanceWatcher, EpsilonAnnealer,\
-        BaseFinishRule, ManualInterruption, WatchIterationCount
+        LearningRecorder, BaseFinishRule, ManualInterruption, WatchIterationCount
 from kyoka.policy import EpsilonGreedyPolicy
 
 def capture_log(instance):
@@ -148,6 +149,58 @@ class EpsilonAnnealerTest(BaseUnitTest):
         sys.stdout = capture
         self.annealer.after_update(101, "dummy", "dummy")
         self.not_include("finish", capture.getvalue())
+
+class LearningRecorderTest(BaseUnitTest):
+
+    def setUp(self):
+        self.algo = Mock()
+        self.recorder = LearningRecorder(self.algo, generate_tmp_dir_path(__file__), 2)
+        capture_log(self)
+
+    def tearDown(self):
+        release_capture()
+        gen_dpath = lambda fname: os.path.join(generate_tmp_dir_path(__file__), fname)
+        for idx in range(1, 5):
+            dname = "after_%d_iteration" % idx
+            remove_leaf_dir(gen_dpath(dname), [])
+        remove_leaf_dir(gen_dpath("gpi_finished"), [])
+        teardown_tmp_dir(__file__, [])
+
+    def test_start_log(self):
+        setup_tmp_dir(__file__)
+        self.recorder.before_gpi_start("dummy", "dummy")
+        self.include(str(2), self.capture.getvalue())
+        self.include(generate_tmp_dir_path(__file__), self.capture.getvalue())
+
+    @raises(Exception)
+    def test_before_gpi_start(self):
+        self.recorder.before_gpi_start("dummy", "dummy")
+
+    def test_after_update(self):
+        setup_tmp_dir(__file__)
+        gen_dpath = lambda fname: os.path.join(generate_tmp_dir_path(__file__), fname)
+        self.recorder.after_update(1, "dummy", "dummy")
+        self.algo.save.assert_not_called()
+        self.false(os.path.exists(gen_dpath("after_1_iteration")))
+        self.recorder.after_update(2, "dummy", "dummy")
+        self.true(os.path.exists(gen_dpath("after_2_iteration")))
+        self.algo.save.assert_called_with(gen_dpath("after_2_iteration"))
+        self.recorder.after_update(3, "dummy", "dummy")
+        self.false(os.path.exists(gen_dpath("after_3_iteration")))
+        self.algo.save.assert_called_with(gen_dpath("after_2_iteration"))
+        self.recorder.after_update(4, "dummy", "dummy")
+        self.true(os.path.exists(gen_dpath("after_4_iteration")))
+        self.algo.save.assert_called_with(gen_dpath("after_4_iteration"))
+        self.include(gen_dpath("after_4_iteration"), self.capture.getvalue())
+
+    def test_after_gpi_finish(self):
+        setup_tmp_dir(__file__)
+        gen_dpath = lambda fname: os.path.join(generate_tmp_dir_path(__file__), fname)
+        gen_dpath = lambda fname: os.path.join(generate_tmp_dir_path(__file__), fname)
+        self.false(os.path.exists(gen_dpath("gpi_finished")))
+        self.recorder.after_gpi_finish("dummy", "dummy")
+        self.true(os.path.exists(gen_dpath("gpi_finished")))
+        self.algo.save.assert_called_with(gen_dpath("gpi_finished"))
 
 class BaseFinishRuleTest(BaseUnitTest):
 
