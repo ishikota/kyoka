@@ -45,7 +45,7 @@ So agent should realize that the better path is appeared by exploring.
 
 ## Sample code
 We prepared sample code to try these mazes by RL algorithms.  
-You can checkout sample code under [script](./maze/script) directory.  
+You can checkout sample code under [script](./script) directory.  
 
 If you want to try `Dyna Maze` by `montecarlo` method, run `python sample/maze/script/dyna_maze/montecarlo.py`  
 After training is finished, the policy which agent learned would be visualized on console like below.
