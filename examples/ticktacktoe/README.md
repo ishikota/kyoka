@@ -58,11 +58,11 @@ You can checkout complete task implementation [here(task.py)](./task.py).
 We prepared sample code to learn strategy by RL algorithms.  
 You can checkout sample code under [script/play_with_agent](./script/play_with_agent) directory.  
 
-If you want to try `QLearning` to train agent, run `python sample/ticktacktoe/script/play_with_agent/q_learning.py`.  
+If you want to try `QLearning` to train agent, run `python examples/ticktacktoe/script/play_with_agent/q_learning.py`.  
 After training is finished, you will be asked to play tick-tack-toe with trained agent. type `y`!!  (agent is first player)
 
 ```
->>> python sample/ticktacktoe/script/play_with_agent/q_learning.py
+>>> python examples/ticktacktoe/script/play_with_agent/q_learning.py
 [Progress] Start GPI iteration for 1000 times
 [EpsilonGreedyAnnealing] Anneal epsilon from 1.0 to 0.1.
 [Progress] Finished 1 / 1000 iterations (0.0s)

@@ -7,10 +7,10 @@ import argparse
 
 root = os.path.join(os.path.dirname(__file__), "../"*4)
 src_path = os.path.join(root, "kyoka")
-sample_path = os.path.join(root, "sample")
+examples_path = os.path.join(root, "examples")
 sys.path.append(root)
 sys.path.append(src_path)
-sys.path.append(sample_path)
+sys.path.append(examples_path)
 
 try:
     import numpy as np
@@ -21,9 +21,9 @@ except ImportError:
 
 import math
 
-import sample.ticktacktoe.helper as Helper
-from sample.ticktacktoe.task import TickTackToeTask
-from sample.ticktacktoe.callback import TickTackToePerformanceWatcher
+import examples.ticktacktoe.helper as Helper
+from examples.ticktacktoe.task import TickTackToeTask
+from examples.ticktacktoe.callback import TickTackToePerformanceWatcher
 
 from kyoka.algorithm.sarsa import Sarsa,\
         SarsaTabularActionValueFunction, SarsaApproxActionValueFunction

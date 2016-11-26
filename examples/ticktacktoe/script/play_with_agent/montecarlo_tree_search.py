@@ -7,15 +7,15 @@ import argparse
 
 root = os.path.join(os.path.dirname(__file__), "../"*4)
 src_path = os.path.join(root, "kyoka")
-sample_path = os.path.join(root, "sample")
+examples_path = os.path.join(root, "examples")
 sys.path.append(root)
 sys.path.append(src_path)
-sys.path.append(sample_path)
+sys.path.append(examples_path)
 
-import sample.ticktacktoe.helper as Helper
-from sample.ticktacktoe.callback import TickTackToePerfectPolicy
-from sample.ticktacktoe.helper import TickTackToeManualPolicy
-from sample.ticktacktoe.task import TickTackToeTask
+import examples.ticktacktoe.helper as Helper
+from examples.ticktacktoe.callback import TickTackToePerfectPolicy
+from examples.ticktacktoe.helper import TickTackToeManualPolicy
+from examples.ticktacktoe.task import TickTackToeTask
 
 from kyoka.algorithm.montecarlo_tree_search import BaseMCTS, UCTNode, UCTEdge
 from kyoka.callback import WatchIterationCount

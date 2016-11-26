@@ -1,5 +1,5 @@
 from tests.base_unittest import BaseUnitTest
-from sample.ticktacktoe.task import TickTackToeTask
+from examples.ticktacktoe.task import TickTackToeTask
 
 class TickTackToeTaskTest(BaseUnitTest):
     """

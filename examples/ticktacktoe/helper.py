@@ -1,5 +1,5 @@
 from kyoka.policy import BasePolicy, GreedyPolicy
-from sample.ticktacktoe.task import TickTackToeTask
+from examples.ticktacktoe.task import TickTackToeTask
 
 visualize_move = lambda flg: {-1: "-", 0:"O", 1:"X"}[flg]
 fetch_line = lambda board, line_idx: board[line_idx*3:(line_idx+1)*3]

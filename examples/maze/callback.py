@@ -1,7 +1,7 @@
 import logging
 
 from kyoka.callback import BaseCallback, BasePerformanceWatcher
-from sample.maze.helper import measure_performance, visualize_policy
+from examples.maze.helper import measure_performance, visualize_policy
 
 class MazePerformanceWatcher(BasePerformanceWatcher):
 

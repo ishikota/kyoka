@@ -7,18 +7,18 @@ import argparse
 
 root = os.path.join(os.path.dirname(__file__), "../"*4)
 src_path = os.path.join(root, "kyoka")
-sample_path = os.path.join(root, "sample")
+examples_path = os.path.join(root, "examples")
 sys.path.append(root)
 sys.path.append(src_path)
-sys.path.append(sample_path)
+sys.path.append(examples_path)
 
 import numpy as np
 from keras.models import Sequential
 from keras.layers.core import Dense
 
-import sample.maze.helper as Helper
-from sample.maze.task import MazeTask
-from sample.maze.callback import MazePerformanceWatcher
+import examples.maze.helper as Helper
+from examples.maze.task import MazeTask
+from examples.maze.callback import MazePerformanceWatcher
 
 from kyoka.algorithm.deep_q_learning import DeepQLearning, DeepQLearningApproxActionValueFunction
 from kyoka.policy import EpsilonGreedyPolicy

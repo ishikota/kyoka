@@ -1,9 +1,9 @@
 import os
-import sample.maze.helper as H
+import examples.maze.helper as H
 
 from tests.base_unittest import BaseUnitTest
 from kyoka.value_function import BaseActionValueFunction
-from sample.maze.task import MazeTask
+from examples.maze.task import MazeTask
 
 class MazeHelperTest(BaseUnitTest):
 

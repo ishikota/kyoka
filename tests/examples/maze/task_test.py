@@ -2,7 +2,7 @@ import os
 
 from nose.tools import raises
 from tests.base_unittest import BaseUnitTest
-from sample.maze.task import MazeTask
+from examples.maze.task import MazeTask
 
 class MazeTaskTest(BaseUnitTest):
 

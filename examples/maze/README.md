@@ -47,10 +47,10 @@ So agent should realize that the better path is appeared by exploring.
 We prepared sample code to try these mazes by RL algorithms.  
 You can checkout sample code under [script](./script) directory.  
 
-If you want to try `Dyna Maze` by `montecarlo` method, run `python sample/maze/script/dyna_maze/montecarlo.py`  
+If you want to try `Dyna Maze` by `montecarlo` method, run `python examples/maze/script/dyna_maze/montecarlo.py`  
 After training is finished, the policy which agent learned would be visualized on console like below.
 ```
->>> python sample/maze/script/dyna_maze/montecarlo.py
+>>> python examples/maze/script/dyna_maze/montecarlo.py
 [Progress] Start GPI iteration for 100 times
 (some logs are output...)
 [Progress] Completed GPI iteration for 100 times. (total time: 0s)

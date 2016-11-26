@@ -3,8 +3,8 @@ import logging
 
 from kyoka.callback import BaseCallback, BasePerformanceWatcher
 from kyoka.policy import BasePolicy, GreedyPolicy
-from sample.ticktacktoe.task import TickTackToeTask
-from sample.ticktacktoe.helper import measure_performance
+from examples.ticktacktoe.task import TickTackToeTask
+from examples.ticktacktoe.helper import measure_performance
 
 class TickTackToePerformanceWatcher(BasePerformanceWatcher):
 
