@@ -7,14 +7,14 @@ from nose.tools import raises
 
 from kyoka.value_function import BaseActionValueFunction
 from kyoka.algorithm.sarsa import Sarsa, SarsaTabularActionValueFunction,\
-        BaseSarsaApproxActionValueFunction, validate_value_function
+        SarsaApproxActionValueFunction, validate_value_function
 
 class SarsaTest(BaseUnitTest):
 
     def test_value_function_validation(self):
         algo = Sarsa()
         validate_value_function(SarsaTabularActionValueFunction())
-        validate_value_function(BaseSarsaApproxActionValueFunction())
+        validate_value_function(SarsaApproxActionValueFunction())
         with self.assertRaises(TypeError) as e:
             algo.setup("dummy", "dummy", BaseActionValueFunction())
         self.include("Sarsa", e.exception.message)
@@ -51,7 +51,7 @@ class SarsaTabularActionValueFunctionTest(BaseUnitTest):
 class SarsaApproxActionValueFunctionTest(BaseUnitTest):
 
     def setUp(self):
-        self.func = BaseSarsaApproxActionValueFunction()
+        self.func = SarsaApproxActionValueFunction()
 
     @raises(NotImplementedError)
     def test_error_msg_when_not_implement_construct_features(self):

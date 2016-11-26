@@ -21,6 +21,14 @@ def visualize_policy(task, value_function):
     visualized_actions = [[flg2icon(flg) for flg in line] for line in actions]
     return visualize_maze(["".join(line) for line in visualized_actions])
 
+def construct_features(task, state, action):
+    w, h = task.get_maze_shape()
+    next_state = task.transit_state(state, action)
+    onehot = [[1 if next_state == (row, col) else 0 for col in range(h)] for row in range(w)]
+    return _flatten(onehot)
+
+def _flatten(table):
+    return [item for sublist in table for item in sublist]
 
 def _find_best_actions_on_each_cell(task, value_function):
     height, width = task.get_maze_shape()

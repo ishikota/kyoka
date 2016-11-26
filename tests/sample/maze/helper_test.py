@@ -39,6 +39,15 @@ class MazeHelperTest(BaseUnitTest):
         self.eq(answer[0][2], MazeTask.RIGHT)
         self.eq(answer[0][3], MazeTask.DOWN)
 
+    def test_feature_construction(self):
+        maze_shape = self.task.get_maze_shape()
+        state1, action1 = (0, 0), self.task.RIGHT
+        self.eq([0,1,0,0,0,0,0,0,0,0,0,0], H.construct_features(self.task, state1, action1))
+        state2, action2 = (2, 1), self.task.UP
+        self.eq([0,0,0,0,0,1,0,0,0,0,0,0], H.construct_features(self.task, state2, action2))
+        state3, action3 = self.task.generate_terminal_state(), self.task.RIGHT
+        self.eq([0,0,0,0,0,0,0,1,0,0,0,0], H.construct_features(self.task, state3, action3))
+
 class PerfectValueFunction(BaseActionValueFunction):
 
     CHEET_SHEET = {

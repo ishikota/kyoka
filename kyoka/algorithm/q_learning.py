@@ -39,7 +39,7 @@ class QLearningTabularActionValueFunction(BaseTabularActionValueFunction):
         new_Q_value = Q_value + alpha * (backup_target - Q_value)
         self.insert_value_into_table(self.table, state, action, new_Q_value)
 
-class BaseQLearningApproxActionValueFunction(BaseApproxActionValueFunction):
+class QLearningApproxActionValueFunction(BaseApproxActionValueFunction):
     pass
 
 ACTION_ON_TERMINAL_FLG = "action_on_terminal"
@@ -58,6 +58,6 @@ def predict_value(value_function, next_state, next_action):
 
 def validate_value_function(value_function):
     value_function_check("QLearning",\
-            [QLearningTabularActionValueFunction, BaseQLearningApproxActionValueFunction],\
+            [QLearningTabularActionValueFunction, QLearningApproxActionValueFunction],\
             value_function)
 

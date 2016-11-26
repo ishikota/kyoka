@@ -8,7 +8,7 @@ from mock import patch, Mock
 from kyoka.utils import pickle_data, unpickle_data
 from kyoka.policy import GreedyPolicy
 from kyoka.algorithm.deep_q_learning import DeepQLearning,\
-        BaseDeepQLearningApproxActionValueFunction, ExperienceReplay
+        DeepQLearningApproxActionValueFunction, ExperienceReplay
 
 class DeepQLearningTest(BaseUnitTest):
 
@@ -95,7 +95,7 @@ class DeepQLearningTest(BaseUnitTest):
         ]
         self.eq(replay_memory_expected, new_algo.replay_memory.queue)
 
-    class DeepQLearningApproxActionValueFunctionImpl(BaseDeepQLearningApproxActionValueFunction):
+    class DeepQLearningApproxActionValueFunctionImpl(DeepQLearningApproxActionValueFunction):
 
         def __init__(self, strict_mode=True):
             self.deepcopy_counter = 0
@@ -148,7 +148,7 @@ class DeepQLearningTest(BaseUnitTest):
 class DeepQLearningApproxValueFunctionTest(BaseUnitTest):
 
     def setUp(self):
-        self.empty_func = BaseDeepQLearningApproxActionValueFunction()
+        self.empty_func = DeepQLearningApproxActionValueFunction()
         self.func = self.DeepQLearningApproxActionValueFunctionImpl()
         self.func.setup()
 
@@ -211,7 +211,7 @@ class DeepQLearningApproxValueFunctionTest(BaseUnitTest):
         self.eq(self.func.q_network, new_func.q_network)
         self.eq(self.func.q_hat_network, new_func.q_hat_network)
 
-    class DeepQLearningApproxActionValueFunctionImpl(BaseDeepQLearningApproxActionValueFunction):
+    class DeepQLearningApproxActionValueFunctionImpl(DeepQLearningApproxActionValueFunction):
 
         def initialize_network(self):
             return 0

@@ -6,6 +6,9 @@ from kyoka.algorithm.rl_algorithm import BaseRLAlgorithm, generate_episode
 
 class MonteCarlo(BaseRLAlgorithm):
 
+    def __init__(self, gamma=1):
+        self.gamma = gamma
+
     def setup(self, task, policy, value_function):
         validate_value_function(value_function)
         super(MonteCarlo, self).setup(task, policy, value_function)
@@ -20,7 +23,10 @@ class MonteCarlo(BaseRLAlgorithm):
     def _calculate_following_state_reward(self, current_turn, episode):
         following_turn_info = episode[current_turn:]
         following_reward = [reward for _, _, _, reward in following_turn_info]
-        return sum(following_reward)
+        return sum([self.__discount(step, reward) for step, reward in enumerate(following_reward)])
+
+    def __discount(self, step, reward):
+        return self.gamma ** step * reward
 
 class MonteCarloTabularActionValueFunction(BaseTabularActionValueFunction):
 
@@ -56,11 +62,11 @@ class MonteCarloTabularActionValueFunction(BaseTabularActionValueFunction):
     def _gen_update_counter_file_path(self, dir_path):
         return os.path.join(dir_path, self.SAVE_FILE_NAME)
 
-class BaseMonteCarloApproxActionValueFunction(BaseApproxActionValueFunction):
+class MonteCarloApproxActionValueFunction(BaseApproxActionValueFunction):
     pass
 
 def validate_value_function(value_function):
     value_function_check("MonteCarlo",\
-            [MonteCarloTabularActionValueFunction, BaseMonteCarloApproxActionValueFunction],\
+            [MonteCarloTabularActionValueFunction, MonteCarloApproxActionValueFunction],\
             value_function)
 
