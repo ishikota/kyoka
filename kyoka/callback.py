@@ -4,19 +4,19 @@ from utils import build_not_implemented_msg
 
 class BaseCallback(object):
 
-  def before_gpi_start(self, domain, value_function):
+  def before_gpi_start(self, task, value_function):
     pass
 
-  def before_update(self, iteration_count, domain, value_function):
+  def before_update(self, iteration_count, task, value_function):
     pass
 
-  def after_update(self, iteration_count, domain, value_function):
+  def after_update(self, iteration_count, task, value_function):
     pass
 
-  def after_gpi_finish(self, domain, value_function):
+  def after_gpi_finish(self, task, value_function):
     pass
 
-  def interrupt_gpi(self, iteration_count, domain, value_function):
+  def interrupt_gpi(self, iteration_count, task, value_function):
     return False
 
   def define_log_tag(self):
@@ -28,39 +28,39 @@ class BaseCallback(object):
 
 class BasePerformanceWatcher(BaseCallback):
 
-    def setUp(self, domain, value_function):
+    def setUp(self, task, value_function):
         pass
 
-    def tearDown(self, domain, value_function):
+    def tearDown(self, task, value_function):
         pass
 
     def define_performance_test_interval(self):
         err_msg = build_not_implemented_msg(self, "define_performance_test_interval")
         raise NotImplementedError(err_msg)
 
-    def run_performance_test(self, domain, value_function):
+    def run_performance_test(self, task, value_function):
         err_msg = build_not_implemented_msg(self, "run_performance_test")
         raise NotImplementedError(err_msg)
 
-    def define_log_message(self, iteration_count, domain, value_function, test_result):
+    def define_log_message(self, iteration_count, task, value_function, test_result):
         base_msg = "Performance test result : %s (nb_iteration=%d)"
         return base_msg % (test_result, iteration_count)
 
 
-    def before_gpi_start(self, domain, value_function):
+    def before_gpi_start(self, task, value_function):
         self.performance_log = []
         self.test_interval = self.define_performance_test_interval()
-        self.setUp(domain, value_function)
+        self.setUp(task, value_function)
 
-    def after_update(self, iteration_count, domain, value_function):
+    def after_update(self, iteration_count, task, value_function):
         if iteration_count % self.test_interval == 0:
-            result = self.run_performance_test(domain, value_function)
+            result = self.run_performance_test(task, value_function)
             self.performance_log.append(result)
-            message = self.define_log_message(iteration_count, domain, value_function, result)
+            message = self.define_log_message(iteration_count, task, value_function, result)
             self.log(message)
 
-    def after_gpi_finish(self, domain, value_function):
-        self.tearDown(domain, value_function)
+    def after_gpi_finish(self, task, value_function):
+        self.tearDown(task, value_function)
 
 class EpsilonAnnealer(BaseCallback):
 
@@ -71,11 +71,11 @@ class EpsilonAnnealer(BaseCallback):
     def define_log_tag(self):
         return "EpsilonGreedyAnnealing"
 
-    def before_gpi_start(self, _domain, _value_function):
+    def before_gpi_start(self, _task, _value_function):
         start_msg = "Anneal epsilon from %s to %s." % (self.policy.eps, self.policy.min_eps)
         self.log(start_msg)
 
-    def after_update(self, iteration_count, _domain, _value_function):
+    def after_update(self, iteration_count, _task, _value_function):
         self.policy.anneal_eps()
         if not self.anneal_finished and self.policy.eps == self.policy.min_eps:
             self.anneal_finished = True
@@ -89,14 +89,14 @@ class LearningRecorder(BaseCallback):
         self.root_save_dir_path = root_save_dir_path
         self.save_interval = save_interval
 
-    def before_gpi_start(self, _domain, _value_function):
+    def before_gpi_start(self, _task, _value_function):
         if not os.path.exists(self.root_save_dir_path):
             err_msg = "Directory [ %s ] not found which you passed to LearningRecorder."
             raise Exception(err_msg  % self.root_save_dir_path)
         base_msg = 'Your algorithm will be saved after each %d iteration on directory [ %s ].'
         self.log(base_msg % (self.save_interval, self.root_save_dir_path))
 
-    def after_update(self, iteration_count, _domain, _value_function):
+    def after_update(self, iteration_count, _task, _value_function):
         if iteration_count % self.save_interval == 0:
             dir_name = self.define_checkpoint_save_dir_name(iteration_count)
             save_path = os.path.join(self.root_save_dir_path, dir_name)
@@ -105,7 +105,7 @@ class LearningRecorder(BaseCallback):
             base_msg = "Saved algorithm after %d iteration at [ %s ]."
             self.log(base_msg % (iteration_count, save_path))
 
-    def after_gpi_finish(self, domain, value_function):
+    def after_gpi_finish(self, task, value_function):
         dir_name = self.define_finish_save_dir_name()
         save_path = os.path.join(self.root_save_dir_path, dir_name)
         os.mkdir(save_path)
@@ -119,7 +119,7 @@ class LearningRecorder(BaseCallback):
 
 class BaseFinishRule(BaseCallback):
 
-    def check_condition(self, iteration_count, domain, value_function):
+    def check_condition(self, iteration_count, task, value_function):
         err_msg = build_not_implemented_msg(self, "check_condition")
         raise NotImplementedError(err_msg)
 
@@ -131,11 +131,11 @@ class BaseFinishRule(BaseCallback):
         err_msg = build_not_implemented_msg(self, "generate_finish_message")
         raise NotImplementedError(err_msg)
 
-    def before_gpi_start(self, domain, value_function):
+    def before_gpi_start(self, task, value_function):
         self.log(self.generate_start_message())
 
-    def interrupt_gpi(self, iteration_count, domain, value_function):
-        finish_iteration = self.check_condition(iteration_count, domain, value_function)
+    def interrupt_gpi(self, iteration_count, task, value_function):
+        finish_iteration = self.check_condition(iteration_count, task, value_function)
         if finish_iteration: self.log(self.generate_finish_message(iteration_count))
         return finish_iteration
 
@@ -147,7 +147,7 @@ class ManualInterruption(BaseFinishRule):
         self.monitor_file_path = monitor_file_path
         self.watch_interval = watch_interval
 
-    def check_condition(self, _iteration_count, _domain, _value_function):
+    def check_condition(self, _iteration_count, _task, _value_function):
         current_time = time.time()
         if current_time - self.last_check_time >= self.watch_interval:
             self.last_check_time = current_time
@@ -188,7 +188,7 @@ class WatchIterationCount(BaseFinishRule):
     def define_log_tag(self):
         return "Progress"
 
-    def check_condition(self, iteration_count, domain, value_function):
+    def check_condition(self, iteration_count, task, value_function):
         return iteration_count >= self.target_count
 
     def generate_start_message(self):
@@ -199,12 +199,12 @@ class WatchIterationCount(BaseFinishRule):
         base_msg = "Completed GPI iteration for %d times. (total time: %ds)"
         return base_msg % (iteration_count, time.time() - self.start_time)
 
-    def before_update(self, iteration_count, domain, value_function):
-        super(WatchIterationCount, self).before_update(iteration_count, domain, value_function)
+    def before_update(self, iteration_count, task, value_function):
+        super(WatchIterationCount, self).before_update(iteration_count, task, value_function)
         self.last_update_time = time.time()
 
-    def after_update(self, iteration_count, domain, value_function):
-        super(WatchIterationCount, self).after_update(iteration_count, domain, value_function)
+    def after_update(self, iteration_count, task, value_function):
+        super(WatchIterationCount, self).after_update(iteration_count, task, value_function)
         if self.verbose > 0:
             current_time = time.time()
             msg = "Finished %d / %d iterations (%.1fs)" %\

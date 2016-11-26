@@ -81,9 +81,9 @@ class EpsilonGreedyPolicyTest(BaseUnitTest):
 
 
 def setup_task_stub(possible_actions):
-    mock_domain = Mock()
-    mock_domain.generate_possible_actions.return_value = possible_actions
-    return mock_domain
+    mock_task = Mock()
+    mock_task.generate_possible_actions.return_value = possible_actions
+    return mock_task
 
 def setup_value_function_stub(mock_return):
     mock_value_func = Mock()
