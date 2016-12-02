@@ -209,8 +209,9 @@ class WatchIterationCount(BaseFinishRule):
         super(WatchIterationCount, self).after_update(iteration_count, task, value_function)
         if self.verbose > 0:
             current_time = time.time()
-            msg = "Finished %d / %d iterations (%.1fs)" %\
-                    (iteration_count, self.target_count, current_time - self.last_update_time)
+            msg = "Finished %d / %d iterations (%.1fs)" % (
+                    iteration_count, self.target_count,
+                    current_time - self.last_update_time)
             self.last_update_time = current_time
             self.log(msg)
 

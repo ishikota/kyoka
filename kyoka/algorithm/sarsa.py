@@ -55,7 +55,7 @@ def predict_value(value_function, next_state, next_action):
         return value_function.predict_value(next_state, next_action)
 
 def validate_value_function(value_function):
-    value_function_check("Sarsa",\
-            [SarsaTabularActionValueFunction, SarsaApproxActionValueFunction],\
+    value_function_check("Sarsa",
+            [SarsaTabularActionValueFunction, SarsaApproxActionValueFunction],
             value_function)
 

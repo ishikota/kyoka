@@ -29,10 +29,11 @@ class BaseMCTS(object):
 
     def planning(self, state, finish_rule):
         assert not self.task.is_terminal_state(state)
-        finish_rule.log(finish_rule.generate_start_message().replace("GPI", "MCTS"))
+        _log_start_msg(finish_rule)
         iteration_count = 0
 
-        root_node = self.generate_node_from_state(state)  # TODO use last calculation result like AlphaGo
+        # TODO use last calculation result like AlphaGo
+        root_node = self.generate_node_from_state(state)
         while not finish_rule.check_condition(iteration_count, self.task, None):
             finish_rule.before_update(iteration_count, self.task, None)
 
@@ -49,11 +50,12 @@ class BaseMCTS(object):
             iteration_count += 1
 
         self.last_calculated_tree = root_node
-        finish_rule.log(finish_rule.generate_finish_message(iteration_count).replace("GPI", "MCTS"))
+        _log_finish_msg(finish_rule, iteration_count)
         return root_node.select_best_edge().action
 
     def _select(self, root_node):
         target_node = root_node
+        # FIXME move this logic to BaseNode class as expandable property
         while not self.task.is_terminal_state(target_node.state) and not target_node.has_unvisited_edge():
             target_node = target_node.select_best_edge().child_node
         return target_node
@@ -84,6 +86,12 @@ def random_playout(task, leaf_node, rand=random):
         state = task.transit_state(state, action)
     return task.calculate_reward(state)
 
+def _log_start_msg(finish_rule):
+    finish_rule.log(finish_rule.generate_start_message().replace("GPI", "MCTS"))
+
+def _log_finish_msg(finish_rule, iteration_count):
+    fin_msg= finish_rule.generate_finish_message(iteration_count)
+    finish_rule.log(fin_msg.replace("GPI", "MCTS"))
 
 class BaseNode(object):
 

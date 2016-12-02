@@ -47,7 +47,9 @@ class MonteCarloTabularActionValueFunction(BaseTabularActionValueFunction):
     def load(self, load_dir_path):
         super(MonteCarloTabularActionValueFunction, self).load(load_dir_path)
         if not os.path.exists(self._gen_update_counter_file_path(load_dir_path)):
-            raise IOError('The saved data of "MonteCarlo" algorithm is not found in [ %s ]'% load_dir_path)
+            raise IOError(
+                    'The saved data of "MonteCarlo" algorithm is not found in [ %s ]' %
+                    load_dir_path)
         self.update_counter = unpickle_data(self._gen_update_counter_file_path(load_dir_path))
 
     def backup(self, state, action, backup_target, alpha):
@@ -67,7 +69,7 @@ class MonteCarloApproxActionValueFunction(BaseApproxActionValueFunction):
     pass
 
 def validate_value_function(value_function):
-    value_function_check("MonteCarlo",\
-            [MonteCarloTabularActionValueFunction, MonteCarloApproxActionValueFunction],\
+    value_function_check("MonteCarlo",
+            [MonteCarloTabularActionValueFunction, MonteCarloApproxActionValueFunction],
             value_function)
 
