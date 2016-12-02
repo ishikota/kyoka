@@ -4,6 +4,7 @@ from kyoka.utils import value_function_check
 from kyoka.value_function import BaseTabularActionValueFunction, BaseApproxActionValueFunction
 from kyoka.algorithm.rl_algorithm import BaseRLAlgorithm, generate_episode
 
+
 class Sarsa(BaseRLAlgorithm):
 
     def __init__(self, alpha=0.1, gamma=0.9):
@@ -54,7 +55,7 @@ def predict_value(value_function, next_state, next_action):
         return value_function.predict_value(next_state, next_action)
 
 def validate_value_function(value_function):
-    value_function_check("Sarsa",\
-            [SarsaTabularActionValueFunction, SarsaApproxActionValueFunction],\
+    value_function_check("Sarsa",
+            [SarsaTabularActionValueFunction, SarsaApproxActionValueFunction],
             value_function)
 

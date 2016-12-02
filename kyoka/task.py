@@ -1,5 +1,6 @@
 from utils import build_not_implemented_msg
 
+
 class BaseTask(object):
 
   def generate_inital_state(self):

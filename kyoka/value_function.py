@@ -1,5 +1,7 @@
 import os
+
 from kyoka.utils import build_not_implemented_msg, pickle_data, unpickle_data
+
 
 class BaseActionValueFunction(object):
 
@@ -52,7 +54,8 @@ class BaseTabularActionValueFunction(BaseActionValueFunction):
     def load(self, load_dir_path):
         file_path = self._gen_table_data_file_path(load_dir_path)
         if not os.path.exists(file_path):
-            raise IOError('The saved data of "TableActionValueFunction" is not found on [ %s ]' % load_dir_path)
+            raise IOError('The saved data of "TableActionValueFunction"' +
+                          ' is not found on [ %s ]' % load_dir_path)
         self.table = unpickle_data(file_path)
 
     def _gen_table_data_file_path(self, dir_path):

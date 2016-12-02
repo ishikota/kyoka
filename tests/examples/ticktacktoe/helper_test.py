@@ -1,7 +1,7 @@
 import examples.ticktacktoe.helper as H
-
-from tests.base_unittest import BaseUnitTest
 from examples.ticktacktoe.task import TickTackToeTask
+from tests.base_unittest import BaseUnitTest
+
 
 class TickTackToeHelperTest(BaseUnitTest):
 

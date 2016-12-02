@@ -6,11 +6,14 @@ from kyoka.policy import GreedyPolicy, EpsilonGreedyPolicy
 from kyoka.value_function import BaseApproxActionValueFunction
 from kyoka.algorithm.rl_algorithm import BaseRLAlgorithm, generate_episode
 
+
 class DeepQLearning(BaseRLAlgorithm):
 
     SAVE_FILE_NAME = "dq_replay_memory.pickle"
 
-    def __init__(self, gamma=0.99, N=1000000, C=10000, minibatch_size=32, replay_start_size=50000):
+    def __init__(self, gamma=0.99, N=1000000, C=10000,
+            minibatch_size=32, replay_start_size=50000):
+
         self.gamma = gamma
         self.replay_memory = ExperienceReplay(max_size=N)
         self.C = C
@@ -36,7 +39,8 @@ class DeepQLearning(BaseRLAlgorithm):
             state = next_state
 
             experience_minibatch = self.replay_memory.sample_minibatch(self.minibatch_size)
-            backup_minibatch = self._gen_backup_minibatch(task, self.greedy_policy, value_function, experience_minibatch)
+            backup_minibatch = self._gen_backup_minibatch(
+                    task, self.greedy_policy, value_function, experience_minibatch)
             value_function.backup_on_minibatch(value_function.q_network, backup_minibatch)
 
             if self.reset_step_counter >= self.C:
@@ -54,8 +58,8 @@ class DeepQLearning(BaseRLAlgorithm):
 
     def load_algorithm_state(self, load_dir_path):
         state = unpickle_data(self._gen_replay_memory_save_path(load_dir_path))
-        self.gamma, replay_memory_serial, self.C, self.minibatch_size,\
-                self.replay_start_size, self.reset_step_counter = state
+        (self.gamma, replay_memory_serial, self.C, self.minibatch_size,
+                self.replay_start_size, self.reset_step_counter) = state
         self.greedy_policy = GreedyPolicy()
         new_replay_memory = ExperienceReplay(max_size=1)
         new_replay_memory.load(replay_memory_serial)
@@ -63,7 +67,8 @@ class DeepQLearning(BaseRLAlgorithm):
 
     def _gen_backup_minibatch(self, task, greedy_policy, value_function, experience_minibatch):
         value_function.use_target_network(True)
-        backup_minibatch = [self._gen_backup_data(task, greedy_policy, value_function, experience)\
+        backup_minibatch = [
+                self._gen_backup_data(task, greedy_policy, value_function, experience)
                 for experience in experience_minibatch]
         value_function.use_target_network(False)
         return backup_minibatch
@@ -150,7 +155,8 @@ class ExperienceReplay(object):
 def initialize_replay_memory(task, value_function, replay_memory, start_size):
     random_policy = EpsilonGreedyPolicy(eps=1.0)
     while len(replay_memory.queue) < start_size:
-        for state, action, next_state, reward in generate_episode(task, random_policy, value_function):
+        episode = generate_episode(task, random_policy, value_function)
+        for state, action, next_state, reward in episode:
             replay_memory.store_transition(state, action, reward, next_state)
             if len(replay_memory.queue) >= start_size: return
 
@@ -169,7 +175,7 @@ def predict_value(value_function, next_state, next_action):
         return value_function.predict_value(next_state, next_action)
 
 def validate_value_function(value_function):
-    value_function_check("DeepQLearning",\
-            [DeepQLearningApproxActionValueFunction],\
+    value_function_check("DeepQLearning",
+            [DeepQLearningApproxActionValueFunction],
             value_function)
 

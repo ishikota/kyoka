@@ -1,8 +1,10 @@
 import os
 
 from nose.tools import raises
-from tests.base_unittest import BaseUnitTest
+
 from examples.maze.task import MazeTask
+from tests.base_unittest import BaseUnitTest
+
 
 class MazeTaskTest(BaseUnitTest):
 

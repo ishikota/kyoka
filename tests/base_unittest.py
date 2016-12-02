@@ -1,5 +1,6 @@
 import unittest
 
+
 class BaseUnitTest(unittest.TestCase):
 
   def eq(self, expected, target):

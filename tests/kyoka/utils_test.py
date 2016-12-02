@@ -1,6 +1,7 @@
 import kyoka.utils as U
 from tests.base_unittest import BaseUnitTest
 
+
 class UtilsTest(BaseUnitTest):
 
     def test_build_not_implemented_msg(self):

@@ -1,30 +1,36 @@
 import os
 import time
+
 from utils import build_not_implemented_msg
+
 
 class BaseCallback(object):
 
-  def before_gpi_start(self, task, value_function):
-    pass
+    def before_gpi_start(self, task, value_function):
+        pass
 
-  def before_update(self, iteration_count, task, value_function):
-    pass
+    def before_update(self, iteration_count, task, value_function):
+        pass
 
-  def after_update(self, iteration_count, task, value_function):
-    pass
+    def after_update(self, iteration_count, task, value_function):
+        pass
 
-  def after_gpi_finish(self, task, value_function):
-    pass
+    def after_gpi_finish(self, task, value_function):
+        pass
 
-  def interrupt_gpi(self, iteration_count, task, value_function):
-    return False
+    def interrupt_gpi(self, iteration_count, task, value_function):
+        return False
 
-  def define_log_tag(self):
-    return self.__class__.__name__
+    def define_log_tag(self):
+        return self.__class__.__name__
 
-  def log(self, message):
-    if message and len(message) != 0:
-      print "[%s] %s" % (self.define_log_tag(), message)
+    @property
+    def tag(self):
+        return self.define_log_tag()
+
+    def log(self, message):
+        if message and len(message) != 0:
+            print "[%s] %s" % (self.tag, message)
 
 class BasePerformanceWatcher(BaseCallback):
 
@@ -207,8 +213,9 @@ class WatchIterationCount(BaseFinishRule):
         super(WatchIterationCount, self).after_update(iteration_count, task, value_function)
         if self.verbose > 0:
             current_time = time.time()
-            msg = "Finished %d / %d iterations (%.1fs)" %\
-                    (iteration_count, self.target_count, current_time - self.last_update_time)
+            msg = "Finished %d / %d iterations (%.1fs)" % (
+                    iteration_count, self.target_count,
+                    current_time - self.last_update_time)
             self.last_update_time = current_time
             self.log(msg)
 

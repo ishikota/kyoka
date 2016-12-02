@@ -2,6 +2,7 @@ from kyoka.utils import build_not_implemented_msg
 from kyoka.policy import EpsilonGreedyPolicy
 from kyoka.callback import EpsilonAnnealer, WatchIterationCount
 
+
 def generate_episode(task, policy, value_function):
     state = task.generate_initial_state()
     episode = []
