@@ -24,9 +24,13 @@ class BaseCallback(object):
     def define_log_tag(self):
         return self.__class__.__name__
 
+    @property
+    def tag(self):
+        return self.define_log_tag()
+
     def log(self, message):
         if message and len(message) != 0:
-            print "[%s] %s" % (self.define_log_tag(), message)
+            print "[%s] %s" % (self.tag, message)
 
 class BasePerformanceWatcher(BaseCallback):
 
