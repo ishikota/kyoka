@@ -1,6 +1,8 @@
-from tests.base_unittest import BaseUnitTest
-from kyoka.task import BaseTask
 from nose.tools import raises
+
+from kyoka.task import BaseTask
+from tests.base_unittest import BaseUnitTest
+
 
 class BaseTaskTest(BaseUnitTest):
 

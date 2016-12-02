@@ -1,7 +1,9 @@
 import random
 import math
+
 from kyoka.utils import build_not_implemented_msg
 from kyoka.task import BaseTask
+
 
 class BaseMCTS(object):
 

@@ -4,6 +4,7 @@ from kyoka.utils import pickle_data, unpickle_data, value_function_check
 from kyoka.value_function import BaseTabularActionValueFunction, BaseApproxActionValueFunction
 from kyoka.algorithm.rl_algorithm import BaseRLAlgorithm, generate_episode
 
+
 class MonteCarlo(BaseRLAlgorithm):
 
     def __init__(self, gamma=1):

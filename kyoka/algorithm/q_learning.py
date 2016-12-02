@@ -5,6 +5,7 @@ from kyoka.policy import GreedyPolicy
 from kyoka.value_function import BaseTabularActionValueFunction, BaseApproxActionValueFunction
 from kyoka.algorithm.rl_algorithm import BaseRLAlgorithm
 
+
 class QLearning(BaseRLAlgorithm):
 
     def __init__(self, alpha=0.1, gamma=0.9):

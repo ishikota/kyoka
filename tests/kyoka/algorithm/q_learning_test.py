@@ -1,11 +1,12 @@
-from tests.base_unittest import BaseUnitTest
-from tests.utils import NegativePolicy
 from mock import Mock
 from nose.tools import raises
 
 from kyoka.value_function import BaseActionValueFunction
 from kyoka.algorithm.q_learning import QLearning, QLearningTabularActionValueFunction,\
         QLearningApproxActionValueFunction, validate_value_function
+from tests.base_unittest import BaseUnitTest
+from tests.utils import NegativePolicy
+
 
 class QLearningTest(BaseUnitTest):
 

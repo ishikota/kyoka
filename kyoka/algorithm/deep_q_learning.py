@@ -6,6 +6,7 @@ from kyoka.policy import GreedyPolicy, EpsilonGreedyPolicy
 from kyoka.value_function import BaseApproxActionValueFunction
 from kyoka.algorithm.rl_algorithm import BaseRLAlgorithm, generate_episode
 
+
 class DeepQLearning(BaseRLAlgorithm):
 
     SAVE_FILE_NAME = "dq_replay_memory.pickle"

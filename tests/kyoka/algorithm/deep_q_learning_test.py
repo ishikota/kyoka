@@ -1,14 +1,15 @@
 import os
 
 from nose.tools import raises
-from tests.base_unittest import BaseUnitTest
-from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir, NegativePolicy
 from mock import patch, Mock
 
 from kyoka.utils import pickle_data, unpickle_data
 from kyoka.policy import GreedyPolicy
 from kyoka.algorithm.deep_q_learning import DeepQLearning,\
         DeepQLearningApproxActionValueFunction, ExperienceReplay
+from tests.base_unittest import BaseUnitTest
+from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir, NegativePolicy
+
 
 class DeepQLearningTest(BaseUnitTest):
 

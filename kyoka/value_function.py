@@ -1,5 +1,7 @@
 import os
+
 from kyoka.utils import build_not_implemented_msg, pickle_data, unpickle_data
+
 
 class BaseActionValueFunction(object):
 

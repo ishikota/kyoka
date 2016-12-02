@@ -2,6 +2,7 @@ import random
 
 from kyoka.utils import build_not_implemented_msg
 
+
 def choose_best_action(task, value_function, state, rand=None):
     rand = rand if rand else random
     actions = task.generate_possible_actions(state)

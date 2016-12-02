@@ -1,13 +1,14 @@
 import os
 
-from tests.base_unittest import BaseUnitTest
-from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir, NegativePolicy
 from mock import Mock
 from nose.tools import raises
 
 from kyoka.value_function import BaseActionValueFunction
 from kyoka.algorithm.sarsa import Sarsa, SarsaTabularActionValueFunction,\
         SarsaApproxActionValueFunction, validate_value_function
+from tests.base_unittest import BaseUnitTest
+from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir, NegativePolicy
+
 
 class SarsaTest(BaseUnitTest):
 

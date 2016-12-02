@@ -1,6 +1,8 @@
 import os
 import time
+
 from utils import build_not_implemented_msg
+
 
 class BaseCallback(object):
 

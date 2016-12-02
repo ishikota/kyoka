@@ -1,9 +1,11 @@
 from mock import patch
-from tests.base_unittest import BaseUnitTest
+
 from kyoka.task import BaseTask
 from kyoka.algorithm.montecarlo_tree_search import BaseMCTS, BaseNode, BaseEdge,\
         UCTNode, UCTEdge, random_playout
 from kyoka.callback import WatchIterationCount
+from tests.base_unittest import BaseUnitTest
+
 
 class MCTSTest(BaseUnitTest):
 

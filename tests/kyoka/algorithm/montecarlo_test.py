@@ -1,14 +1,15 @@
-from tests.base_unittest import BaseUnitTest
-from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir
-from kyoka.algorithm.montecarlo import MonteCarlo, MonteCarloTabularActionValueFunction,\
-        MonteCarloApproxActionValueFunction, validate_value_function
-from kyoka.value_function import BaseActionValueFunction
-from kyoka.policy import GreedyPolicy
+import os
 
 from mock import Mock
 from nose.tools import raises
 
-import os
+from kyoka.algorithm.montecarlo import MonteCarlo, MonteCarloTabularActionValueFunction,\
+        MonteCarloApproxActionValueFunction, validate_value_function
+from kyoka.value_function import BaseActionValueFunction
+from kyoka.policy import GreedyPolicy
+from tests.base_unittest import BaseUnitTest
+from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir
+
 
 class MonteCarloTest(BaseUnitTest):
 
