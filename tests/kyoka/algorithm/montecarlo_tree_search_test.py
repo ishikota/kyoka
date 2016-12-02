@@ -27,7 +27,7 @@ class MCTSTest(BaseUnitTest):
         self.mcts.set_playout_policy(self.mcts._mock_playout)
 
         def edge_check(edge, value, visit_count):
-            self.almosteq(value, edge.value, 0.01)
+            self.almosteq(value, edge.internal_value, 0.01)
             self.eq(visit_count, edge.visit_count)
 
         action = self.mcts.planning("A", WatchIterationCount(1, verbose=0))
@@ -117,24 +117,24 @@ class MCTSTest(BaseUnitTest):
         self.eq("A", self.mcts._select(root).state)
         root.child_edges[1].build_child(self.mcts.generate_node_from_state)
 
-        root.child_edges[1].value = 5
+        root.child_edges[1].internal_value = 5
         self.eq("F", self.mcts._select(root).state)
 
-        root.child_edges[0].value = 10
+        root.child_edges[0].internal_value = 10
         self.eq("B", self.mcts._select(root).state)
 
         nodeB = root.child_edges[0].child_node
         nodeB.child_edges[0].build_child(self.mcts.generate_node_from_state)
         self.eq("B", self.mcts._select(root).state)
         nodeB.child_edges[1].build_child(self.mcts.generate_node_from_state)
-        nodeB.child_edges[1].value = 10
+        nodeB.child_edges[1].internal_value = 10
         self.eq("D", self.mcts._select(root).state)
 
         nodeD = nodeB.child_edges[1].child_node
         nodeD.child_edges[0].build_child(self.mcts.generate_node_from_state)
         self.eq("E", self.mcts._select(root).state)
 
-        nodeB.child_edges[0].value = 20
+        nodeB.child_edges[0].internal_value = 20
         self.eq("C", self.mcts._select(root).state)
 
     def test_expand(self):
@@ -176,15 +176,15 @@ class MCTSTest(BaseUnitTest):
         edge5 = nodeA.child_edges[1]
 
         def subtest(edge_values, visit_counts):
-            self.eq(edge1.value, edge_values[0])
+            self.eq(edge1.internal_value, edge_values[0])
             self.eq(edge1.visit_count, visit_counts[0])
-            self.eq(edge2.value, edge_values[1])
+            self.eq(edge2.internal_value, edge_values[1])
             self.eq(edge2.visit_count, visit_counts[1])
-            self.eq(edge3.value, edge_values[2])
+            self.eq(edge3.internal_value, edge_values[2])
             self.eq(edge3.visit_count, visit_counts[2])
-            self.eq(edge4.value, edge_values[3])
+            self.eq(edge4.internal_value, edge_values[3])
             self.eq(edge4.visit_count, visit_counts[3])
-            self.eq(edge5.value, edge_values[4])
+            self.eq(edge5.internal_value, edge_values[4])
             self.eq(edge5.visit_count, visit_counts[4])
 
         self.mcts._backpropagation(nodeB, 1)
@@ -215,7 +215,7 @@ class BaseNodeTest(BaseUnitTest):
     def test_select_best_edge(self):
        node = TestNode(TestTask(), "A")
        node.child_edges[0].visit()
-       node.child_edges[0].update_value(1)
+       node.child_edges[0].update_internal_value(1)
        self.eq(1, node.select_best_edge().action)
 
     def test_build_child_edges(self):
@@ -229,39 +229,39 @@ class BaseNodeTest(BaseUnitTest):
     def test_has_unvisited_edge(self):
        node = TestNode(TestTask(), "A")
        state2node = lambda state: TestNode(TestTask(), state)
-       self.true(node.has_unvisited_edge())
+       self.true(node.has_unvisited_edge)
        node.child_edges[0].build_child(state2node)
-       self.true(node.has_unvisited_edge())
+       self.true(node.has_unvisited_edge)
        node.child_edges[1].build_child(state2node)
-       self.false(node.has_unvisited_edge())
+       self.false(node.has_unvisited_edge)
 
     def test_select_unvisited_edge(self):
        node = TestNode(TestTask(), "A")
        state2node = lambda state: TestNode(TestTask(), state)
-       self.false(node.child_edges[0].has_child())
+       self.false(node.child_edges[0].has_child)
        node.select_unvisited_edge().build_child(state2node)
-       self.true(node.child_edges[0].has_child())
-       self.false(node.child_edges[1].has_child())
+       self.true(node.child_edges[0].has_child)
+       self.false(node.child_edges[1].has_child)
        node.select_unvisited_edge().build_child(state2node)
-       self.true(node.child_edges[1].has_child())
+       self.true(node.child_edges[1].has_child)
 
     def test_visit_count(self):
        node = TestNode(TestTask(), "A")
-       self.eq(0, node.visit_count())
+       self.eq(0, node.visit_count)
        node.child_edges[0].visit()
        node.child_edges[0].visit()
        node.child_edges[1].visit()
-       self.eq(3, node.visit_count())
+       self.eq(3, node.visit_count)
 
 class BaseEdgeTest(BaseUnitTest):
 
     def setUp(self):
         self.edge = BaseEdge(TestNode(TestTask(), "A"), 1)
 
-    def test_update_value(self):
+    def test_update_internal_value(self):
         with self.assertRaises(NotImplementedError) as e:
-            self.edge.update_value("dummy")
-        self.include("update_value", e.exception.message)
+            self.edge.update_internal_value("dummy")
+        self.include("update_internal_value", e.exception.message)
 
     def test_calculate_value(self):
         with self.assertRaises(NotImplementedError) as e:
@@ -270,10 +270,10 @@ class BaseEdgeTest(BaseUnitTest):
 
     def test_build_child_and_had_child(self):
         edge = BaseEdge(TestNode(TestTask(), "A"), 1)
-        self.false(edge.has_child())
+        self.false(edge.has_child)
         edge.build_child(lambda state: TestNode(TestTask(), state))
         self.eq("B", edge.child_node.state)
-        self.true(edge.has_child())
+        self.true(edge.has_child)
 
     def test_visit(self):
         self.eq(0, self.edge.visit_count)
@@ -286,22 +286,22 @@ class UCTEdgeNodeTest(BaseUnitTest):
         self.nodeA = UCTNode(TestTask(), "A")
         self.edge = self.nodeA.child_edges[0]
 
-    def test_update_value(self):
+    def test_update_internal_value(self):
         self.edge.visit()
-        self.edge.update_value(5)
-        self.eq(5, self.edge.value)
+        self.edge.update_internal_value(5)
+        self.eq(5, self.edge.internal_value)
         self.edge.visit()
-        self.edge.update_value(1)
-        self.eq(3, self.edge.value)
+        self.edge.update_internal_value(1)
+        self.eq(3, self.edge.internal_value)
 
     def test_calculate_value(self):
         self.edge.visit()
-        self.edge.update_value(0)
+        self.edge.update_internal_value(0)
         self.almosteq(0, self.edge.calculate_value(), 0.0001)
         self.nodeA.child_edges[1].visit()
         self.almosteq(1.1774, self.edge.calculate_value(), 0.0001)
         self.edge.visit()
-        self.edge.update_value(1)
+        self.edge.update_internal_value(1)
         self.almosteq(1.5481, self.edge.calculate_value(), 0.0001)
 
 class TestTask(BaseTask):
@@ -339,17 +339,17 @@ class TestEdge(BaseEdge):
 
     def __init__(self, parent_node, action):
         super(TestEdge, self).__init__(parent_node, action)
-        self.value = 0
+        self.internal_value = 0
 
-    def update_value(self, new_reward):
-        self.value = self._calc_average_in_incremental_way(self.value, self.visit_count, new_reward)
+    def update_internal_value(self, new_reward):
+        self.internal_value = self._calc_average_in_incremental_way(self.internal_value, self.visit_count, new_reward)
 
     def calculate_value(self):
         if self.visit_count == 0:
             explore_term = 0
         else:
-            explore_term = 1.0 * self.parent_node.visit_count() / self.visit_count
-        return self.value + explore_term
+            explore_term = 1.0 * self.parent_node.visit_count / self.visit_count
+        return self.internal_value + explore_term
 
     def _calc_average_in_incremental_way(self, old_value, visit_count, new_reward):
         assert visit_count != 0

@@ -55,13 +55,12 @@ class BaseMCTS(object):
 
     def _select(self, root_node):
         target_node = root_node
-        # FIXME move this logic to BaseNode class as expandable property
-        while not self.task.is_terminal_state(target_node.state) and not target_node.has_unvisited_edge():
+        while target_node.is_expanded:
             target_node = target_node.select_best_edge().child_node
         return target_node
 
     def _expand(self, node):
-        assert node.has_unvisited_edge()
+        assert node.has_unvisited_edge
         edge = node.select_unvisited_edge()
         edge.build_child(self.generate_node_from_state)
         return edge.child_node
@@ -75,7 +74,7 @@ class BaseMCTS(object):
         assert target.parent_edge is not None
         while target.parent_edge:
             target.parent_edge.visit()
-            target.parent_edge.update_value(reward)
+            target.parent_edge.update_internal_value(reward)
             target = target.parent_edge.parent_node
 
 def random_playout(task, leaf_node, rand=random):
@@ -100,6 +99,7 @@ class BaseNode(object):
         self.state = state
         self.parent_edge = None
         self.child_edges = self.build_child_edges(task, state)
+        self.terminal = task.is_terminal_state(state)
 
     def generate_edge(self, parent_node, action):
         err_msg = build_not_implemented_msg(self, "generate_edge")
@@ -115,12 +115,18 @@ class BaseNode(object):
         actions = task.generate_possible_actions(state)
         return [self.generate_edge(self, action) for action in actions]
 
-    def has_unvisited_edge(self):
-        return any([not edge.has_child() for edge in self.child_edges])
-
     def select_unvisited_edge(self):
-        return [edge for edge in self.child_edges if not edge.has_child()][0]
+        return [edge for edge in self.child_edges if not edge.has_child][0]
 
+    @property
+    def is_expanded(self):
+        return not (self.terminal or self.has_unvisited_edge)
+
+    @property
+    def has_unvisited_edge(self):
+        return any([not edge.has_child for edge in self.child_edges])
+
+    @property
     def visit_count(self):
         return sum([edge.visit_count for edge in self.child_edges])
 
@@ -132,16 +138,13 @@ class BaseEdge(object):
         self.child_node = None
         self.visit_count = 0
 
-    def update_value(self, new_reward):
-        err_msg = build_not_implemented_msg(self, "update_value")
+    def update_internal_value(self, new_reward):
+        err_msg = build_not_implemented_msg(self, "update_internal_value")
         raise NotImplementedError(err_msg)
 
     def calculate_value(self):
         err_msg = build_not_implemented_msg(self, "calculate_value")
         raise NotImplementedError(err_msg)
-
-    def has_child(self):
-        return self.child_node is not None
 
     def build_child(self, state2node):
         child_state = self.parent_node.task.transit_state(self.parent_node.state, self.action)
@@ -150,6 +153,10 @@ class BaseEdge(object):
 
     def visit(self):
         self.visit_count += 1
+
+    @property
+    def has_child(self):
+        return self.child_node is not None
 
 class UCTNode(BaseNode):
 
@@ -161,17 +168,18 @@ class UCTEdge(BaseEdge):
     def __init__(self, parent_node, action):
         super(UCTEdge, self).__init__(parent_node, action)
         self.C = 1.4142135623730951  # 1.41... = math.sqrt(2)
-        self.value = 0
+        self.internal_value = 0
 
-    def update_value(self, new_reward):
-        self.value = self._calc_average_in_incremental_way(self.value, self.visit_count, new_reward)
+    def update_internal_value(self, new_reward):
+        self.internal_value = self._calc_average_in_incremental_way(
+                self.internal_value, self.visit_count, new_reward)
 
     def calculate_value(self):
         if self.visit_count == 0:
             explore_term = float('inf')
         else:
-            explore_term = math.sqrt(math.log(self.parent_node.visit_count()) / self.visit_count)
-        return self.value + self.C * explore_term
+            explore_term = math.sqrt(math.log(self.parent_node.visit_count) / self.visit_count)
+        return self.internal_value + self.C * explore_term
 
     def _calc_average_in_incremental_way(self, old_value, visit_count, new_reward):
         assert visit_count != 0
