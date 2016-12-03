@@ -12,7 +12,7 @@ class BasePolityTest(BaseUnitTest):
 
     @raises(NotImplementedError)
     def test_choose_action(self):
-        self.policy.choose_action("dummy", "dummy", "dummy", "dummy")
+        self.policy.choose_action("dummy", "dummy", "dummy")
 
 class GreedyPolicyTest(BaseUnitTest):
 
