@@ -369,7 +369,7 @@ class UCTEdge(BaseEdge):
 
     def __init__(self, parent_node, action):
         super(UCTEdge, self).__init__(parent_node, action)
-        self.C = 1.4142135623730951  # 1.41... = math.sqrt(2)
+        self.C = 0.7071067811865475 # 1 / math.sqrt(2)
         self.internal_value = 0
 
     def update_internal_value(self, new_reward):
@@ -380,8 +380,8 @@ class UCTEdge(BaseEdge):
         if self.visit_count == 0:
             explore_term = float('inf')
         else:
-            explore_term = math.sqrt(math.log(self.parent_node.visit_count) / self.visit_count)
-        return self.internal_value + self.C * explore_term
+            explore_term = math.sqrt(2 * math.log(self.parent_node.visit_count) / self.visit_count)
+        return self.internal_value + 2 * self.C * explore_term
 
     def _calc_average_in_incremental_way(self, old_value, visit_count, new_reward):
         assert visit_count != 0

@@ -299,10 +299,10 @@ class UCTEdgeNodeTest(BaseUnitTest):
         self.edge.update_internal_value(0)
         self.almosteq(0, self.edge.calculate_value(), 0.0001)
         self.nodeA.child_edges[1].visit()
-        self.almosteq(1.1774, self.edge.calculate_value(), 0.0001)
+        self.almosteq(1.6651092223153954, self.edge.calculate_value(), 0.0001)
         self.edge.visit()
         self.edge.update_internal_value(1)
-        self.almosteq(1.5481, self.edge.calculate_value(), 0.0001)
+        self.almosteq(1.982303807367511, self.edge.calculate_value(), 0.0001)
 
 class TestTask(BaseTask):
 
