@@ -147,7 +147,7 @@ class BaseMCTS(object):
 
         self.last_calculated_tree = root_node
         _log_finish_msg(finish_rule, iteration_count)
-        return root_node.select_best_edge().action
+        return root_node.greedy_edge.action
 
     def _select(self, root_node):
         """Find terminal or not expanded node"""
@@ -174,7 +174,7 @@ class BaseMCTS(object):
         assert target.parent_edge is not None
         while target.parent_edge:
             target.parent_edge.visit()
-            target.parent_edge.update_internal_value(reward)
+            target.parent_edge.update_by_new_reward(reward)
             target = target.parent_edge.parent_node
 
 def random_playout(task, leaf_node, rand=random):
@@ -219,6 +219,7 @@ class BaseNode(object):
         state: state of the node passed from "BaseMCTS.generate_node_from_state"
         parent_edge: reference of parent edge to access parent node
         child_edges: array of reference of edge to access child nodes
+        greedy_edge: the edge which has highest average_reward
         terminal: boolean. True if state of this node is terminal.
         is_expanded: boolean. False if this node is possible to expand.
         has_unvisited_edge: boolean. True if one of edge.visit_count is 0.
@@ -265,6 +266,12 @@ class BaseNode(object):
         return [edge for edge in self.child_edges if not edge.has_child][0]
 
     @property
+    def greedy_edge(self):
+        best = max([edge.average_reward for edge in self.child_edges])
+        best_edges = [edge for edge in self.child_edges if edge.average_reward==best]
+        return best_edges[0]
+
+    @property
     def is_expanded(self):
         """boolean. False if this node is possible to expand."""
         return not (self.terminal or self.has_unvisited_edge)
@@ -283,14 +290,14 @@ class BaseEdge(object):
     """Base class to build Edge class of tree for MCTS
 
     This class is responsible for the logic of
-    1. "how to update the internal value of edge in Backpropagation of MCTS"
+    1. "holds average of rewards received in backpropagation"
     2. "how to calculate the value of edge for Select of MCTS"
 
-    Most of the case, logic 1. should calculate the average of backpropagated
-    rewards.
-    There are lots of methods for logic 2 like UCT, UCT+, ...
-
-    If you want to implement your own logic, please refer UCTEdge class.
+    There are lots of methods to calculate value for selection 
+    like UCT, UCT+, ... . So this logic is abstracted as
+    "calculate_value" method.
+    When you implement "calculate_value" by your own, we recommend you
+    to refer implementation of UCTEdge class.
 
     Property:
         parent_node: reference to the parent node of the edge
@@ -299,6 +306,7 @@ class BaseEdge(object):
         visit_count: the number of update in backpropagation process
         has_child: True if already "build_child" is called. This means
                    "this node is already selected at least once".
+        average_reward: average of rewards received ever
     """
 
     def __init__(self, parent_node, action):
@@ -306,20 +314,7 @@ class BaseEdge(object):
         self.parent_node = parent_node
         self.child_node = None
         self.visit_count = 0
-
-    def update_internal_value(self, new_reward):
-        """Define the logic of update. This method is called
-        from backpropagation procedure with reward of simulation.
-
-        Most of the case, you would calculate average of reward received ever
-        and save it as property like "self.reward_average".
-        Args:
-            new_reward: reward of simulation passed from backpropagation
-        Returns:
-            nothing
-        """
-        err_msg = build_not_implemented_msg(self, "update_internal_value")
-        raise NotImplementedError(err_msg)
+        self.average_reward = 0
 
     def calculate_value(self):
         """Define how to calculate the value of this Edge.
@@ -339,12 +334,21 @@ class BaseEdge(object):
     def visit(self):
         self.visit_count += 1
 
+    def update_by_new_reward(self, new_reward):
+        self.average_reward = self._calc_average_in_incremental_way(
+                self.average_reward, self.visit_count, new_reward)
+
+    def _calc_average_in_incremental_way(self, old_value, visit_count, new_reward):
+        assert visit_count != 0
+        return old_value + 1.0 / visit_count * (new_reward - old_value)
+
     @property
     def has_child(self):
         """True if already "build_child" is called. This means
         "this node is already selected at least once".
         """
         return self.child_node is not None
+
 
 class UCTNode(BaseNode):
     """Concrete implementation of BaseNode for UCT search.
@@ -370,20 +374,11 @@ class UCTEdge(BaseEdge):
     def __init__(self, parent_node, action):
         super(UCTEdge, self).__init__(parent_node, action)
         self.C = 0.7071067811865475 # 1 / math.sqrt(2)
-        self.internal_value = 0
-
-    def update_internal_value(self, new_reward):
-        self.internal_value = self._calc_average_in_incremental_way(
-                self.internal_value, self.visit_count, new_reward)
 
     def calculate_value(self):
         if self.visit_count == 0:
             explore_term = float('inf')
         else:
             explore_term = math.sqrt(2 * math.log(self.parent_node.visit_count) / self.visit_count)
-        return self.internal_value + 2 * self.C * explore_term
-
-    def _calc_average_in_incremental_way(self, old_value, visit_count, new_reward):
-        assert visit_count != 0
-        return old_value + 1.0 / visit_count * (new_reward - old_value)
+        return self.average_reward + 2 * self.C * explore_term
 
