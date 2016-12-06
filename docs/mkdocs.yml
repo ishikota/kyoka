@@ -1,0 +1,17 @@
+site_name: kyoka
+theme: readthedocs
+docs_dir: sources
+repo_url: https://github.com/ishikota/kyoka
+site_description: 'Documentation site for kyoka'
+ 
+pages:
+- Home: index.md
+- Tutorial:
+  - Maze task: tutorial/maze_task.md
+  - TickTackToe task: tutorial/ticktacktoe_task.md
+- Algorithm:
+  - MonteCarlo: algorithm/montecarlo.md
+  - Sarsa: algorithm/sarsa.md
+  - QLearning: algorithm/q_learning.md
+  - deep Q-learning: algorithm/deep_q_learning.md
+  - MonteCarloTreeSearch: algorithm/monte_carlo_tree_search.md
