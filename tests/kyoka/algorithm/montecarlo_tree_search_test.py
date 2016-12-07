@@ -27,7 +27,7 @@ class MCTSTest(BaseUnitTest):
         self.mcts.set_playout_policy(self.mcts._mock_playout)
 
         def edge_check(edge, value, visit_count):
-            self.almosteq(value, edge.internal_value, 0.01)
+            self.almosteq(value, edge.average_reward, 0.01)
             self.eq(visit_count, edge.visit_count)
 
         action = self.mcts.planning("A", WatchIterationCount(1, verbose=0))
@@ -42,7 +42,7 @@ class MCTSTest(BaseUnitTest):
 
         action = self.mcts.planning("A", WatchIterationCount(3, verbose=0))
         nodeB = self.mcts.last_calculated_tree.child_edges[0].child_node
-        self.eq(5, action)
+        self.eq(1, action)
         edge_check(nodeB.child_edges[0], 0.5, 1)
 
         action = self.mcts.planning("A", WatchIterationCount(4, verbose=0))
@@ -53,7 +53,7 @@ class MCTSTest(BaseUnitTest):
         action = self.mcts.planning("A", WatchIterationCount(5, verbose=0))
         nodeA = self.mcts.last_calculated_tree
         nodeB = nodeA.child_edges[0].child_node
-        self.eq(5, action)
+        self.eq(1, action)
         edge_check(nodeA.child_edges[0], 1.33, 3)
         edge_check(nodeB.child_edges[1], 1.5, 1)
 
@@ -66,7 +66,7 @@ class MCTSTest(BaseUnitTest):
         nodeA = self.mcts.last_calculated_tree
         nodeB = nodeA.child_edges[0].child_node
         nodeD = nodeB.child_edges[1].child_node
-        self.eq(5, action)
+        self.eq(1, action)
         edge_check(nodeD.child_edges[0], 0.1, 1)
         edge_check(nodeB.child_edges[1], 0.8, 2)
         edge_check(nodeA.child_edges[0], 1.025, 4)
@@ -90,7 +90,7 @@ class MCTSTest(BaseUnitTest):
 
         action = self.mcts.planning("A", WatchIterationCount(11, verbose=0))
         nodeA = self.mcts.last_calculated_tree
-        self.eq(1, action)
+        self.eq(5, action)
         edge_check(nodeA.child_edges[1], 1, 6)
 
         action = self.mcts.planning("A", WatchIterationCount(12, verbose=0))
@@ -104,7 +104,7 @@ class MCTSTest(BaseUnitTest):
 
         action = self.mcts.planning("A", WatchIterationCount(13, verbose=0))
         nodeA = self.mcts.last_calculated_tree
-        self.eq(1, action)
+        self.eq(5, action)
         edge_check(nodeA.child_edges[1], 1, 7)
 
         self.almosteq(2.94, nodeA.child_edges[0].calculate_value(), 0.01)
@@ -117,24 +117,24 @@ class MCTSTest(BaseUnitTest):
         self.eq("A", self.mcts._select(root).state)
         root.child_edges[1].build_child(self.mcts.generate_node_from_state)
 
-        root.child_edges[1].internal_value = 5
+        root.child_edges[1].average_reward = 5
         self.eq("F", self.mcts._select(root).state)
 
-        root.child_edges[0].internal_value = 10
+        root.child_edges[0].average_reward = 10
         self.eq("B", self.mcts._select(root).state)
 
         nodeB = root.child_edges[0].child_node
         nodeB.child_edges[0].build_child(self.mcts.generate_node_from_state)
         self.eq("B", self.mcts._select(root).state)
         nodeB.child_edges[1].build_child(self.mcts.generate_node_from_state)
-        nodeB.child_edges[1].internal_value = 10
+        nodeB.child_edges[1].average_reward = 10
         self.eq("D", self.mcts._select(root).state)
 
         nodeD = nodeB.child_edges[1].child_node
         nodeD.child_edges[0].build_child(self.mcts.generate_node_from_state)
         self.eq("E", self.mcts._select(root).state)
 
-        nodeB.child_edges[0].internal_value = 20
+        nodeB.child_edges[0].average_reward = 20
         self.eq("C", self.mcts._select(root).state)
 
     def test_expand(self):
@@ -176,15 +176,15 @@ class MCTSTest(BaseUnitTest):
         edge5 = nodeA.child_edges[1]
 
         def subtest(edge_values, visit_counts):
-            self.eq(edge1.internal_value, edge_values[0])
+            self.eq(edge1.average_reward, edge_values[0])
             self.eq(edge1.visit_count, visit_counts[0])
-            self.eq(edge2.internal_value, edge_values[1])
+            self.eq(edge2.average_reward, edge_values[1])
             self.eq(edge2.visit_count, visit_counts[1])
-            self.eq(edge3.internal_value, edge_values[2])
+            self.eq(edge3.average_reward, edge_values[2])
             self.eq(edge3.visit_count, visit_counts[2])
-            self.eq(edge4.internal_value, edge_values[3])
+            self.eq(edge4.average_reward, edge_values[3])
             self.eq(edge4.visit_count, visit_counts[3])
-            self.eq(edge5.internal_value, edge_values[4])
+            self.eq(edge5.average_reward, edge_values[4])
             self.eq(edge5.visit_count, visit_counts[4])
 
         self.mcts._backpropagation(nodeB, 1)
@@ -215,8 +215,19 @@ class BaseNodeTest(BaseUnitTest):
     def test_select_best_edge(self):
        node = TestNode(TestTask(), "A")
        node.child_edges[0].visit()
-       node.child_edges[0].update_internal_value(1)
+       node.child_edges[0].update_by_new_reward(1)
        self.eq(1, node.select_best_edge().action)
+
+    def test_select_greedy_edge(self):
+       node = TestNode(TestTask(), "A")
+       node.child_edges[0].visit()
+       node.child_edges[0].update_by_new_reward(1)
+       node.child_edges[1].visit()
+       node.child_edges[1].update_by_new_reward(1.1)
+       node.child_edges[1].visit()
+       node.child_edges[1].update_by_new_reward(1.1)
+       self.eq(node.child_edges[0], node.select_best_edge())
+       self.eq(node.child_edges[1], node.greedy_edge)
 
     def test_build_child_edges(self):
        node = TestNode(TestTask(), "A")
@@ -258,10 +269,13 @@ class BaseEdgeTest(BaseUnitTest):
     def setUp(self):
         self.edge = BaseEdge(TestNode(TestTask(), "A"), 1)
 
-    def test_update_internal_value(self):
-        with self.assertRaises(NotImplementedError) as e:
-            self.edge.update_internal_value("dummy")
-        self.include("update_internal_value", e.exception.message)
+    def test_update_by_new_reward(self):
+        self.edge.visit()
+        self.edge.update_by_new_reward(5)
+        self.eq(5, self.edge.average_reward)
+        self.edge.visit()
+        self.edge.update_by_new_reward(1)
+        self.eq(3, self.edge.average_reward)
 
     def test_calculate_value(self):
         with self.assertRaises(NotImplementedError) as e:
@@ -286,23 +300,15 @@ class UCTEdgeNodeTest(BaseUnitTest):
         self.nodeA = UCTNode(TestTask(), "A")
         self.edge = self.nodeA.child_edges[0]
 
-    def test_update_internal_value(self):
-        self.edge.visit()
-        self.edge.update_internal_value(5)
-        self.eq(5, self.edge.internal_value)
-        self.edge.visit()
-        self.edge.update_internal_value(1)
-        self.eq(3, self.edge.internal_value)
-
     def test_calculate_value(self):
         self.edge.visit()
-        self.edge.update_internal_value(0)
+        self.edge.update_by_new_reward(0)
         self.almosteq(0, self.edge.calculate_value(), 0.0001)
         self.nodeA.child_edges[1].visit()
-        self.almosteq(1.1774, self.edge.calculate_value(), 0.0001)
+        self.almosteq(1.6651092223153954, self.edge.calculate_value(), 0.0001)
         self.edge.visit()
-        self.edge.update_internal_value(1)
-        self.almosteq(1.5481, self.edge.calculate_value(), 0.0001)
+        self.edge.update_by_new_reward(1)
+        self.almosteq(1.982303807367511, self.edge.calculate_value(), 0.0001)
 
 class TestTask(BaseTask):
 
@@ -337,21 +343,10 @@ class TestNode(BaseNode):
 
 class TestEdge(BaseEdge):
 
-    def __init__(self, parent_node, action):
-        super(TestEdge, self).__init__(parent_node, action)
-        self.internal_value = 0
-
-    def update_internal_value(self, new_reward):
-        self.internal_value = self._calc_average_in_incremental_way(self.internal_value, self.visit_count, new_reward)
-
     def calculate_value(self):
         if self.visit_count == 0:
             explore_term = 0
         else:
             explore_term = 1.0 * self.parent_node.visit_count / self.visit_count
-        return self.internal_value + explore_term
-
-    def _calc_average_in_incremental_way(self, old_value, visit_count, new_reward):
-        assert visit_count != 0
-        return old_value + 1.0 / visit_count * (new_reward - old_value)
+        return self.average_reward + explore_term
 

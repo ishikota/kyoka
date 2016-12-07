@@ -7,8 +7,44 @@ from kyoka.algorithm.rl_algorithm import BaseRLAlgorithm
 
 
 class QLearning(BaseRLAlgorithm):
+    """Basic "off-policy" Temporal-Difference Learning method.
+
+    "off-policy" indicates that this method uses different policy when
+    "select action during the episode" and "create backup target".
+    (backup target is the target value used when training value function)
+
+    QLearning uses GreedyPolicy to "create backup target".
+    And you can choose policy to use to "select action during the episode".
+    (Most of the case, soft-policy(ex. epsilon-greedy) is good choice.)
+
+    Algorithm is implemented based on the book "Reinforcement Learning: An Introduction"
+    (reference : https://webdocs.cs.ualberta.ca/~sutton/book/bookdraft2016sep.pdf)
+
+    - Algorithm -
+    Initialize
+        T  <- your RL task
+        PI <- policy used to "select action during the episode"
+        Q  <- action value function
+        a  <- learning rate (alpha)
+        g  <- discounting factor (gamma)
+    Repeat until computational budge runs out:
+        S <- generate initial state of task T
+        A <- choose action at S by following policy PI
+        Repeat until S is terminal state:
+            S' <- next state of S after taking action A
+            R <- reward gained by taking action A at state S
+            A' <- next action at S' by following policy PI
+            GA <- greedy action at S' under action value function Q
+            Q(S, A) <- Q(S, A) + a * [ R + g * Q(S', GA) - Q(S, A)]
+            S, A <- S', A'
+    """
 
     def __init__(self, alpha=0.1, gamma=0.9):
+        """
+        Args:
+            alpha: learning rate. default=0.1. 0 < alpha <= 1
+            gamma: discounting factor. default=0.9. 0 < gamma <= 1
+        """
         self.alpha = alpha
         self.gamma = gamma
 
@@ -31,6 +67,12 @@ class QLearning(BaseRLAlgorithm):
             state, action = next_state, next_action
 
 class QLearningTabularActionValueFunction(BaseTabularActionValueFunction):
+    """Tabular action value function for QLearning.
+
+    Backup target(TD error) passed from QLearning is "R + g * Q(S', GA)".
+    So backup is done by following next equation.
+        Q(S, A) <- Q(S, A) + a * [ R + g * Q(S', GA) - Q(S, A)]
+    """
 
     def define_save_file_prefix(self):
         return "q_learning"
@@ -41,6 +83,13 @@ class QLearningTabularActionValueFunction(BaseTabularActionValueFunction):
         self.insert_value_into_table(self.table, state, action, new_Q_value)
 
 class QLearningApproxActionValueFunction(BaseApproxActionValueFunction):
+    """Approximation action value function for QLearning.
+    There is no additional method from base class to use QLearning.
+
+    Backup target(TD error) passed from QLearning is "R + g * Q(S', GA)".
+    So backup should be done to approximate next update.
+        Q(S, A) <- Q(S, A) + a * [ R + g * Q(S', GA) - Q(S, A)]
+    """
     pass
 
 ACTION_ON_TERMINAL_FLG = "action_on_terminal"

@@ -6,8 +6,42 @@ from kyoka.algorithm.rl_algorithm import BaseRLAlgorithm, generate_episode
 
 
 class MonteCarlo(BaseRLAlgorithm):
+    """Every-visit MonteCarlo method with supporting reward discounting,
+
+    "Every-visit" means "using every state for update in an episode even if
+    same state appeared in the episode".
+
+    Algorithm is implemented based on the book "Reinforcement Learning: An Introduction"
+    (reference : https://webdocs.cs.ualberta.ca/~sutton/book/bookdraft2016sep.pdf)
+
+    - Algorithm -
+    Initialize:
+        T  <- your RL task
+        PI <- Policy used to generate episode
+        Q  <- action value function
+    Repeat until computational budge runs out:
+        generate an episode of T by following policy PI
+        for each state-action pair (S, A)  appeared in the episode:
+            G <- sum of rewards gained after state S (discounted if gamma < 1)
+            Q(S, A) <- average G of S sampled ever
+    """
 
     def __init__(self, gamma=1):
+        """
+        If you want to discount future reward then set gamma < 1.
+
+        For example, we have an apisode like this
+        episode :
+            (state0, action0) -> reward0 ->
+            (state1, action1) -> reward1 ->
+            (state2, action2) -> reward2 -> finish
+
+        then reward discounting is done like this
+            reward_sum_from_state0 = reward0 + gamma * reward1 + gamma**2 reward2
+
+        Args:
+            gamma : discount factor of reward. default=1. 0 < gamma <= 1.
+         """
         self.gamma = gamma
 
     def setup(self, task, policy, value_function):
@@ -30,6 +64,14 @@ class MonteCarlo(BaseRLAlgorithm):
         return self.gamma ** step * reward
 
 class MonteCarloTabularActionValueFunction(BaseTabularActionValueFunction):
+    """Tabular action value function for MonteCarlo method.
+
+    Backup target passed from MonteCarlo is G(reward sum of state S).
+    So backup is done just averaging G of S sampled ever.
+
+    Calculation of average is implemented by memory efficient way.
+    ("_calc_average_in_incremental_way" is the method calculates average")
+    """
 
     SAVE_FILE_NAME = "montecarlo_update_counter.pickle"
 
@@ -60,12 +102,19 @@ class MonteCarloTabularActionValueFunction(BaseTabularActionValueFunction):
         self.insert_value_into_table(self.update_counter, state, action, update_count+1)
 
     def _calc_average_in_incremental_way(self, k, r, Q):
+        """Memory efficient implementation to calculate average"""
         return Q + 1.0 / (k + 1) * (r - Q)
 
     def _gen_update_counter_file_path(self, dir_path):
         return os.path.join(dir_path, self.SAVE_FILE_NAME)
 
 class MonteCarloApproxActionValueFunction(BaseApproxActionValueFunction):
+    """Approximation action value function for MonteCarlo method.
+    There is no additional method from base class to use MonteCarlo method.
+
+    Backup target passed from MonteCarlo is G(reward sum of state S).
+    So backup should be done to approximate average of G of S sampled ever.
+    """
     pass
 
 def validate_value_function(value_function):
