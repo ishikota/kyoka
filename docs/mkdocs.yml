@@ -7,8 +7,8 @@ site_description: 'Documentation site for kyoka'
 pages:
 - Home: index.md
 - Tutorial:
-  - Maze task: tutorial/maze_task.md
-  - TickTackToe task: tutorial/ticktacktoe_task.md
+  - Tabular Method Tutorial: tutorial/tabular_method_tutorial.md
+  - Approximation Method Tutorial: tutorial/approximation_method_tutorial.md
 - Algorithm:
   - MonteCarlo: algorithm/montecarlo.md
   - Sarsa: algorithm/sarsa.md
