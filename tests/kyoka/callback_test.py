@@ -2,13 +2,15 @@ import os
 import sys
 import StringIO
 
-from tests.base_unittest import BaseUnitTest
-from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir, remove_leaf_dir
 from nose.tools import raises
 from mock import patch, Mock
+
 from kyoka.callback import BaseCallback, BasePerformanceWatcher, EpsilonAnnealer,\
         LearningRecorder, BaseFinishRule, ManualInterruption, WatchIterationCount
 from kyoka.policy import EpsilonGreedyPolicy
+from tests.base_unittest import BaseUnitTest
+from tests.utils import generate_tmp_dir_path, setup_tmp_dir, teardown_tmp_dir, remove_leaf_dir
+
 
 def capture_log(instance):
     instance.capture = StringIO.StringIO()

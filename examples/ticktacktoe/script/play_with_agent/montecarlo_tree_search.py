@@ -59,7 +59,7 @@ print "VS PerfectPolicy average result: lose=%f, draw=%f, win=%f" % tuple(result
 
 # Play with agent
 flg = raw_input("Do you want to play with trained agent? (y/n) >> ")
-fetch_action_value = lambda tree: [edge.calculate_value() for edge in tree.child_edges]
+fetch_action_value = lambda tree: [edge.average_reward for edge in tree.child_edges]
 if flg in ["y", "yes"]:
     task = TickTackToeTask(is_first_player=False)
     human = TickTackToeManualPolicy()

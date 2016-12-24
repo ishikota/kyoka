@@ -1,7 +1,9 @@
 from __future__ import absolute_import
 
 import os
+
 from kyoka.policy import BasePolicy
+
 
 def generate_tmp_dir_path(script_path):
     return os.path.join(os.path.dirname(script_path), "tmp")

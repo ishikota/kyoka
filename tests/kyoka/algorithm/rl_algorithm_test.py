@@ -1,13 +1,14 @@
-from tests.base_unittest import BaseUnitTest
+import StringIO
+import sys
+
+from mock import Mock
+
 from kyoka.algorithm.rl_algorithm import BaseRLAlgorithm, generate_episode
 from kyoka.policy import GreedyPolicy, EpsilonGreedyPolicy
 from kyoka.value_function import BaseActionValueFunction
 from kyoka.callback import BaseFinishRule
+from tests.base_unittest import BaseUnitTest
 
-from mock import Mock
-
-import StringIO
-import sys
 
 class BaseRLAlgorithmTest(BaseUnitTest):
 

@@ -1,32 +1,58 @@
 import os
 import time
+
 from utils import build_not_implemented_msg
 
+
 class BaseCallback(object):
+    """Base class for creating new GPI callback as you like.
 
-  def before_gpi_start(self, task, value_function):
-    pass
+    The following callback methods are called from BaseRLAlgorithm.run_gpi_for_an_episode
+    in proper timing.
 
-  def before_update(self, iteration_count, task, value_function):
-    pass
+    before_gpi_start : called before start training
+    before_update : called before each call of RLalgorithm.run_gpi_for_an_episode
+    after_update : called after each call of RLalgorithm.run_gpi_for_an_episode
+    after_gpi_finish : called when training is finished
+    interrupt_gpi : called after each update is finished to judge if finish the training
+    """
 
-  def after_update(self, iteration_count, task, value_function):
-    pass
+    def before_gpi_start(self, task, value_function):
+        pass
 
-  def after_gpi_finish(self, task, value_function):
-    pass
+    def before_update(self, iteration_count, task, value_function):
+        pass
 
-  def interrupt_gpi(self, iteration_count, task, value_function):
-    return False
+    def after_update(self, iteration_count, task, value_function):
+        pass
 
-  def define_log_tag(self):
-    return self.__class__.__name__
+    def after_gpi_finish(self, task, value_function):
+        pass
 
-  def log(self, message):
-    if message and len(message) != 0:
-      print "[%s] %s" % (self.define_log_tag(), message)
+    def interrupt_gpi(self, iteration_count, task, value_function):
+        """Return True if you want to stop the training."""
+        return False
+
+    def define_log_tag(self):
+        """Define tag string which displayed with log message.
+
+        Ex. if you return "MyTag" here then
+            self.log("some message") would output
+            "[MyTag] some message" on your console
+        """
+        return self.__class__.__name__
+
+    @property
+    def tag(self):
+        return self.define_log_tag()
+
+    def log(self, message):
+        if message and len(message) != 0:
+            print "[%s] %s" % (self.tag, message)
 
 class BasePerformanceWatcher(BaseCallback):
+    """Utility class to execute some calculation with intermediate result of training.
+    """
 
     def setUp(self, task, value_function):
         pass
@@ -35,10 +61,21 @@ class BasePerformanceWatcher(BaseCallback):
         pass
 
     def define_performance_test_interval(self):
+        """Define interval to execute "run_performance_test".
+
+        For example, if you return 1 then "run_performance_test" is called after
+        every update of training.
+        """
         err_msg = build_not_implemented_msg(self, "define_performance_test_interval")
         raise NotImplementedError(err_msg)
 
     def run_performance_test(self, task, value_function):
+        """Define some calculation to see how good current value_function works.
+
+        Args:
+            task: Task instance which is used in training
+            value_function: Value function which is in the middle of training.
+        """
         err_msg = build_not_implemented_msg(self, "run_performance_test")
         raise NotImplementedError(err_msg)
 
@@ -63,8 +100,13 @@ class BasePerformanceWatcher(BaseCallback):
         self.tearDown(task, value_function)
 
 class EpsilonAnnealer(BaseCallback):
+    """Callback to decay epsiron of EpsironGreedyPolicy during training."""
 
     def __init__(self, epsilon_greedy_policy):
+        """
+        Args:
+            epsilon_greedy_policy: target to execute epsilon annealing.
+        """
         self.policy = epsilon_greedy_policy
         self.anneal_finished = False
 
@@ -83,8 +125,25 @@ class EpsilonAnnealer(BaseCallback):
             self.log(finish_msg)
 
 class LearningRecorder(BaseCallback):
+    """Callback to save intermediate result of training.
+
+    If you set
+        root_save_dir_path=training_results
+        save_interval=100
+    After 250 iteration of training, "algorithm.save(training_results)" is called twice.
+    So training_results directory would have two items like below
+
+    training_results/after_100_iteration/...
+                    /after_200_iteration/...
+    """
 
     def __init__(self, algorithm, root_save_dir_path, save_interval):
+        """
+        Args:
+            algorithm: the RL algorithm which will be used in training.
+            root_save_dir_path: save method is executed under this path of directory.
+            save_interval: interval of training to execute save method.
+        """
         self.algorithm = algorithm
         self.root_save_dir_path = root_save_dir_path
         self.save_interval = save_interval
@@ -118,8 +177,17 @@ class LearningRecorder(BaseCallback):
         return "gpi_finished"
 
 class BaseFinishRule(BaseCallback):
+    """Base class to define the rule to stop the training.
+
+    Child class needs to implement following 3 methods.
+
+    check_condition : return True if you want  to stop the training.
+    generate_start_message : the string retured here is logged when start training.
+    generate_finish_message : the string returned here is logged after training finished.
+    """
 
     def check_condition(self, iteration_count, task, value_function):
+        """Return True if you want to stop the training"""
         err_msg = build_not_implemented_msg(self, "check_condition")
         raise NotImplementedError(err_msg)
 
@@ -140,10 +208,23 @@ class BaseFinishRule(BaseCallback):
         return finish_iteration
 
 class ManualInterruption(BaseFinishRule):
+    """Callback to stop the training by file-base communication
+
+    How to stop the training manually
+    1. Share the path of a file with this callback
+    2. Start the training with this callback.
+    3. Write target word (default is "stop") on the shared file.
+    4. Callback will find the target word from the shared file and stop the training.
+    """
 
     TARGET_WARD = "stop"
 
     def __init__(self, monitor_file_path, watch_interval=30):
+        """
+        Args:
+            monitor_file_path: path of file to send stop command.
+            watch_interval: the interval to check the file in monitor_file_path
+        """
         self.monitor_file_path = monitor_file_path
         self.watch_interval = watch_interval
 
@@ -179,8 +260,14 @@ class ManualInterruption(BaseFinishRule):
         with open(filepath, 'rb') as f: return f.read()
 
 class WatchIterationCount(BaseFinishRule):
+    """Finish the training after specified number of training."""
 
     def __init__(self, target_count, verbose=1):
+        """
+        Args
+            target_count : stop the training after this number of iteration.
+            verbose : if verbose > 0 then log is activated.
+        """
         self.target_count = target_count
         self.start_time = self.last_update_time = 0
         self.verbose = verbose
@@ -207,8 +294,9 @@ class WatchIterationCount(BaseFinishRule):
         super(WatchIterationCount, self).after_update(iteration_count, task, value_function)
         if self.verbose > 0:
             current_time = time.time()
-            msg = "Finished %d / %d iterations (%.1fs)" %\
-                    (iteration_count, self.target_count, current_time - self.last_update_time)
+            msg = "Finished %d / %d iterations (%.1fs)" % (
+                    iteration_count, self.target_count,
+                    current_time - self.last_update_time)
             self.last_update_time = current_time
             self.log(msg)
 
