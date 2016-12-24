@@ -10,6 +10,7 @@ pages:
   - Tabular Method Tutorial: tutorial/tabular_method_tutorial.md
   - Approximation Method Tutorial: tutorial/approximation_method_tutorial.md
 - Algorithm:
+  - About Algorithms: algorithm/about_algorithms.md
   - MonteCarlo: algorithm/montecarlo.md
   - Sarsa: algorithm/sarsa.md
   - QLearning: algorithm/q_learning.md
