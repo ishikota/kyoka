@@ -1,0 +1,22 @@
+site_name: kyoka
+theme: readthedocs
+docs_dir: sources
+repo_url: https://github.com/ishikota/kyoka
+site_description: 'Documentation site for kyoka'
+ 
+pages:
+- Home:
+  - Introduction: index.md
+- Tutorial:
+  - Tabular Method Tutorial: tutorial/tabular_method_tutorial.md
+  - Approximation Method Tutorial: tutorial/approximation_method_tutorial.md
+- Algorithm:
+  - About Algorithms: algorithm/about_algorithms.md
+  - MonteCarlo: algorithm/montecarlo.md
+  - Sarsa: algorithm/sarsa.md
+  - QLearning: algorithm/q_learning.md
+  - deep Q-learning: algorithm/deep_q_learning.md
+  - MonteCarloTreeSearch: algorithm/monte_carlo_tree_search.md
+- Callback:
+  - About Callback: callback/about_callback.md
+  - Callbacks: callback/callbacks.md
