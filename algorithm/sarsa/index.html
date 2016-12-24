@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Sarsa - kyoka</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Sarsa";
+    var mkdocs_page_input_path = "algorithm/sarsa.md";
+    var mkdocs_page_url = "/algorithm/sarsa/";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> kyoka</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Home</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../..">Introduction</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Tutorial</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../tutorial/tabular_method_tutorial/">Tabular Method Tutorial</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../tutorial/approximation_method_tutorial/">Approximation Method Tutorial</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Algorithm</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../about_algorithms/">About Algorithms</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../montecarlo/">MonteCarlo</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Sarsa</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#sarsa-on-policy-td-learning-method">Sarsa - on-policy TD learning method</a></li>
+                
+                    <li><a class="toctree-l4" href="#algorithm">Algorithm</a></li>
+                
+                    <li><a class="toctree-l4" href="#value-function">Value function</a></li>
+                
+            
+            </ul>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../q_learning/">QLearning</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../deep_q_learning/">deep Q-learning</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../monte_carlo_tree_search/">MonteCarloTreeSearch</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Callback</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../callback/about_callback/">About Callback</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../callback/callbacks/">Callbacks</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">kyoka</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Algorithm &raquo;</li>
+        
+      
+    
+    <li>Sarsa</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/ishikota/kyoka/edit/master/docs/algorithm/sarsa.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="sarsa-on-policy-td-learning-method">Sarsa - on-policy TD learning method</h1>
+<p>Sarsa method updates value of state-action pair <code>Q(s,a)</code>in following way.</p>
+<pre><code>s  : current state
+a  : action to take at state s choosed by policy PI
+r  : reward by transition (s, a)
+s' : next state after took action a at s
+a' : action to take at state s' choosed by policy PI
+
+Q(s,a) = Q(s,a) + alpha [ r + gamma * Q(s', a') - Q(s, a) ]
+</code></pre>
+
+<p>Update is done with variable <code>s,a,r,s',a'</code>. So this algorithm is named as Sarsa.</p>
+<p>This method is also called as <em>on-policy TD learning</em> method.  The keyword is <strong>on-policy</strong>.<br />
+<strong>on-policy</strong> means that Sarsa uses same policy PI to calculate <code>a</code> and <code>a'</code>.<br />
+The algorithm uses different policy to select <code>a</code> and <code>a'</code> is called <em>off-policy</em> method. (ex. QLearning)</p>
+<h2 id="algorithm">Algorithm</h2>
+<pre><code>Parameter:
+    a  &lt;- alpha. learning rate. [0,1].
+    g  &lt;- gamma. discounting factor. [0,1].
+Initialize:
+    T  &lt;- your RL task
+    PI &lt;- policy used in the algorithm
+    Q  &lt;- action value function
+
+    Repeat until computational budget runs out:
+        S &lt;- generate initial state of task T
+        A &lt;- choose action at S by following policy PI
+        Repeat until S is terminal state:
+            S' &lt;- next state of S after taking action A
+            R &lt;- reward gained by taking action A at state S
+            A' &lt;- next action at S' by following policy PI
+            Q(S, A) &lt;- Q(S, A) + a * [ R + g * Q(S', A') - Q(S, A)]
+            S, A &lt;- S', A'
+</code></pre>
+
+<h2 id="value-function">Value function</h2>
+<p>Sarsa method provides <strong>tabular</strong> and <strong>approximation</strong> type of value functions.</p>
+<h3 id="sarsatabularactionvaluefunction">SarsaTabularActionValueFunction</h3>
+<p>If your task is <em>tabular size</em>, you can use <code>SarsaTabularActionValueFunction</code>.</p>
+<blockquote>
+<p>If you can store the value of all state-action pair on the memory(array), your task is <strong>tabular</strong> size.</p>
+</blockquote>
+<p><code>SarsaTabularActionValueFunction</code> has 3 abstracted method to define the table size of your task.</p>
+<ul>
+<li><code>generate_initial_table</code> : initialize table object and return it here</li>
+<li><code>fetch_value_from_table</code> : define how to fetch value from your table</li>
+<li><code>insert_value_into_table</code> : define how to insert new value into your table</li>
+</ul>
+<p>If the shape of your state-action space is SxA, implementation would be like this.</p>
+<pre><code class="python">class MyTabularActionValueFunction(SarsaTabularActionValueFunction):
+
+    def generate_initial_table(self):
+        return [[0 for j in range(A)] for i in range(S)]
+
+    def fetch_value_from_table(self, table, state, action):
+        return table[state][action]
+
+    def insert_value_into_table(self, table, state, action, new_value):
+        table[state][action] = new_value
+</code></pre>
+
+<h3 id="sarsaapproxactionvaluefunction">SarsaApproxActionValueFunction</h3>
+<p>If your task is not <em>tabular</em> size, you use <code>SarsaApproxActionValueFunction</code>.</p>
+<p><code>SarsaApproxActionValueFunction</code> has 3 abstracted methods. You would wrap some prediction model (ex. neuralnet) in these methods.</p>
+<ul>
+<li><code>construct_features</code> : transform state-action pair into feature representation</li>
+<li><code>approx_predict_value</code> : predict value of state-action pair with prediction model you want to use</li>
+<li><code>approx_backup</code> : update your model in supervised learning way with passed input and output pair</li>
+</ul>
+<p>The implementation with some neuralnet library would be like this.</p>
+<pre><code class="python">class MyApproxActionValueFunction(SarsaApproxActionValueFunction):
+
+    def setup(self):
+        super(MazeApproxActionValueFunction, self).setup()
+        self.neuralnet = build_neuralnet_in_some_way()
+
+    def construct_features(self, state, action):
+        feature1 = do_something(state, action)
+        feature2 = do_anotherthing(state, action)
+        return [feature1, feature2]
+
+    def approx_predict_value(self, features):
+        return self.neuralnet.predict(features)
+
+    def approx_backup(self, features, backup_target, alpha):
+        self.neuralnet.incremental_training(X=features, Y=backup_target)
+</code></pre>
+
+<h4 id="sample-code-to-start-learning">Sample code to start learning</h4>
+<pre><code class="python">test_length = 1000
+task = MyTask()
+policy = EpsilonGreedyPolicy(eps=0.1)
+value_func = MyTabularActionValueFunction()
+algorithm = Sarsa(gamma=0.99)
+algorithm.setup(task, policy, value_func)
+algorithm.run_gpi(test_length)
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../q_learning/" class="btn btn-neutral float-right" title="QLearning">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../montecarlo/" class="btn btn-neutral" title="MonteCarlo"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/ishikota/kyoka" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../montecarlo/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../q_learning/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script src="../../js/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>MonteCarloTreeSearch - kyoka</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "MonteCarloTreeSearch";
+    var mkdocs_page_input_path = "algorithm/monte_carlo_tree_search.md";
+    var mkdocs_page_url = "/algorithm/monte_carlo_tree_search/";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> kyoka</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Home</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../..">Introduction</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Tutorial</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../tutorial/tabular_method_tutorial/">Tabular Method Tutorial</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../tutorial/approximation_method_tutorial/">Approximation Method Tutorial</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Algorithm</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../about_algorithms/">About Algorithms</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../montecarlo/">MonteCarlo</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../sarsa/">Sarsa</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../q_learning/">QLearning</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../deep_q_learning/">deep Q-learning</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 current">
+        <a class="current" href="./">MonteCarloTreeSearch</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#montecarlotreesearch">MonteCarloTreeSearch</a></li>
+                
+                    <li><a class="toctree-l4" href="#algorithm">Algorithm</a></li>
+                
+                    <li><a class="toctree-l4" href="#tutorial">Tutorial</a></li>
+                
+                    <li><a class="toctree-l4" href="#advanced">Advanced</a></li>
+                
+            
+            </ul>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Callback</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../callback/about_callback/">About Callback</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../callback/callbacks/">Callbacks</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">kyoka</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Algorithm &raquo;</li>
+        
+      
+    
+    <li>MonteCarloTreeSearch</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/ishikota/kyoka/edit/master/docs/algorithm/monte_carlo_tree_search.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="montecarlotreesearch">MonteCarloTreeSearch</h1>
+<p>Monte Carlo Tree Search (MCTS) is one of the famous <strong>heuristic search</strong> method. MCTS builds search tree to find most promising action by using results of random simulation.  </p>
+<p>Unlike other reinforcement algorithms (ex. MonteCarlo, QLearning, ...), MCTS has no training phase.<br />
+MCTS finds most promising action every time when it receives new state to choose action.  </p>
+<p>For more detail explanation see <a href="http://ieeexplore.ieee.org/document/6145622/">A Survey of Monte Carlo Tree Search Methods</a>.<br />
+(We implemented MCTS based on this paper.)</p>
+<h2 id="algorithm">Algorithm</h2>
+<p>The search tree of MCTS represents search space of reinforcement learning task.<br />
+Each node represents some state <em>S</em> and its child edge represents possible actions at state <em>S</em>.  </p>
+<p>First we pass current state of task to MCTS. Then MCTS creates search tree which has only root node representing current state.
+After that MCTS starts to build search tree by iterating following 4 steps as long as possible.</p>
+<ol>
+<li>SELECT : select a node which has not expanded edge</li>
+<li>EXPAND : add child node of selected node on search tree</li>
+<li>PLAYOUT : run random simulation from state which expanded node representing</li>
+<li>BACKPROPAGATION : backpropagate reward of simulation from expanded node to root node</li>
+</ol>
+<pre><code>Initialize:
+    R &lt;- Build game tree which has only a root node which represents
+         current state (where we want to find best action)
+Repeat until computational budget runs out:
+    N  &lt;- find not expanded node by descending R from root node
+         (expanded = visited all child node at least once)
+    N' &lt;- child node of N which is not visited yet.
+          And add N' on search tree.
+    R  &lt;- reward of simulation started from the state which N' represents
+    Backpropagate R from N' to R
+return best action(edge of highest value) at R
+</code></pre>
+
+<h2 id="tutorial">Tutorial</h2>
+<p>Now we will introduce how to use MCTS with example task <code>TickTackToeTask</code>.  </p>
+<p>Before starting implementation, we need to decide the algorithm for <em>SELECT</em> step (how to choose the node to expand).
+In this tutorial we adapt famous algorithm <em>UCT search</em> (Most of the case this choice would be good).</p>
+<p><em>UCT search</em> calculate the value of edge by following equation.  </p>
+<pre><code>edge_value = average_reard + 2 * C * sqrt( 2 * log(N) / n )
+</code></pre>
+
+<p>where</p>
+<ul>
+<li><code>average_reward</code> is the average of reward received through <em>BACKPROPAGATION</em> step.</li>
+<li><code>C</code> is the hyper parameter to balance explore and exploitation</li>
+<li><code>N</code> total visit count of parent node of target edge</li>
+<li><code>n</code> total visit count of child node of target edge</li>
+</ul>
+<p>And descend to the edge of child node which has maximum value.  </p>
+<p>This algorithm is already implemented as <code>UCTNode</code>, <code>UCTEdge</code> classes. So we will use it.</p>
+<h3 id="creating-custom-node">Creating custom node</h3>
+<p><em>tick-tack-toe</em> is two-player zero-sum game. So the best action of opponent player is the worst action of my player.<br />
+To integrate this idea with UCT search, we create <code>MaxNode</code> and <code>MinNode</code>.</p>
+<pre><code class="python">from kyoka.algorithm.montecarlo_tree_search import UCTNode
+
+# descend the tree to the child edge which has maximum value. (choose best action for me)
+# This node should represents the state of my turn.
+class MaxNode(BaseNode):
+
+    def select_best_edge(self):
+        sort_key = lambda edge: edge.calculate_value()
+        max_val_edge = sorted([edge for edge in self.child_edges], key=sort_key)[-1]
+        return max_val_edge
+
+# descend the tree to the child edge which has minimum value. (choose worst action for me)
+# This node should represents the state of opponent turn.
+class MinNode(BaseNode):
+
+    def select_best_edge(self):
+        sort_key = lambda edge: edge.calculate_value()
+        min_val_edge = sorted([edge for edge in self.child_edges], key=sort_key)[0]
+        return min_val_edge
+</code></pre>
+
+<p>After finished to create <code>Node</code> class, we need to tell MCTS how to build our search tree.<br />
+We will do this by implementing <code>BaseMCTS.generate_node_from_state</code> method.</p>
+<pre><code>from kyoka.algorithm.montecarlo_tree_search import BaseMCTS
+
+class MyMCTS(BaseMCTS):
+
+    def generate_node_from_state(self, state):
+        if self.next_player_is_me(state):
+            return MaxNode(state)
+        else:
+            return MinNode(state)
+
+    def next_player_is_me(self, state):
+        return # TODO judge passed state is my turn or not by some logic
+</code></pre>
+
+<p>Ok, we prepared everything.<br />
+Below code runs 5000 iteration of MCTS and returns most promising action at initial state.</p>
+<pre><code class="python">from kyoka.callback import WatchIterationCount
+
+NB_SIMULATION = 5000
+finish_rule = WatchIterationCount(SIMULATION_NUM)
+task = TickTackToeTask()
+algorithm = MyMCTS(TickTackToeTask)
+
+state = task.generate_initial_state()
+best_action = algorithm.planning(state, finish_rule)
+
+# you can also call planning method through &quot;choose_action(task, value_functoin, state)&quot; interface
+algorithm.set_finish_rule(finish_rule)
+best_action = algorithm.choose_action(&quot;dummy&quot;, &quot;dummy&quot;, state)
+</code></pre>
+
+<h2 id="advanced">Advanced</h2>
+<p>If you want to run simulation in not random way, you can customize simulation logic.<br />
+Simulation is executed by calling method from <code>BaseMCTS.playout_policy</code> property.<br />
+So you can create simulation method and set it by calling <code>BaseMCTS.set_playout_policy</code> method.  </p>
+<p>The interface of simulation method is</p>
+<ul>
+<li>receives <em>task</em> and <em>leaf_node</em> as argument</li>
+<li>returns reward of simulation</li>
+</ul>
+<p>The default implementation <code>random_playout</code> is implemented like this.</p>
+<pre><code class="python">import random
+
+def random_playout(task, leaf_node):
+    state = leaf_node.state
+    while not task.is_terminal_state(state):
+        actions = task.generate_possible_actions(state)
+        action = random.choice(actions)
+        state = task.transit_state(state, action)
+    return task.calculate_reward(state)
+
+mcts.set_playout_policy(random_playout)
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../callback/about_callback/" class="btn btn-neutral float-right" title="About Callback">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../deep_q_learning/" class="btn btn-neutral" title="deep Q-learning"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/ishikota/kyoka" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../deep_q_learning/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../../callback/about_callback/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script src="../../js/theme.js"></script>
+
+</body>
+</html>

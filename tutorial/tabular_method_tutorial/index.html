@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Tabular Method Tutorial - kyoka</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Tabular Method Tutorial";
+    var mkdocs_page_input_path = "tutorial/tabular_method_tutorial.md";
+    var mkdocs_page_url = "/tutorial/tabular_method_tutorial/";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> kyoka</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Home</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../..">Introduction</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Tutorial</span></li>
+
+        
+            
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Tabular Method Tutorial</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#tabular-reinforcement-learning-problem">Tabular Reinforcement Learning Problem</a></li>
+                
+                    <li><a class="toctree-l4" href="#blocking-maze-problem">blocking maze problem</a></li>
+                
+                    <li><a class="toctree-l4" href="#implementation">Implementation</a></li>
+                
+                    <li><a class="toctree-l4" href="#solve-blocking-maze">Solve blocking maze</a></li>
+                
+            
+            </ul>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../approximation_method_tutorial/">Approximation Method Tutorial</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Algorithm</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/about_algorithms/">About Algorithms</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/montecarlo/">MonteCarlo</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/sarsa/">Sarsa</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/q_learning/">QLearning</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/deep_q_learning/">deep Q-learning</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/monte_carlo_tree_search/">MonteCarloTreeSearch</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Callback</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../callback/about_callback/">About Callback</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../callback/callbacks/">Callbacks</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">kyoka</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Tutorial &raquo;</li>
+        
+      
+    
+    <li>Tabular Method Tutorial</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/ishikota/kyoka/edit/master/docs/tutorial/tabular_method_tutorial.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="tabular-reinforcement-learning-problem">Tabular Reinforcement Learning Problem</h1>
+<p>In this tutorial, we will solve the problem called <strong>tabular reinforcement learning problem</strong>.  </p>
+<p>The keyword <strong>tabular</strong> means <strong>state-action space of the problem is small enough to fit in array or table</strong>.<br />
+Most of reinforcement learning methods have good convergence property on <em>tabular reinforcement learning problem</em>.<br />
+So first we will approach this type of problem.</p>
+<h2 id="blocking-maze-problem">blocking maze problem</h2>
+<p>We will find the shortest path of <em>blocking maze</em>.<br />
+<em>blocking maze</em> transforms its structure during training like below.  </p>
+<pre><code class="bash">  Before         After
+ --------G     --------G
+ ---------     ---------
+ ---------  =&gt; ---------
+ XXXXXXXX-     -XXXXXXXX
+ ---------     ---------
+ ---S-----     ---S-----
+# 10 step       16 step  &lt;= minimum step
+</code></pre>
+
+<p>The best path in first structure is blocked by transformation.<br />
+So agent needs to realize the transformation and re-learn shortest path.</p>
+<h2 id="implementation">Implementation</h2>
+<h3 id="define-blocking-maze-task">Define blocking maze task</h3>
+<p>First we define our <em>blocking maze problem</em> as reinforcement learning task.
+What we need to do is implementing 5 abstracted methods of <code>BaseTask</code> class.
+So our <code>BlockingMazeTask</code> would be like this.</p>
+<pre><code class="python">from kyoka.task import BaseTask
+
+class BlockingMazeTask(BaseTask):
+
+    UP, DOWN, RIGHT, LEFT = 0, 1, 2, 3
+    START, GOAL = (5, 3), (0, 8)
+    BEFORE_MAZE = [
+            ['-','-','-','-','-','-','-','-','G'],
+            ['-','-','-','-','-','-','-','-','-'],
+            ['-','-','-','-','-','-','-','-','-'],
+            ['X','X','X','X','X','X','X','X','-'],
+            ['-','-','-','-','-','-','-','-','-'],
+            ['-','-','-','S','-','-','-','-','-']
+    ]
+    AFTER_MAZE = [
+            ['-','-','-','-','-','-','-','-','G'],
+            ['-','-','-','-','-','-','-','-','-'],
+            ['-','-','-','-','-','-','-','-','-'],
+            ['-','X','X','X','X','X','X','X','X'],
+            ['-','-','-','-','-','-','-','-','-'],
+            ['-','-','-','S','-','-','-','-','-']
+    ]
+
+    def __init__(self):
+        self.maze = self.BEFORE_MAZE
+
+    def generate_initial_state(self):
+        return self.START
+
+    def is_terminal_state(self, state):
+        return self.GOAL == state
+
+    def transit_state(self, state, action):
+        row, col = state
+        height, width = 6, 9
+        if action == self.UP:
+            row = max(0, row-1)
+        elif action == self.DOWN:
+            row = min(height-1, row+1)
+        elif action == self.RIGHT:
+            col= min(width-1, col+1)
+        elif action == self.LEFT:
+            col = max(0, col-1)
+        if 'X' != self.maze[row][col]:
+            return (row, col)
+        else:
+            return state
+
+    def generate_possible_actions(self, state):
+        return [self.UP, self.DOWN, self.RIGHT, self.LEFT]
+
+    def calculate_reward(self, state):
+        row, col = state
+        return 1 if 'G' == self.maze[row][col] else 0
+</code></pre>
+
+<p>This code does not imeplment transformation feature yet.<br />
+We implement the transformation feature by using <code>kyoka.callback</code> module later.</p>
+<h3 id="setup-algorithm-for-blocking-maze-problem">Setup algorithm for blocking maze problem</h3>
+<p>Next we create <strong>value function</strong> of our task.</p>
+<blockquote>
+<p>value function is the function which receives state-action pair and estimates how good for the agent to take the action at the state.</p>
+</blockquote>
+<p>Before start implementation, let's think about the <strong>size of state-action space</strong> of our blocking maze problem.<br />
+In our <code>BlockingMazeTask</code>, state and action is defined like this.</p>
+<ul>
+<li>state  = position of agent in the maze </li>
+<li>action = the direction to move (UP or DOWN or RIGHT or LEFT)</li>
+</ul>
+<p>The number of possible state is <code>6*9=54</code>(our maze shape is 6x9) and we can move <code>4</code> direction in every state.
+So the <strong>size of state-action space</strong> is <code>54*4=216</code>.<br />
+This indicates that our learning problem is <em>small enough to fit in array or table</em>.<br />
+So we can say that blocking maze problem is <em>tabular reinforcement learning problem</em>.</p>
+<p>Ok, let's resume implementation.
+Here we use <code>Sarsa</code> method to find shortest path.<br />
+What we need to do is implementing abstract methods of <code>SarsaTabularActionValueFunction</code> like this.</p>
+<pre><code class="python">class MazeTabularValueFunction(SarsaTabularActionValueFunction):
+
+    def generate_initial_table(self):
+        maze_width, maze_height, action_num = 6, 9, 4
+        return [[[0 for a in range(action_num)] for j in range(width)] for i in range(height)]
+
+    def fetch_value_from_table(self, table, state, action):
+        row, col = state
+        return table[row][col][action]
+
+    def insert_value_into_table(self, table, state, action, new_value):
+        row, col = state
+        table[row][col][action] = new_value
+</code></pre>
+
+<h3 id="implement-maze-transformation-feature">Implement maze transformation feature</h3>
+<p>We implement maze transformation feature by using <code>keras.callback</code> module.
+This module provides the callback methods to interact with our task and value function under training.  </p>
+<p>Base class of all callback is <code>keras.callback.BaseCallback</code>. This class has 4 callback methods.</p>
+<ul>
+<li><code>before_gpi_start(task, value_function)</code></li>
+<li><code>before_update(iteration_count, task, value_function)</code></li>
+<li><code>after_update(iteration_count, task, value_function)</code></li>
+<li><code>after_gpi_finish(task, value_function)</code></li>
+</ul>
+<p>Here we create the <code>MazeTransformationCallback</code> which interacts with <code>BlockingMazeTask</code> after 50 iteration of training and switch the shape of maze. The code is like this.</p>
+<pre><code class="python">from kyoka.callback import BaseCallback
+
+class MazeTransformationCallback(BaseCallback):
+
+    def after_update(self, iteration_count, task, value_function):
+        if 50 == iteration_count:
+            task.maze = BlockingMazeTask.AFTER_MAZE
+            # we recommend you to use &quot;self.log(message)&quot; instead of &quot;print&quot; method in callback.
+            self.log(&quot;Maze transformed after %d iteration.&quot; % iteration_count)
+
+</code></pre>
+
+<h3 id="watch-performance-of-agent-during-training">Watch performance of agent during training</h3>
+<p>Before start training, we implement one more important callback <code>MazePerformanceWatcher</code>.<br />
+This callback logs performance of agent in each iteration of training.<br />
+(In our case, performance means <em>how many step does agent takes to the goal</em>.)</p>
+<p>With <code>task</code> and <code>value_function</code>, we can test performance of agent like this.</p>
+<pre><code class="python">from kyoka.policy import choose_best_action
+
+MAX_STEP = 10000
+def solve_maze(task, value_function):
+    step_count = 0
+    state = task.generate_initial_state()
+    while not task.is_terminal_state():
+        action = choose_best_action(task, value_function, state)
+        state = task.transit_state(state, action)
+        step_count += 1
+        if step_count &gt;= MAX_STEP:  # agent may never reaches to the goal
+            break
+    return step_count
+
+</code></pre>
+
+<p>We create <code>MazePerformanceWatcher</code> by using <code>kyoka.callback.BasePerformanceWatcher</code> callback.<br />
+The code would be like this.</p>
+<pre><code class="python">class MazePerformanceWatcher(BasePerformanceWatcher):
+
+    def define_performance_test_interval(self):
+        return 1  # this means &quot;run_performance_test&quot; is called in every &quot;after_update&quot; callback
+
+    # Do performance test and return its result.
+    # Result is passed to &quot;define_log_message&quot; method as &quot;test_result&quot; argument.
+    def run_performance_test(self, task, value_function):
+        step_to_goal = solve_maze(task, value_function)
+        return step_to_goal
+
+    # The message returned here is logged after every &quot;run_performance_test&quot; is called.
+    def define_log_message(self, iteration_count, task, value_function, test_result):
+        step_to_goal = test_result
+        return &quot;Step = %d (iteration=%d)&quot; % (step_to_goal,iteration_count)
+
+</code></pre>
+
+<h2 id="solve-blocking-maze">Solve blocking maze</h2>
+<p>Ok, we prepared everything to start training.  Let's start !!</p>
+<pre><code class="python">from kyoka.algorithm.sarsa import Sarsa
+from kyoka.policy import EpsilonGreedyPolicy
+
+task = BlockingMazeTask()
+policy = EpsilonGreedyPolicy(eps=0.1)
+value_function = MazeTabularValueFunction()
+algorithm = Sarsa()
+algorithm.setup(task, policy, value_function)
+
+callbacks = [MazeTransformationCallback(), MazePerformanceWatcher()]
+algorithm.run_gpi(nb_iteration=100, callbacks=callbacks)
+</code></pre>
+
+<p>Training logs would be output on console like this</p>
+<pre><code>[Progress] Start GPI iteration for 100 times
+[Progress] Finished 1 / 100 iterations (0.0s)
+[MazePerformanceWatcher] Step = 223 (nb_iteration=1)
+[Progress] Finished 2 / 100 iterations (0.0s)
+[MazePerformanceWatcher] Step = 507 (nb_iteration=2)
+[Progress] Finished 3 / 100 iterations (0.0s)
+[MazePerformanceWatcher] Step = 220 (nb_iteration=3)
+[Progress] Finished 4 / 100 iterations (0.0s)
+[MazePerformanceWatcher] Step = 142 (nb_iteration=4)
+[Progress] Finished 5 / 100 iterations (0.0s)
+[MazePerformanceWatcher] Step = 572 (nb_iteration=5)
+[Progress] Finished 6 / 100 iterations (0.0s)
+[MazePerformanceWatcher] Step = 781 (nb_iteration=6)
+[Progress] Finished 7 / 100 iterations (0.0s)
+[MazePerformanceWatcher] Step = 18 (nb_iteration=7)
+...
+[Progress] Finished 50 / 100 iterations (0.0s)
+[MazePerformanceWatcher] Step = 10 (nb_iteration=50)
+[MazeTransformationCallback] Maze transformed after 50 iteration
+[Progress] Finished 51 / 100 iterations (1.6s)
+[MazePerformanceWatcher] Step = 10000 (nb_iteration=51)
+[Progress] Finished 52 / 100 iterations (1.4s)
+[MazePerformanceWatcher] Step = 10000 (nb_iteration=52)
+...
+Progress] Finished 99 / 100 iterations (0.0s)
+[MazePerformanceWatcher] Step = 16 (nb_iteration=99)
+[Progress] Finished 100 / 100 iterations (0.0s)
+[MazePerformanceWatcher] Step = 16 (nb_iteration=100)
+[Progress] Completed GPI iteration for 100 times. (total time: 7s)
+</code></pre>
+
+<p>Great!! Agent found the shortest path of blocking maze before and after transofmation.  </p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../approximation_method_tutorial/" class="btn btn-neutral float-right" title="Approximation Method Tutorial">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../.." class="btn btn-neutral" title="Introduction"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/ishikota/kyoka" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../.." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../approximation_method_tutorial/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script src="../../js/theme.js"></script>
+
+</body>
+</html>

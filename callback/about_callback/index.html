@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>About Callback - kyoka</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "About Callback";
+    var mkdocs_page_input_path = "callback/about_callback.md";
+    var mkdocs_page_url = "/callback/about_callback/";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> kyoka</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Home</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../..">Introduction</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Tutorial</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../tutorial/tabular_method_tutorial/">Tabular Method Tutorial</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../tutorial/approximation_method_tutorial/">Approximation Method Tutorial</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Algorithm</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/about_algorithms/">About Algorithms</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/montecarlo/">MonteCarlo</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/sarsa/">Sarsa</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/q_learning/">QLearning</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/deep_q_learning/">deep Q-learning</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/monte_carlo_tree_search/">MonteCarloTreeSearch</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Callback</span></li>
+
+        
+            
+    <li class="toctree-l1 current">
+        <a class="current" href="./">About Callback</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#what-is-callback">What is callback</a></li>
+                
+                    <li><a class="toctree-l4" href="#callback-methods">Callback methods</a></li>
+                
+                    <li><a class="toctree-l4" href="#logging-methods">Logging methods</a></li>
+                
+            
+            </ul>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../callbacks/">Callbacks</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">kyoka</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Callback &raquo;</li>
+        
+      
+    
+    <li>About Callback</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/ishikota/kyoka/edit/master/docs/callback/about_callback.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="what-is-callback">What is callback</h1>
+<p>You can define some procedure which you want to execute in the middle of training through callback object.<br />
+(ex. record performance of value function in each 1000 iteration of training.)  </p>
+<p>How to set callback for training is createing list of callbacks and pass it to <code>algorithm.run_gpi(nb_iteration, callbacks=None)</code>.<br />
+(You can also pass single callback object (not list) as callbacks arguments)</p>
+<h2 id="callback-methods">Callback methods</h2>
+<p>The base class of all callback objects is <code>kyoka.callback.BaseCallback</code>.<br />
+All callback object must inherit this class and override callback methods as you want.  </p>
+<p><code>kyoka.callback.BaseCallback</code> class has 5 callback methods which callback object can override.  </p>
+<ul>
+<li><code>before_gpi_start(self, task, value_function)</code><ul>
+<li>called when <code>algorithm.run_gpi</code> is called</li>
+</ul>
+</li>
+<li><code>before_update(self, iteration_count, task, value_function)</code><ul>
+<li>called before <code>iteration_count</code> of episode is played in training</li>
+</ul>
+</li>
+<li><code>after_update(self, iteration_count, task, value_function)</code><ul>
+<li>called after <code>iteration_count</code> of episode is played in training</li>
+</ul>
+</li>
+<li><code>after_gpi_finish(self, task, value_function)</code><ul>
+<li>called when training finishes</li>
+</ul>
+</li>
+<li><code>interrupt_gpi(self, iteration_count, task, value_function)</code><ul>
+<li>if you return <code>True</code> training finishes even if it doesn't reach maximum iteration count</li>
+</ul>
+</li>
+</ul>
+<p>In default, above 4 methods are implemented as empty method and <code>interrupt_gpi</code> just returns <code>False</code>.<br />
+So callback object don't need to override all methods if nothing to do.</p>
+<h2 id="logging-methods">Logging methods</h2>
+<p><code>kyoka.callback.BaseCallback</code> class also have utility method <code>log(message)</code>.<br />
+If you want to log something on console, we recommend you to use this method instead of <code>print(message)</code>.</p>
+<p><code>log(message)</code> prints passed message with tag like below.  </p>
+<pre><code class="python">&gt;&gt;&gt; callback = WatchIterationCount(5000)
+&gt;&gt;&gt; callback.log(&quot;Start GPI iteration for 5000 times&quot;)
+[WatchIterationCount] Start GPI iteration for 5000 times
+</code></pre>
+
+<p>We use class name of callback as tag in default. But you can easily customize it by overriding <code>define_log_tag</code> method.  </p>
+<pre><code>class WatchIterationCount(BaseCallback):
+    # some codes...
+
+    def define_log_tag(self):
+        return &quot;Progress&quot;
+
+&gt;&gt;&gt; callback = WatchIterationCount(5000)
+&gt;&gt;&gt; callback.log(&quot;Start GPI iteration for 5000 times&quot;)
+[Progress] Start GPI iteration for 5000 times
+</code></pre>
+
+<hr />
+<p>Here is the sample custom callback to record value of initial state in every 1000 iteration.</p>
+<pre><code class="python">import csv
+from kyoka.policy import choose_best_action
+
+class InitialStateValueRecorder(BaseCallback):
+
+    def __init__(self, score_file_path):
+        self.score_file_path = score_file_path
+        self.score_holder = []
+
+    def before_gpi_start(self, task, value_function):
+        value = self._predict_value_of_initial_state(task, value_function)
+        self.log(&quot;Value of initial state is [ %s ]&quot; % value)
+        self.score_holder.append(value)
+
+    def after_update(self, iteration_count, task, value_function):
+        value = self._predict_value_of_initial_state(task, value_function)
+        self.log(&quot;Value of initial state is [ %s ]&quot; % value)
+        self.score_holder.append(value)
+
+    def after_gpi_finish(self, task, value_function):
+        with open(self.score_file_path, &quot;wb&quot;) as f:
+            writer = csv.writer(f, lineterminator=&quot;\n&quot;)
+            writer.writerow(self.score_holder)
+        self.log(&quot;Score is saved on [ %s ]&quot; % self.score_file_path)
+
+
+    def _predict_value_of_initial_state(self, task, value_function):
+        state = task.generate_initial_state()
+        action = choose_best_action(task, value_function, state)
+        return value_function.predict_value(state, action)
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../callbacks/" class="btn btn-neutral float-right" title="Callbacks">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../../algorithm/monte_carlo_tree_search/" class="btn btn-neutral" title="MonteCarloTreeSearch"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/ishikota/kyoka" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../../algorithm/monte_carlo_tree_search/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../callbacks/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script src="../../js/theme.js"></script>
+
+</body>
+</html>

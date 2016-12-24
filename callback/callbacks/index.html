@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Callbacks - kyoka</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Callbacks";
+    var mkdocs_page_input_path = "callback/callbacks.md";
+    var mkdocs_page_url = "/callback/callbacks/";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> kyoka</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Home</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../..">Introduction</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Tutorial</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../tutorial/tabular_method_tutorial/">Tabular Method Tutorial</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../tutorial/approximation_method_tutorial/">Approximation Method Tutorial</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Algorithm</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/about_algorithms/">About Algorithms</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/montecarlo/">MonteCarlo</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/sarsa/">Sarsa</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/q_learning/">QLearning</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/deep_q_learning/">deep Q-learning</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../algorithm/monte_carlo_tree_search/">MonteCarloTreeSearch</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Callback</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../about_callback/">About Callback</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Callbacks</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#callbacks-implemented-by-kyoka">Callbacks implemented by kyoka</a></li>
+                
+                    <li><a class="toctree-l4" href="#learningrecorder">LearningRecorder</a></li>
+                
+                    <li><a class="toctree-l4" href="#baseperformancewatcher">BasePerformanceWatcher</a></li>
+                
+                    <li><a class="toctree-l4" href="#manualinterruption">ManualInterruption</a></li>
+                
+            
+            </ul>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">kyoka</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Callback &raquo;</li>
+        
+      
+    
+    <li>Callbacks</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/ishikota/kyoka/edit/master/docs/callback/callbacks.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="callbacks-implemented-by-kyoka">Callbacks implemented by <em>kyoka</em></h1>
+<p><em>kyoka</em> prepared callbacks which would be useful for reinforcement learning.  </p>
+<hr />
+<h2 id="learningrecorder">LearningRecorder</h2>
+<p>Save algorithm in the middle of training in each specified interval.</p>
+<pre><code class="python">LearningRecorder(algorithm, root_save_dir_path, save_interval)
+</code></pre>
+
+<p>If you set <code>root_save_dir_path="dev/rl/training_results</code>, <code>save_interval=1000</code>,<br />
+after 2500 iteration of training, the directory of <code>root_save_dir_path</code> has two items like below</p>
+<pre><code class="bash">&gt;&gt;&gt; ls dev/rl/training_results
+after_1000_iteration        after_2000_iteration
+</code></pre>
+
+<p>If you want to load training results of ater 1000 iteration, you would ...</p>
+<pre><code class="python">algorithm.load(&quot;dev/rl/training_results/after_1000_iteration&quot;)
+</code></pre>
+
+<hr />
+<h2 id="baseperformancewatcher">BasePerformanceWatcher</h2>
+<p>Execute some calculation with task and value function in the middle of training and logs its result.</p>
+<p>This class has 2 abstracted methods you need to implement.</p>
+<ul>
+<li><code>run_performance_test(self, task, value_function)</code>: run some calculation and returns its result</li>
+<li><code>define_performance_test_interval</code> : define the interval of training to execute <code>run_performance_test</code></li>
+</ul>
+<p>Below implementation checks how much rewards gained in the episode by intermediate value function 
+and logs it in each 5000 training iteration.  </p>
+<pre><code class="python">from kyoka.callback import BasePerformanceWatcher
+from kyoka.algorithm.rl_algorithm import generate_episode
+from kyoka.policy import GreedyPolicy
+
+class RewardsPeformanceWatcher(BasePerformanceWatcher):
+
+    def setUp(self, task, value_function):
+        self.policy = GreedyPolicy()
+
+    def tearDown(self, task, value_function):
+        pass
+
+    def define_performance_test_interval(self):
+        return 5000
+
+    def run_performance_test(self, task, value_function):
+        episode = generate_episode(task, self.policy, value_function)
+        gains = sum([reward for _state, _action, _next_state, reward in episode])
+        return gains
+
+    # This is the default implementation to generate log message.
+    # So if this implementation is ok, you do not need to implement this method.
+    # Argument &quot;test_result&quot; is the item which you returned in &quot;run_performance_test&quot;
+    def define_log_message(self, iteration_count, task, value_function, test_result):
+        base_msg = &quot;Performance test result : %s (nb_iteration=%d)&quot;
+        return base_msg % (test_result, iteration_count)
+</code></pre>
+
+<hr />
+<h2 id="manualinterruption">ManualInterruption</h2>
+<p>You can stop training whenever you want by writing "stop" on specified file.</p>
+<pre><code class="python">ManualInterruption(monitor_file_path, watch_interval=30)
+</code></pre>
+
+<p>If you pass <code>monitor_file_path=dev/rl/stop.txt</code> then this callback checks</p>
+<ol>
+<li>if a file exists on <code>monitor_file_path</code></li>
+<li>if a file exists, find words "stop" in the file</li>
+<li>if found the word "stop", finish the training</li>
+</ol>
+<p>in each 30 iteration of training.  </p>
+<p>So you can interrupt training like this.</p>
+<pre><code class="bash">echo stop &gt; dev/rl/stop.txt
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../about_callback/" class="btn btn-neutral" title="About Callback"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/ishikota/kyoka" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../about_callback/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script src="../../js/theme.js"></script>
+
+</body>
+</html>

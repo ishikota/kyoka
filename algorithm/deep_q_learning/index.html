@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>deep Q-learning - kyoka</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "deep Q-learning";
+    var mkdocs_page_input_path = "algorithm/deep_q_learning.md";
+    var mkdocs_page_url = "/algorithm/deep_q_learning/";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> kyoka</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Home</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../..">Introduction</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Tutorial</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../tutorial/tabular_method_tutorial/">Tabular Method Tutorial</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../tutorial/approximation_method_tutorial/">Approximation Method Tutorial</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Algorithm</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../about_algorithms/">About Algorithms</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../montecarlo/">MonteCarlo</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../sarsa/">Sarsa</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../q_learning/">QLearning</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 current">
+        <a class="current" href="./">deep Q-learning</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#deep-q-learning-with-experience-replay">deep Q-learning with experience replay.</a></li>
+                
+                    <li><a class="toctree-l4" href="#algorithm">Algorithm</a></li>
+                
+                    <li><a class="toctree-l4" href="#value-function">Value function</a></li>
+                
+            
+            </ul>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../monte_carlo_tree_search/">MonteCarloTreeSearch</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Callback</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../callback/about_callback/">About Callback</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../callback/callbacks/">Callbacks</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">kyoka</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Algorithm &raquo;</li>
+        
+      
+    
+    <li>deep Q-learning</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/ishikota/kyoka/edit/master/docs/algorithm/deep_q_learning.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="deep-q-learning-with-experience-replay">deep Q-learning with experience replay.</h1>
+<p>Variant of Q-learning for function approximation proposed in the paper<br />
+<a href="http://www.nature.com/nature/journal/v518/n7540/abs/nature14236.html?lang=en">Human-level control through deep reinforcement learning</a>.</p>
+<p>In reinforcement leaning, it's known that function approximation with non-linear model (ex. neuralnet) would be unstable and lead poor learning result.<br />
+To address this problem, <em>deep Q-learning</em> combined two key ideas with QLearning.</p>
+<ul>
+<li>Use <em>experience replay</em> to reduce correlations between sequence of learning data.</li>
+<li><em>Separate taget and behavior network</em> to stable the source of learning data.</li>
+</ul>
+<h2 id="algorithm">Algorithm</h2>
+<pre><code>    Parameter
+        g &lt;- gamma. discounting factor of QLearning
+        N &lt;- capacity of replay memory
+        C &lt;- interval to sync Q'(target network) with Q
+        minibatch_size &lt;- size of minibatch used to train Q
+        replay_start_size &lt;- initial size of replay memory. Fill D
+            with this number of experiences which created by random policy.
+            This procedure is done in setup phase.
+
+    Initialize
+        T  &lt;- your RL task
+        PI &lt;- policy used to select action during the episode
+        Q  &lt;- approximate action value function (ex. neural network)
+        Q' &lt;- target network. initialized by deepcopy Q.
+        D  &lt;- filled with replay_start_size of  experiences created by random simulation.
+              (experience = tuple of state, action, reward and next_state)
+
+    Repeat until computational budget runs out:
+        S &lt;- generate initial state of task T
+        A &lt;- choose action at S by following PI
+        Repeat until S is terminal state:
+            S' &lt;- next state of S after taking action A
+            R &lt;- reward gained by taking action A at state S
+            A' &lt;- next action at S' by following policy PI
+            append experience (S,A,R,S') to D
+            MB &lt;- sample minibatch_size of experiences from D
+            BT &lt;- transform minibatch of experiences into backup targets
+            (BT = [r + g * Q(s', GA) for s,a,r,s' in MB], GA=greedy action at s')
+            Update Q by using BT (minibatch of backup targets)
+            Every C step: Q' &lt;- Q (ex. deepcopy weights of Q to Q')
+            S, A &lt;- S', A'
+</code></pre>
+
+<h2 id="value-function">Value function</h2>
+<p><code>DeepQLearning</code> method provides only <strong>approximation</strong> type of value functions.</p>
+<h3 id="deepqlearningapproxactionvaluefunction">DeepQLearningApproxActionValueFunction</h3>
+<p><code>DeepQLearningApproxActionValueFunction</code> has 6 abstracted methods. You would wrap your prediction model (ex. neuralnet) in these methods.</p>
+<ul>
+<li><code>initialize_network</code> : initialize your prediction model here</li>
+<li><code>deepcopy_network</code> : define how to create deepcopy of your prediction model</li>
+<li><code>predict_value_by_network</code> : predict value of state-action pair by your prediction model</li>
+<li><code>backup_on_minibatch</code> : train your prediction model with passed learning minibatch</li>
+<li><code>save_networks</code> : save your prediction model as you like (ex. save the weights of neuralnet)</li>
+<li><code>load_networks</code> : load your prediction model from resource created by <code>save_networks</code></li>
+</ul>
+<p>The implementation with some neuralnet library would be like this.</p>
+<pre><code class="python">class MyApproxActionValueFunction(DeepQLearningApproxActionValueFunction):
+
+    # the model returned here is used as &quot;q_network&quot; (Q of above algorithm)
+    def initialize_network(self):
+        model = build_neuralnet()
+        return model
+
+    # the model returned here is used as &quot;q_hat_network&quot; (Q' of above algorithm)
+    def deepcopy_network(self, q_network):
+        original_weight = q_network.get_weights()
+        deepcopy_network = self.initialize_network()
+        deepcopy_network.set_weights(original_weight)
+        return deepcopy_network
+
+    # return prediction value of passed state action pair.
+    # passed network would be &quot;q_network&quot; or &quot;q_hat_network&quot;.
+    def predict_value_by_network(self, network, state, action):
+        features = build_features(state, action)
+        prediction = network.predict(features)
+        return prediction
+
+    # train passed q_network with backup_minibatch
+    # you would need to transform backup_minibatch into input output pair like
+    # supervised learning format.
+    def backup_on_minibatch(self, q_network, backup_minibatch):
+        # backup_minibatch is array of (state, action, target_value).
+        X = [build_features(state, action) for state, action, _target in backup_minibatch]
+        y = [target for _state, _action, target in backup_minibatch]
+        q_network.train_on_minibatch(X, y)
+
+    # save passed two neuralnet on passed directory
+    def save_networks(self, q_network, q_hat_network, save_dir_path):
+        q_network.save_weights(&quot;%s/q_weight.h5&quot; % save_dir_path)
+        q_hat_network.save_weights(&quot;%s/q_hat_weight.h5&quot; % save_dir_path)
+
+    # load &quot;q_network&quot; and &quot;q_hat_network&quot; from passed directory and return them in
+    # &quot;q_network&quot;, &quot;q_hat_network&quot; order.
+    def load_networks(self, load_dir_path):
+        q_network = self.initialize_network()
+        q_network.load_weights(&quot;%s/q_weight.h5&quot; % load_dir_path)
+        q_hat_network = self.initialize_network()
+        q_hat_network.load_weights(&quot;%s/q_hat_weight.h5&quot; % load_dir_path)
+        return q_network, q_hat_network
+
+</code></pre>
+
+<h4 id="sample-code-to-start-learning">Sample code to start learning</h4>
+<pre><code class="python">TEST_LENGTH = 5000000
+task = MyTask()
+policy = EpsilonGreedyPolicy(eps=1.0)
+policy.set_eps_annealing(initial_eps=1.0, final_eps=0.1, anneal_duration=1000000)
+value_func = MyApproxActionValueFunction()
+algorithm = DeepQLearning(gamma=0.99, N=100000, C=1000, minibatch_size=32, replay_start_size=50000)
+algorithm.setup(task, policy, value_func)
+algorithm.run_gpi(test_length)
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../monte_carlo_tree_search/" class="btn btn-neutral float-right" title="MonteCarloTreeSearch">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../q_learning/" class="btn btn-neutral" title="QLearning"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/ishikota/kyoka" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../q_learning/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../monte_carlo_tree_search/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script src="../../js/theme.js"></script>
+
+</body>
+</html>

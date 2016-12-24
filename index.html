@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Documentation site for kyoka">
+  
+  <link rel="shortcut icon" href="./img/favicon.ico">
+  <title>Introduction - kyoka</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="./css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="./css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="./css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Introduction";
+    var mkdocs_page_input_path = "index.md";
+    var mkdocs_page_url = "/";
+  </script>
+  
+  <script src="./js/jquery-2.1.1.min.js"></script>
+  <script src="./js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="./js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="." class="icon icon-home"> kyoka</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Home</span></li>
+
+        
+            
+    <li class="toctree-l1 current">
+        <a class="current" href=".">Introduction</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#kyoka-reinforcement-learning-framework">kyoka - Reinforcement Learning framework</a></li>
+                
+                    <li><a class="toctree-l4" href="#what-is-reinforcement-learning">What is Reinforcement Learning</a></li>
+                
+                    <li><a class="toctree-l4" href="#why-kyoka-is-creted">Why kyoka is creted</a></li>
+                
+                    <li><a class="toctree-l4" href="#hello-reinforcement-learning">Hello Reinforcement Learning</a></li>
+                
+                    <li><a class="toctree-l4" href="#installation">Installation</a></li>
+                
+            
+            </ul>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Tutorial</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="tutorial/tabular_method_tutorial/">Tabular Method Tutorial</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="tutorial/approximation_method_tutorial/">Approximation Method Tutorial</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Algorithm</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="algorithm/about_algorithms/">About Algorithms</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="algorithm/montecarlo/">MonteCarlo</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="algorithm/sarsa/">Sarsa</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="algorithm/q_learning/">QLearning</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="algorithm/deep_q_learning/">deep Q-learning</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="algorithm/monte_carlo_tree_search/">MonteCarloTreeSearch</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Callback</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="callback/about_callback/">About Callback</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="callback/callbacks/">Callbacks</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href=".">kyoka</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Home &raquo;</li>
+        
+      
+    
+    <li>Introduction</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/ishikota/kyoka/edit/master/docs/index.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="kyoka-reinforcement-learning-framework">kyoka - Reinforcement Learning framework</h1>
+<h3 id="what-is-reinforcement-learning">What is Reinforcement Learning</h3>
+<blockquote>
+<p>Reinforcement learning is an area of machine learning inspired by behaviorist psychology, concerned with how software agents ought to take actions in an environment so as to maximize some notion of cumulative reward. (wikipedia)</p>
+</blockquote>
+<p>In reinforcement learning, the player to learn how to get good result in some task is called as <strong>agent</strong>.<br />
+Agent learns which action is good or bad at each situation through large number of simulation.<br />
+(The essential factor to characterize reinforcement learning is <strong>learning from trial-and-error</strong>.)</p>
+<h2 id="why-kyoka-is-creted">Why <em>kyoka</em> is creted</h2>
+<p>The steps to solve your learning problem (ex. playing Go) by reinforcement learning algorithms would be  </p>
+<ol>
+<li><strong>Define your learning problem</strong> in Reinforcement Learning format.  </li>
+<li>Select learning algorithm(ex. QLearning) and <strong>implement it for your learning problem</strong>.  </li>
+</ol>
+<p>We have a lots of things to do before start learning.<br />
+This library is created to ease implementing these steps.  </p>
+<p>Sorry, I talked too much. Let's see the code with simple example !!</p>
+<h2 id="hello-reinforcement-learning">Hello Reinforcement Learning</h2>
+<p>We will find the shortest path to escape from below maze by <code>QLearning</code>.</p>
+<pre><code class="bash">S: start, G: goal, X: wall
+
+-------XG
+--X----X-
+S-X----X-
+--X------
+-----X---
+---------
+</code></pre>
+
+<h3 id="step1-define-maze-task">Step1. Define Maze Task</h3>
+<p>First we define our learning problem as reinforcement learning task.
+<em>kyoka</em> provides <code>kyoka.task.BaseTask</code> template class. This class has 5 abstracted methods you need to implement.</p>
+<ol>
+<li><code>gegenerate_inital_state</code> : define start state of our problem</li>
+<li><code>is_terminal_state</code> : define when is the finish of our problem</li>
+<li><code>transit_state</code> : define the rule of state transition in our problem</li>
+<li><code>generate_possible_actions</code> : define what action is possible in each state</li>
+<li><code>calculate_reward</code> : define how good each state is</li>
+</ol>
+<p>Here is the <code>MazeTask</code> class which represents our learning problem.</p>
+<pre><code class="python">from kyoka.task import BaseTask
+
+class MazeTask(BaseTask):
+
+    ACTION_UP = 0
+    ACTION_DOWN = 1
+    ACTION_RIGHT = 2
+    ACTION_LEFT = 3
+
+    # We use current position of the agent in the maze as &quot;state&quot;.
+    # So we return start position of the maze (row=2, col=0).
+    def generate_initial_state(self):
+        return (2, 0)
+
+    # The position of the goal is (row=0, column=8).
+    def is_terminal_state(self):
+        return (0, 8) == state
+
+    # We can always move towards 4 directions.
+    def generate_possible_actions(self, state):
+        return [self.ACTION_UP, self.ACTION_DOWN, self.ACTION_RIGHT, self.ACTION_LEFT]
+
+    # Agent can get reward +1 only when he reaches to the goal.
+    def calculate_reward(self, state):
+        return 1 if self.is_terminal_state(state) else 0
+
+    # Returns next state after moved toward direction of passed action.
+    # If destination is out of the maze or block cell, do not move.
+    def transit_state(self, state, action):
+        row, col = state
+        wall_position = [(1,2), (2,2), (3,2), (4,5), (0,7), (1,7), (2,7)]
+        height, width = 6, 9
+        if self.ACTION_UP == action:
+            row = max(0, row-1)
+        elif self.ACTION_DOWN == action:
+            row = min(height-1, row+1)
+        elif self.ACTION_RIGHT == action:
+            col= min(width-1, col+1)
+        elif self.ACTION_LEFT == action:
+            col = max(0, col-1)
+        if (row, col) not in wall_position:
+            return (row, col)
+        else:
+            return state  # Stay current position if destination is not a path.
+
+</code></pre>
+
+<h3 id="step2-setup-qlearning-for-mazetask">Step2. Setup QLearning for MazeTask</h3>
+<p>Next we implement <strong>value function</strong> of our <code>MazeTask</code> for <code>QLearning</code>.  </p>
+<p><strong>value function</strong> is the function which receives <strong>state-action</strong> pair and estimates <strong>how good</strong> for the agent to take the action at the state.
+So value function would work like this</p>
+<pre><code class="python">value_of_action = value_function.predict_value(state=(1, 5), action=ACTION_UP)
+# value_of_action should be 1 because (1,6) is the goal of the maze.
+</code></pre>
+
+<p>The most important part of reinforcement learning is to <strong>learn correct value function</strong> of the task.</p>
+<p>Each algorithm in this library has different base class of value function<br />
+(ex. <code>QLearningTabularActionValueFunction</code>, <code>DeepQLearningApproxActionValueFunction</code>).<br />
+Now we need to implement abstracted method of <code>QLearningTabularActionValueFunction</code>.</p>
+<p>Here is the <code>MazeTabularValueFunction</code> class for <code>QLearning</code>.</p>
+<pre><code class="python">class MazeTabularValueFunction(QLearningTabularActionValueFunction):
+
+    # We use table(array) to store the value of state-action pair.
+    # Ex. the value of action=ACTION_RIGHT at state=(0,3) is stored in table[0][3][2].
+    def generate_initial_table(self):
+        maze_width, maze_height, action_num = 6, 9, 4
+        return [[[0 for a in range(action_num)] for j in range(width)] for i in range(height)]
+
+    # Define how to fetch value from the table which
+    # initialized by &quot;generate_initial_table&quot; method.
+    def fetch_value_from_table(self, table, state, action):
+        row, col = state
+        return table[row][col][action]
+
+    # Define how to update the value of table.
+    def insert_value_into_table(self, table, state, action, new_value):
+        row, col = state
+        table[row][col][action] = new_value
+</code></pre>
+
+<h3 id="final-step-run-qlearning-and-see-its-result">Final Step. Run <code>QLearning</code> and see its result</h3>
+<p>Ok, we prepared everything. Next code starts the learning.</p>
+<pre><code class="python">task = MazeTask()
+policy = EpsilonGreedyPolicy(eps=0.1)
+value_function = MazeTabularValueFunction()
+algorithm = QLearning()
+algorithm.setup(task, policy, value_function)  # setup before calling &quot;run_gpi&quot;
+algorithm.run_gpi(nb_iteration=100)  # starts the learning
+</code></pre>
+
+<p>That's all !! Now <code>value_function</code> stores how good each action is. Let's visualize what agent learned.<br />
+(We prepared helper method <code>examples.maze.helper.visualize_policy</code>.)</p>
+<pre><code class="python">&gt;&gt;&gt; print visualize_policy(task, value_function)
+
+     -------XG
+     --X-v-vX^
+S -&gt; v-X-vvvX^
+     vvX&gt;&gt;&gt;&gt;&gt;^
+     &gt;&gt;&gt;&gt;^-^^^
+     -&gt;^&lt;^----
+</code></pre>
+
+<p>Great!! Agent found the shortest path to the goal. (14 step is the minimum step to the goal !!)</p>
+<h2 id="installation">Installation</h2>
+<p>You can use pip like this.</p>
+<pre><code>pip install kyoka
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorial/tabular_method_tutorial/" class="btn btn-neutral float-right" title="Tabular Method Tutorial">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/ishikota/kyoka" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+      
+        <span style="margin-left: 15px"><a href="tutorial/tabular_method_tutorial/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script src="./js/theme.js"></script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 0.16.0
+Build Date UTC : 2016-12-24 08:29:02
+-->
