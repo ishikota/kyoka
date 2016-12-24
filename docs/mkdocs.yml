@@ -17,3 +17,6 @@ pages:
   - QLearning: algorithm/q_learning.md
   - deep Q-learning: algorithm/deep_q_learning.md
   - MonteCarloTreeSearch: algorithm/monte_carlo_tree_search.md
+- Callback:
+  - About Callback: callback/about_callback.md
+  - Callbacks: callback/callbacks.md
